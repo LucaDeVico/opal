@@ -1,0 +1,10 @@
+{
+  "name": "OPAL probe",
+  "short_name": "OPAL probe",
+  "description": "Throw-away test page for installing OPAL on the iPad. Not the app.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a"
+}

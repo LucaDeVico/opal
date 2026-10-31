@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--
+  OPAL probe -- a throw-away page, not part of the suite and never shipped to the dock.
+  Distributed under the GNU Lesser General Public License v2.1 or any later version.
+  (c) 2026 Luca De Vico, Università degli Studi di Siena.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OPAL probe">
+<meta name="theme-color" content="#1a1a1a">
+<link rel="manifest" href="manifest.webmanifest">
+<title>OPAL probe</title>
+<style>
+html, body { margin: 0; padding: 0; background: #1a1a1a; color: #e6e6e6;
+  font: 16px/1.4 -apple-system, Helvetica, Arial, sans-serif; }
+body { padding: 12px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+h2 { font-size: 16px; margin: 18px 0 6px; border-top: 1px solid #444; padding-top: 10px; }
+p { margin: 4px 0; }
+button, input[type=number] { font-size: 16px; padding: 8px 12px; margin: 4px 4px 4px 0; }
+.note { color: #aaa; font-size: 14px; }
+#log { white-space: pre-wrap; word-break: break-word; background: #000; color: #9f9;
+  font: 13px/1.35 Menlo, monospace; padding: 8px; min-height: 5em; }
+.big { font-size: 28px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<h1>OPAL probe</h1>
+<p class="note">A test page, not the app. Three questions: does the file picker work here,
+does sharing a saved file work after a long task, and does the cache survive.</p>
+<p class="note" id="mode"></p>
+
+<h2>1. File picker</h2>
+<p><input type="file" id="pick"></p>
+<p id="pickOut">No file chosen.</p>
+
+<h2>2. Share after a long task</h2>
+<p>Seconds to wait: <input type="number" id="secs" value="20" min="1" max="600" style="width:5em"></p>
+<p><label><input type="checkbox" id="auto"> also try to share by itself when the wait ends (no tap)</label></p>
+<p><button id="start">Start the wait</button></p>
+<p class="big" id="counter">&nbsp;</p>
+<p><button id="share" disabled>Share the saved file</button></p>
+<p id="shareOut" class="note">Nothing shared yet.</p>
+
+<h2>3. Cache</h2>
+<p id="cacheOut">Checking.</p>
+<p><button id="recheck">Check again</button></p>
+
+<h2>Log</h2>
+<div id="log"></div>
+
+<script>
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+
+function log(msg) {
+  var t = new Date();
+  var s = t.toLocaleTimeString() + '  ' + msg;
+  $('log').textContent += s + '\n';
+}
+
+// Standalone or in a Safari tab: this is what the whole probe is about.
+var standalone = (window.navigator.standalone === true) ||
+  (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+$('mode').textContent = standalone
+  ? 'Running as an installed app (standalone).'
+  : 'Running in a browser tab, not installed.';
+log('standalone=' + standalone + '  share=' + (typeof navigator.share) +
+    '  canShare=' + (typeof navigator.canShare) + '  serviceWorker=' + ('serviceWorker' in navigator));
+
+// --- 1. file picker ---
+$('pick').addEventListener('change', function () {
+  var f = this.files && this.files[0];
+  if (!f) { $('pickOut').textContent = 'No file chosen.'; log('picker: returned with no file'); return; }
+  $('pickOut').textContent = f.name + ' -- ' + f.size + ' bytes';
+  log('picker: ' + f.name + ' ' + f.size + ' bytes, type "' + f.type + '"');
+});
+
+// --- 2. share after a long task ---
+var saved = null;
+var timer = null;
+
+function makeFile(secs) {
+  var text = 'OPAL probe file\nwait: ' + secs + ' s\nmade: ' + new Date().toISOString() + '\n';
+  return new File([text], 'opal-probe.txt', { type: 'text/plain' });
+}
+
+function tryShare(file, how) {
+  if (!navigator.share) { $('shareOut').textContent = 'navigator.share is absent.'; log('share (' + how + '): absent'); return; }
+  if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+    $('shareOut').textContent = 'canShare refused the file.';
+    log('share (' + how + '): canShare false');
+    return;
+  }
+  // No title, and no dialog before the call (the iOS file-saving rules).
+  navigator.share({ files: [file] }).then(function () {
+    $('shareOut').textContent = 'Share finished (' + how + ').';
+    log('share (' + how + '): resolved');
+  }).catch(function (e) {
+    $('shareOut').textContent = 'Share failed (' + how + '): ' + e.name + ': ' + e.message;
+    log('share (' + how + '): ' + e.name + ': ' + e.message);
+  });
+}
+
+$('start').addEventListener('click', function () {
+  var secs = Math.max(1, Math.min(600, parseInt($('secs').value, 10) || 20));
+  if (timer) { clearInterval(timer); timer = null; }
+  saved = null;
+  $('share').disabled = true;
+  $('shareOut').textContent = 'Waiting.';
+  var t0 = Date.now();
+  log('wait started: ' + secs + ' s');
+  timer = setInterval(function () {
+    var left = secs - Math.floor((Date.now() - t0) / 1000);
+    if (left > 0) { $('counter').textContent = left + ' s left'; return; }
+    clearInterval(timer); timer = null;
+    $('counter').textContent = 'done';
+    saved = makeFile(secs);
+    $('share').disabled = false;
+    log('wait ended; file ready (' + saved.size + ' bytes)');
+    if ($('auto').checked) tryShare(saved, 'by itself, no tap');
+  }, 250);
+});
+
+$('share').addEventListener('click', function () {
+  if (saved) tryShare(saved, 'fresh tap');
+});
+
+// --- 3. cache ---
+function showCache() {
+  var out = $('cacheOut');
+  var now = new Date().toLocaleString();
+  if (!('serviceWorker' in navigator) || !window.caches) { out.textContent = 'No service worker or cache here.\nNow: ' + now; return; }
+  caches.open('opal-probe-v1').then(function (c) { return c.match('cache-filled-at'); })
+    .then(function (r) { return r ? r.text() : null; })
+    .then(function (ms) {
+      var filled = ms ? new Date(parseInt(ms, 10)).toLocaleString() : 'not filled yet';
+      out.textContent = 'Cache filled: ' + filled + '\nNow: ' + now;
+      log('cache filled: ' + filled);
+    })
+    .catch(function (e) { out.textContent = 'Cache error: ' + e.name + ': ' + e.message; });
+  if (navigator.storage && navigator.storage.persisted) {
+    navigator.storage.persisted().then(function (p) { log('storage persisted=' + p); });
+  }
+}
+$('recheck').addEventListener('click', showCache);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(function (reg) {
+    log('worker registered, scope ' + reg.scope);
+    setTimeout(showCache, 1500);
+  }).catch(function (e) { log('worker not registered: ' + e.name + ': ' + e.message); showCache(); });
+} else {
+  showCache();
+}
+</script>
+</body>
+</html>
