@@ -1,32 +1,78 @@
 <!DOCTYPE html>
 <!--
+************************************************************************
+* This file is part of OpenMolcas.                                     *
+*                                                                      *
+* OpenMolcas is free software; you can redistribute it and/or modify   *
+* it under the terms of the GNU Lesser General Public License, v. 2.1. *
+* OpenMolcas is distributed in the hope that it will be useful, but it *
+* is provided "as is" and without any express or implied warranties.   *
+* For more details see the full text of the license in the file        *
+* LICENSE or in <http://www.gnu.org/licenses/>.                        *
+*                                                                      *
+* Copyright (C) 2026, Luca De Vico                                     *
+************************************************************************
+
   OPAL — OpenMolcas Orbitals, Plotting, Analysis and Layout
   Suite launcher / index page
 
-  Copyright (C) 2026 Luca De Vico
   Università degli Studi di Siena
-
-  This file is part of OPAL.
-
-  OPAL is free software: you can redistribute it and/or modify it under
-  the terms of the GNU Lesser General Public License as published by the
-  Free Software Foundation, either version 2.1 of the License, or
-  (at your option) any later version.
-
-  OPAL is distributed in the hope that it will be useful, but WITHOUT
-  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-  License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with OPAL. If not, see <https://www.gnu.org/licenses/>.
 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#12172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/opal-180.png">
 <title>OpenMolcas OPAL</title>
 <meta name="description" content="OpenMolcas OPAL — Orbitals, Plotting, Analysis and Layout">
+<script id="opal-theme">
+/* Light theme switch. The choice is carried only by the page address fragment:
+   no cookies and no stored values. This block sits in the head so that the first
+   paint is already in the right theme. Dark is the default. */
+(function () {
+  var root = document.documentElement;
+  var KEY = 'theme=light';
+  var listeners = [];
+  function isLight() { return root.getAttribute('data-theme') === 'light'; }
+  function fragment() { return isLight() ? '#' + KEY : ''; }
+  function sync() {
+    var btn = document.getElementById('btn-theme');
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', isLight() ? 'true' : 'false');
+    btn.title = isLight() ? 'Switch to the dark theme' : 'Switch to the light theme';
+  }
+  function set(light) {
+    if (light) root.setAttribute('data-theme', 'light');
+    else root.removeAttribute('data-theme');
+    sync();
+    try {
+      window.history.replaceState(null, '', light ? fragment() : window.location.pathname + window.location.search);
+    } catch (e) { /* a file address may refuse this; the choice still applies */ }
+    for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](light); } catch (err) { console.error(err); }
+    }
+  }
+  window.OPAL_THEME = {
+    isLight: isLight,
+    fragment: fragment,
+    set: set,
+    toggle: function () { set(!isLight()); },
+    onChange: function (fn) { listeners.push(fn); }
+  };
+  if ((window.location.hash || '').replace(/^#/, '').split('&').indexOf(KEY) !== -1) {
+    root.setAttribute('data-theme', 'light');
+  }
+  function wire() {
+    var btn = document.getElementById('btn-theme');
+    if (btn) btn.addEventListener('click', function () { window.OPAL_THEME.toggle(); });
+    sync();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
+</script>
 <link rel="icon" id="favicon-link" type="image/png" href="data:image/png;base64,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">
 <style>
 /* ─── Design-system tokens ─────────────────────────────────────────────── */
@@ -71,6 +117,16 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center;
   padding: 0 14px; gap: 10px;
+  /* Safe areas: the page asks to extend under the notch and the home indicator, so
+     the edges are padded by what the device reports. Each line has a plain fallback. */
+  height: 44px;
+  height: calc(44px + env(safe-area-inset-top, 0px));
+  padding-top: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: 14px;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: 14px;
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
 }
 #toolbar img.suite-icon {
   height: 28px; width: auto; opacity: .9;
@@ -157,6 +213,8 @@ a { color: inherit; text-decoration: none; }
   max-width: 1040px;
   margin: 0 auto;
   padding: 8px 20px 60px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
 #tools-section h2 {
   font-family: var(--mono);
@@ -304,10 +362,47 @@ a { color: inherit; text-decoration: none; }
 #footer {
   border-top: 1px solid var(--border);
   padding: 18px 24px;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
   text-align: center;
   font-size: 11px;
   color: var(--txt4);
   font-family: var(--mono);
+}
+
+/* ─── Offline copy: status line, update banner, dimmed network-only card ─── */
+#offline-status[hidden], #update-banner[hidden] { display: none; }
+#hero #offline-status {
+  margin-top: 12px;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--txt3);
+}
+#offline-status button, #update-banner button {
+  margin-left: 8px;
+  padding: 3px 10px;
+  border-radius: var(--r);
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: var(--sans); font-size: 12px;
+}
+#update-banner {
+  padding: 8px 14px;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+  background: var(--panel2);
+  border-bottom: 1px solid var(--accent);
+  color: var(--txt);
+  font-size: 12px;
+  text-align: center;
+}
+.tool-card.needs-network { opacity: .5; }
+.tool-card.needs-network .launch-btn { pointer-events: none; }
+.tool-card .network-note {
+  font-size: 11px; font-family: var(--mono); color: var(--txt3);
 }
 #footer a { color: var(--txt3); }
 #footer a:hover { color: var(--accent); }
@@ -329,6 +424,44 @@ a { color: inherit; text-decoration: none; }
   color: var(--txt4);
   font-style: normal;
 }
+
+/* ─── Theme button ──────────────────────────────────────────────────────── */
+.theme-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--r);
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--txt2);
+  cursor: pointer;
+  font-family: var(--sans); font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.theme-btn:hover { background: var(--panel2); color: var(--txt); }
+.theme-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.theme-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ─── Light theme ───────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:      #eef1f5;
+  --panel:   #ffffff;
+  --panel2:  #dde4ee;
+  --border:  #aab4c3;
+  --border2: #6b7686;
+  --accent:  #b3123a;
+  --blue:    #1356a8;
+  --green:   #16702f;
+  --yellow:  #8a5000;
+  --red:     #b01c1c;
+  --txt:     #0f172a;
+  --txt2:    #243044;
+  --txt3:    #3b4658;
+  --txt4:    #525d70;
+}
+:root[data-theme="light"] #toolbar img.suite-icon { filter: invert(1); opacity: 1; }
+:root[data-theme="light"] .tool-card:hover { box-shadow: 0 4px 24px rgba(15, 23, 42, .18); }
 </style>
 </head>
 <body>
@@ -342,7 +475,12 @@ a { color: inherit; text-decoration: none; }
   <span id="ver-badge" title="OPAL launcher version"></span>
   <div class="spacer"></div>
   <span class="tagline" id="toolbar-tagline">Orbitals, Plotting, Analysis and Layout</span>
+  <button class="theme-btn" id="btn-theme" type="button" aria-pressed="false" title="Switch to the light theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9zM12 6.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4zM12 15.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4z"/></svg>Theme
+  </button>
+  <button class="theme-btn" id="btn-cite" type="button" title="How to cite OPAL" aria-label="How to cite OPAL" onclick="CITE.open('OPAL launcher', INDEX_VERSION)">&#9432;</button>
 </div>
+<div id="update-banner" role="status" hidden></div>
 
 <!-- ═══ HERO ══════════════════════════════════════════════════════════════ -->
 <section id="hero">
@@ -356,6 +494,7 @@ a { color: inherit; text-decoration: none; }
     <span class="dot"></span>
     <span id="hero-badge-text">Orbitals, Plotting, Analysis and Layout</span>
   </div>
+  <p id="offline-status" role="status" hidden></p>
 </section>
 
 <!-- ═══ TOOLS GRID ════════════════════════════════════════════════════════ -->
@@ -366,6 +505,12 @@ a { color: inherit; text-decoration: none; }
   </div>
 </section>
 
+<!-- ═══ HOW TO CITE ═══════════════════════════════════════════════════════ -->
+<section id="cite-section">
+  <h2>How to cite</h2>
+  <div id="cite-body"></div>
+</section>
+
 <!-- ═══ FOOTER ════════════════════════════════════════════════════════════ -->
 <footer id="footer">
   <span id="footer-text">OpenMolcas OPAL — Orbitals, Plotting, Analysis and Layout</span>
@@ -374,7 +519,7 @@ a { color: inherit; text-decoration: none; }
   <span class="cookie-quote" style="margin-top:8px;">
     &copy; 2026 Luca De Vico &nbsp;&middot;&nbsp; Universit&agrave; degli Studi di Siena
     &nbsp;&middot;&nbsp;
-    <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" target="_blank">LGPL 2.1 or later</a>
+    <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" target="_blank">LGPL 2.1</a>
   </span>
   <span class="cookie-quote">
     <em id="cookie-quote-text"></em>
@@ -391,7 +536,214 @@ a { color: inherit; text-decoration: none; }
    names were rejected and their entries removed.
    ══════════════════════════════════════════════════════════════════════════ */
 
-const INDEX_VERSION = 'v0.52';
+const INDEX_VERSION = 'v0.64';
+
+//@@OPAL-SHARED:BEGIN citation@@
+const CITE = (() => {
+  // How to cite OPAL: the two references, their plain-text and BibTeX forms, the
+  // line added to exported files, and the small window every tool and the launcher
+  // open from their info button. One source for all of them.
+  //
+  // TO FILL IN A REFERENCE LATER: edit the entry below (authors, title, venue, year,
+  // doi, url), run the sync script, bump the version of every tool and of the
+  // launcher. While an entry has no title it is shown as "in preparation", offers no
+  // Copy button, and adds nothing to exported files.
+  const CITATIONS = [
+    { id: 'opal', label: 'The OPAL article',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' },
+    { id: 'openmolcas', label: 'The OpenMolcas paper that presents OPAL',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' }
+  ];
+  const PENDING_TEXT = 'In preparation; the reference will appear here.';
+  const INTRO_TEXT = 'If you use OPAL in published work, please cite:';
+
+  // The tutorial page of each tool lives on the published site, so the address is
+  // absolute: the dock carries the same files and has no tutorials of its own. The
+  // page is found from the tool's name, lower-cased, and only when that name is in
+  // the list, so the launcher's window gets no such line.
+  const TUTORIAL_BASE = 'https://lucadevico.github.io/opal/tutorials/tools/';
+  const TUTORIAL_TOOLS = ['csfscalc', 'geodiff', 'intcoords', 'molbuild', 'molviz', 'orbviz', 'pathvibviz', 'rassiviz'];
+  const TUTORIAL_TEXT = 'Tutorial for this tool';
+
+  function list(override) { return override || CITATIONS; }
+  function tutorialUrl(toolName) {
+    const slug = String(toolName == null ? '' : toolName).toLowerCase();
+    return TUTORIAL_TOOLS.indexOf(slug) >= 0 ? TUTORIAL_BASE + slug + '/' : '';
+  }
+  function isEmpty(c) { return !c || !String(c.title || '').trim(); }
+  function field(c, k) { return String(c[k] == null ? '' : c[k]).trim(); }
+
+  // Plain text: Authors. Title. Venue, Year. doi:...  (parts that are empty are left out)
+  function plain(c) {
+    if (isEmpty(c)) return '';
+    const parts = [];
+    const a = field(c, 'authors'), t = field(c, 'title'), v = field(c, 'venue'), y = field(c, 'year');
+    const d = field(c, 'doi'), u = field(c, 'url');
+    if (a) parts.push(a.replace(/\.$/, '') + '.');
+    parts.push(t.replace(/\.$/, '') + '.');
+    if (v || y) parts.push((v + (v && y ? ', ' : '') + y) + '.');
+    if (d) parts.push('doi:' + d);
+    else if (u) parts.push(u);
+    return parts.join(' ');
+  }
+
+  function bibEscape(s) { return s.replace(/[{}]/g, ''); }
+  function bibtex(c) {
+    if (isEmpty(c)) return '';
+    const rows = [];
+    const add = (k, v) => { if (v) rows.push('  ' + k + ' = {' + bibEscape(v) + '}'); };
+    add('author', field(c, 'authors'));
+    add('title', field(c, 'title'));
+    add('journal', field(c, 'venue'));
+    add('year', field(c, 'year'));
+    add('doi', field(c, 'doi'));
+    add('url', field(c, 'url'));
+    const key = 'opal_' + String(c.id).replace(/[^A-Za-z0-9]/g, '') + field(c, 'year');
+    return '@article{' + key + ',\n' + rows.join(',\n') + '\n}';
+  }
+
+  // The DOIs of the entries that have one, and the line exports carry.
+  function dois(override) {
+    return list(override).filter(c => !isEmpty(c) && field(c, 'doi')).map(c => field(c, 'doi'));
+  }
+  // Empty string while no entry has a DOI. Callers add it only when it is not empty.
+  function exportLine(override) {
+    const d = dois(override);
+    return d.length ? 'Please cite: ' + d.map(x => 'doi:' + x).join('; ') : '';
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Copy: the clipboard interface where the page may use it, otherwise a hidden
+  // read-only text field selected and copied. Resolves to true or false.
+  function copyText(text) {
+    const fallback = () => {
+      let ok = false;
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.readOnly = true;
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+      document.body.appendChild(ta);
+      try { ta.focus({ preventScroll: true }); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand('copy'); }
+      catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(() => true, () => fallback());
+    }
+    return Promise.resolve(fallback());
+  }
+
+  const STYLE_ID = 'cite-style';
+  const CSS =
+    '.cite-back{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:12px;box-sizing:border-box}' +
+    '.cite-box{background:var(--panel,#16213e);color:var(--txt,#e8e8f0);border:1px solid var(--border,#2a3a5c);border-radius:var(--r,8px);max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:16px 18px;box-sizing:border-box;font-size:13px;line-height:1.5}' +
+    '.cite-box h2{margin:0 0 2px;font-size:15px}' +
+    '.cite-ver{color:var(--txt3,#9aa3b8);font-size:12px;margin-bottom:10px}' +
+    '.cite-item{margin:10px 0;padding:8px 10px;border:1px solid var(--border,#2a3a5c);border-radius:6px}' +
+    '.cite-label{font-weight:600;margin-bottom:4px}' +
+    '.cite-text{white-space:pre-wrap;word-break:break-word;-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}' +
+    '.cite-pending{color:var(--txt3,#9aa3b8);font-style:italic}' +
+    '.cite-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}' +
+    '.cite-row button,.cite-close{font:inherit;font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid var(--border,#2a3a5c);background:transparent;color:inherit;cursor:pointer}' +
+    '.cite-status{min-height:1.2em;margin-top:6px;font-size:12px;color:var(--txt3,#9aa3b8)}' +
+    '.cite-tut{margin:10px 0 0}.cite-tut a{color:var(--accent,#5dade2)}' +
+    '.cite-close{margin-top:8px}';
+
+  let openState = null;   // { back, keyHandler, returnTo } while the window is shown
+
+  function close() {
+    if (!openState) return;
+    const s = openState; openState = null;
+    document.removeEventListener('keydown', s.keyHandler, true);
+    if (s.back.parentNode) s.back.parentNode.removeChild(s.back);
+    if (s.returnTo && s.returnTo.focus) { try { s.returnTo.focus({ preventScroll: true }); } catch (e) {} }
+  }
+
+  // Body markup of the window; also used by the launcher's own section.
+  function bodyHtml(override) {
+    const items = list(override);
+    let h = '<p>' + esc(INTRO_TEXT) + '</p>';
+    for (let i = 0; i < items.length; i++) {
+      const c = items[i];
+      h += '<div class="cite-item" data-cite="' + esc(c.id) + '"><div class="cite-label">' + esc(c.label) + '</div>';
+      if (isEmpty(c)) {
+        h += '<div class="cite-pending">' + esc(PENDING_TEXT) + '</div>';
+      } else {
+        h += '<div class="cite-text">' + esc(plain(c)) + '</div>' +
+          '<div class="cite-row"><button type="button" data-copy="plain" data-i="' + i + '">Copy text</button>' +
+          '<button type="button" data-copy="bibtex" data-i="' + i + '">Copy BibTeX</button></div>';
+      }
+      h += '</div>';
+    }
+    return h + '<div class="cite-status" role="status"></div>';
+  }
+
+  function wireCopy(root, override) {
+    const items = list(override);
+    root.addEventListener('click', (ev) => {
+      const b = ev.target && ev.target.closest ? ev.target.closest('button[data-copy]') : null;
+      if (!b) return;
+      const c = items[Number(b.getAttribute('data-i'))];
+      if (isEmpty(c)) return;                 // the handler refuses as well as the markup
+      const text = b.getAttribute('data-copy') === 'bibtex' ? bibtex(c) : plain(c);
+      const status = root.querySelector('.cite-status');
+      copyText(text).then((ok) => {
+        if (status) status.textContent = ok ? 'Copied.' : 'Copy failed: select the text above and copy it by hand.';
+      });
+    });
+  }
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = STYLE_ID; st.textContent = CSS;
+    document.head.appendChild(st);
+  }
+
+  function open(toolName, version, override) {
+    close();
+    ensureStyle();
+    const back = document.createElement('div');
+    back.className = 'cite-back';
+    const box = document.createElement('div');
+    box.className = 'cite-box';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'How to cite');
+    const tut = tutorialUrl(toolName);
+    box.innerHTML = '<h2>' + esc(toolName) + '</h2><div class="cite-ver">' + esc(version) + '</div>' +
+      bodyHtml(override) +
+      (tut ? '<p class="cite-tut"><a href="' + esc(tut) + '" target="_blank" rel="noopener">' + esc(TUTORIAL_TEXT) + '</a></p>' : '') +
+      '<button type="button" class="cite-close">Close</button>';
+    back.appendChild(box);
+    wireCopy(box, override);
+    box.querySelector('.cite-close').addEventListener('click', close);
+    back.addEventListener('click', (ev) => { if (ev.target === back) close(); });
+    const keyHandler = (ev) => { if (ev.key === 'Escape') { ev.stopPropagation(); close(); } };
+    document.addEventListener('keydown', keyHandler, true);
+    document.body.appendChild(back);
+    openState = { back: back, keyHandler: keyHandler, returnTo: document.activeElement };
+    const closeBtn = box.querySelector('.cite-close');
+    try { closeBtn.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  return {
+    TUTORIAL_BASE: TUTORIAL_BASE, TUTORIAL_TOOLS: TUTORIAL_TOOLS, tutorialUrl: tutorialUrl,
+    CITATIONS: CITATIONS, PENDING_TEXT: PENDING_TEXT, INTRO_TEXT: INTRO_TEXT,
+    isEmpty: isEmpty, plain: plain, bibtex: bibtex, dois: dois, exportLine: exportLine,
+    bodyHtml: bodyHtml, wireCopy: wireCopy, ensureStyle: ensureStyle,
+    open: open, close: close, isOpen: () => !!openState
+  };
+})();
+//@@OPAL-SHARED:END citation@@
+
+(function () {
+  var body = document.getElementById('cite-body');
+  if (body) { CITE.ensureStyle(); body.innerHTML = CITE.bodyHtml(); CITE.wireCopy(body); }
+})();
 
 const ACTIVE_SUITE = 'OPAL';   // the only key in SUITES
 
@@ -417,52 +769,15 @@ const SUITES = {
      desc      – 1–2 sentence description
      status    – 'stable' | 'beta' | 'dev'  (controls badge colour)
      color     – hex accent colour for this card's top bar and icon bg
+     colorLight – darker variant of color used in the light theme; it must reach
+                 4.5:1 against white, because it colours the launch button text
      icon      – one of the SVG keys defined in ICONS below
      external  – (optional) true → opens in new tab, button reads "Open ↗"
      badge     – (optional) URL of a badge image shown in the card footer
+     fileLabel – (optional) text shown in the card footer instead of the file
    ══════════════════════════════════════════════════════════════════════════ */
 
 const TOOLS = [
-  {
-    id:       'molviz',
-    name:     'MolViz',
-    subtitle: 'Geometry Visualizer',
-    file:     'molviz.html',
-    desc:     'Ball-and-stick 3D viewer for molecular geometries. Supports XYZ and Molden formats, with bond editing, CPK colouring, atom labels, TDM vectors, and PNG/GIF export.',
-    status:   'stable',
-    color:    '#3498db',
-    icon:     'atom',
-  },
-  {
-    id:       'orbviz',
-    name:     'OrbViz',
-    subtitle: 'Orbital Visualizer',
-    file:     'orbviz.html',
-    desc:     'Render molecular orbitals, electron densities, and density differences from OpenMolcas HDF5 and Molden files. Marching-cubes isosurfaces with high-quality smoothing mode.',
-    status:   'stable',
-    color:    '#2ecc71',
-    icon:     'orbital',
-  },
-  {
-    id:       'rassiviz',
-    name:     'RassiViz',
-    subtitle: 'RASSI Visualizer',
-    file:     'rassiviz.html',
-    desc:     'Explore spin-free states, transition dipole moments, and transition electron densities from OpenMolcas RASSI HDF5 files. Includes an absorption spectrum viewer.',
-    status:   'stable',
-    color:    '#f39c12',
-    icon:     'transition',
-  },
-  {
-    id:       '99',
-    name:     'CSFsCalc',
-    subtitle: 'RASSCF Configuration Calculator',
-    file:     'csfscalc.html',
-    desc:     'Calculates the number of Configuration State Functions (CSFs) and Slater determinants for RASSCF active spaces using the Weyl-Paldus formula. Includes RAM requirement estimates.',
-    status:   'stable',
-    color:    '#ff5d11',
-    icon:     'csfs',
-  },
   {
     id:       '00',
     name:     'MolBuild',
@@ -471,7 +786,52 @@ const TOOLS = [
     desc:     'Create UFF-optimized molecules from 2D drawings. Reads and saves XYZ coordinate files. Free drawing and templates are available.',
     status:   'stable',
     color:    '#0099ff',
+    colorLight: '#0070ba',
     icon:     'molbuild',
+  },
+  {
+    id:       'molviz',
+    name:     'MolViz',
+    subtitle: 'Geometry Visualizer',
+    file:     'molviz.html',
+    desc:     'Ball-and-stick 3D viewer for molecular geometries. Reads XYZ, Molden and OpenMolcas HDF5 files (geometry only from HDF5), with bond editing, CPK colouring, atom labels, TDM vectors, and PNG/GIF export.',
+    status:   'stable',
+    color:    '#3498db',
+    colorLight: '#2772a4',
+    icon:     'atom',
+  },
+  {
+    id:       'orbviz',
+    name:     'OrbViz',
+    subtitle: 'Orbital Visualizer',
+    file:     'orbviz.html',
+    desc:     'Render molecular orbitals, electron densities, and density differences from OpenMolcas HDF5 and Molden files. Marching-cubes isosurfaces with high-quality smoothing mode, spin and tilt motion, and animated GIF export.',
+    status:   'stable',
+    color:    '#2ecc71',
+    colorLight: '#1c7c45',
+    icon:     'orbital',
+  },
+  {
+    id:       'pathvibviz',
+    name:     'PathVibViz',
+    subtitle: 'Paths and Vibrations',
+    file:     'pathvibviz.html',
+    desc:     'Follow geometry optimisations, reaction paths (IRC, MEP) and conical intersections from SLAPAF HDF5 files, with convergence plots, measurements along the path, animated vibrations from Molden, and XYZ, PNG and GIF export.',
+    status:   'dev',
+    color:    '#1abc9c',
+    colorLight: '#12806b',
+    icon:     'pathvibviz',
+  },
+  {
+    id:       'rassiviz',
+    name:     'RassiViz',
+    subtitle: 'RASSI Visualizer',
+    file:     'rassiviz.html',
+    desc:     'Explore spin-free states, transition dipole moments, and transition electron densities from OpenMolcas RASSI HDF5 files. Includes an absorption spectrum viewer, spin and tilt motion, and animated GIF export.',
+    status:   'stable',
+    color:    '#f39c12',
+    colorLight: '#945f0b',
+    icon:     'transition',
   },
   {
     id:       'geodiff',
@@ -481,7 +841,30 @@ const TOOLS = [
     desc:     'Compare two molecular structures from XYZ, Molden, or HDF5. RMSD and best-fit roto-translation, ranked bond/angle/dihedral differences, BLA, curvature and macrocycle distortion. Solves atom-order mismatches, handles substituted analogues, and emits a ready-to-run mort.py command.',
     status:   'stable',
     color:    '#9b59d0',
+    colorLight: '#8c50bb',
     icon:     'geodiff',
+  },
+  {
+    id:       'intcoords',
+    name:     'IntCoords',
+    subtitle: 'SLAPAF Internal Coordinates',
+    file:     'intcoords.html',
+    desc:     'Builds the SLAPAF Internal coordinates block for a transition-state search from an XYZ geometry: bonds, angles and dihedrals, with tap-to-pick atoms and a ready-to-paste input block.',
+    status:   'stable',
+    color:    '#e84393',
+    colorLight: '#be3779',
+    icon:     'intcoords',
+  },
+  {
+    id:       '99',
+    name:     'CSFsCalc',
+    subtitle: 'RASSCF Configuration Calculator',
+    file:     'csfscalc.html',
+    desc:     'Calculates the number of Configuration State Functions (CSFs) and Slater determinants for RASSCF active spaces using the Weyl-Paldus formula. Includes RAM requirement estimates.',
+    status:   'stable',
+    color:    '#ff5d11',
+    colorLight: '#bd450d',
+    icon:     'csfs',
   },
   {
     id:       '150',
@@ -491,9 +874,23 @@ const TOOLS = [
     desc:     'Opens in Google Colab a notebook to run OpenMolcas completely installation-free. All basic functionalities are present, including customizable input, full output, and molecule and orbital display.',
     status:   'stable',
     color:    '#339966',
+    colorLight: '#297a52',
     icon:     'colab',
     external: true,
     badge:    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTE3IiBoZWlnaHQ9IjIwIj48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgyPSIwIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYmJiIiBzdG9wLW9wYWNpdHk9Ii4xIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLW9wYWNpdHk9Ii4xIi8+PC9saW5lYXJHcmFkaWVudD48Y2xpcFBhdGggaWQ9ImEiPjxyZWN0IHdpZHRoPSIxMTciIGhlaWdodD0iMjAiIHJ4PSIzIiBmaWxsPSIjZmZmIi8+PC9jbGlwUGF0aD48ZyBjbGlwLXBhdGg9InVybCgjYSkiPjxwYXRoIGZpbGw9IiM1NTUiIGQ9Ik0wIDBoMzB2MjBIMHoiLz48cGF0aCBmaWxsPSIjMDA3ZWM2IiBkPSJNMzAgMGg4N3YyMEgzMHoiLz48cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDExN3YyMEgweiIvPjwvZz48ZyBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iRGVqYVZ1IFNhbnMsVmVyZGFuYSxHZW5ldmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMTAiPjxzdmcgeD0iNHB4IiB5PSIwcHgiIHdpZHRoPSIyMnB4IiBoZWlnaHQ9IjIwcHgiIHZpZXdCb3g9Ii0yIDAgMjggMjQiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiAjZmZmO2JvcmRlci1yYWRpdXM6IDFweDsiPjxwYXRoIHN0eWxlPSJmaWxsOiNlODcxMGE7IiBkPSJNMS45NzcsMTYuNzdjLTIuNjY3LTIuMjc3LTIuNjA1LTcuMDc5LDAtOS4zNTdDMi45MTksOC4wNTcsMy41MjIsOS4wNzUsNC40OSw5LjY5MWMtMS4xNTIsMS42LTEuMTQ2LDMuMjAxLTAuMDA0LDQuODAzQzMuNTIyLDE1LjExMSwyLjkxOCwxNi4xMjYsMS45NzcsMTYuNzd6Ii8+PHBhdGggc3R5bGU9ImZpbGw6I2Y5YWIwMDsiIGQ9Ik0xMi4yNTcsMTcuMTE0Yy0xLjc2Ny0xLjYzMy0yLjQ4NS0zLjY1OC0yLjExOC02LjAyYzAuNDUxLTIuOTEsMi4xMzktNC44OTMsNC45NDYtNS42NzhjMi41NjUtMC43MTgsNC45NjQtMC4yMTcsNi44NzgsMS44MTljLTAuODg0LDAuNzQzLTEuNzA3LDEuNTQ3LTIuNDM0LDIuNDQ2QzE4LjQ4OCw4LjgyNywxNy4zMTksOC40MzUsMTYsOC44NTZjLTIuNDA0LDAuNzY3LTMuMDQ2LDMuMjQxLTEuNDk0LDUuNjQ0Yy0wLjI0MSwwLjI3NS0wLjQ5MywwLjU0MS0wLjcyMSwwLjgyNkMxMy4yOTUsMTUuOTM5LDEyLjUxMSwxNi4zLDEyLjI1NywxNy4xMTR6Ii8+PHBhdGggc3R5bGU9ImZpbGw6I2U4NzEwYTsiIGQ9Ik0xOS41MjksOS42ODJjMC43MjctMC44OTksMS41NS0xLjcwMywyLjQzNC0yLjQ0NmMyLjcwMywyLjc4MywyLjcwMSw3LjAzMS0wLjAwNSw5Ljc2NGMtMi42NDgsMi42NzQtNi45MzYsMi43MjUtOS43MDEsMC4xMTVjMC4yNTQtMC44MTQsMS4wMzgtMS4xNzUsMS41MjgtMS43ODhjMC4yMjgtMC4yODUsMC40OC0wLjU1MiwwLjcyMS0wLjgyNmMxLjA1MywwLjkxNiwyLjI1NCwxLjI2OCwzLjYsMC44M0MyMC41MDIsMTQuNTUxLDIxLjE1MSwxMS45MjcsMTkuNTI5LDkuNjgyeiIvPjxwYXRoIHN0eWxlPSJmaWxsOiNmOWFiMDA7IiBkPSJNNC40OSw5LjY5MUMzLjUyMiw5LjA3NSwyLjkxOSw4LjA1NywxLjk3Nyw3LjQxM2MyLjIwOS0yLjM5OCw1LjcyMS0yLjk0Miw4LjQ3Ni0xLjM1NWMwLjU1NSwwLjMyLDAuNzE5LDAuNjA2LDAuMjg1LDEuMTI4Yy0wLjE1NywwLjE4OC0wLjI1OCwwLjQyMi0wLjM5MSwwLjYzMWMtMC4yOTksMC40Ny0wLjUwOSwxLjA2Ny0wLjkyOSwxLjM3MUM4LjkzMyw5LjUzOSw4LjUyMyw4Ljg0Nyw4LjAyMSw4Ljc0NkM2LjY3Myw4LjQ3NSw1LjUwOSw4Ljc4Nyw0LjQ5LDkuNjkxeiIvPjxwYXRoIHN0eWxlPSJmaWxsOiNmOWFiMDA7IiBkPSJNMS45NzcsMTYuNzdjMC45NDEtMC42NDQsMS41NDUtMS42NTksMi41MDktMi4yNzdjMS4zNzMsMS4xNTIsMi44NSwxLjQzMyw0LjQ1LDAuNDk5YzAuMzMyLTAuMTk0LDAuNTAzLTAuMDg4LDAuNjczLDAuMTljMC4zODYsMC42MzUsMC43NTMsMS4yODUsMS4xODEsMS44OWMwLjM0LDAuNDgsMC4yMjIsMC43MTUtMC4yNTMsMS4wMDZDNy44NCwxOS43Myw0LjIwNSwxOS4xODgsMS45NzcsMTYuNzd6Ii8+PC9zdmc+PHRleHQgeD0iMjQ1IiB5PSIxNDAiIHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB0ZXh0TGVuZ3RoPSIzMCI+IDwvdGV4dD48dGV4dCB4PSI3MjUiIHk9IjE1MCIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyIgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHRleHRMZW5ndGg9Ijc3MCI+T3BlbiBpbiBDb2xhYjwvdGV4dD48dGV4dCB4PSI3MjUiIHk9IjE0MCIgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHRleHRMZW5ndGg9Ijc3MCI+T3BlbiBpbiBDb2xhYjwvdGV4dD48L2c+IDwvc3ZnPgo=',
+  },
+  {
+    id:       'tutorials',
+    name:     'Tutorials',
+    subtitle: 'Step-by-step guides',
+    file:     'https://lucadevico.github.io/opal/tutorials/',
+    fileLabel: 'lucadevico.github.io/opal/tutorials',
+    desc:     'Step-by-step tutorials for the OPAL tools and for OpenMolcas calculations, with example files. They open on the project site and need a network connection.',
+    status:   'writing',
+    color:    '#5dade2',
+    colorLight: '#1f6a9c',
+    icon:     'tutorials',
+    external: true,
   },
 ];
 
@@ -561,6 +958,11 @@ const ICONS = {
     <path d="M21,18 C21,15 16,15 12,18 C8,21 3,21 3,18 C3,15 8,15 12,18 C16,21 21,21 21,18"/>
   </svg>`,
 
+  tutorials: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 5.5C5.5 4.3 9 4.3 12 6c3-1.7 6.5-1.7 9-.5v13c-2.5-1.2-6-1.2-9 .5-3-1.7-6.5-1.7-9-.5z"/>
+    <line x1="12" y1="6" x2="12" y2="19.5"/>
+  </svg>`,
+
   geodiff: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <line x1="5.2" y1="15.4" x2="10.4" y2="13.2"/>
     <line x1="10.4" y1="13.2" x2="14.6" y2="16.2"/>
@@ -575,6 +977,25 @@ const ICONS = {
       <circle cx="18.8" cy="10.2" r="2.0"/>
     </g>
   </svg>`,
+
+  intcoords: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="4.5"  y1="17.5" x2="10"   y2="12"/>
+    <line x1="10"   y1="12"   x2="16.5" y2="14.5"/>
+    <line x1="16.5" y1="14.5" x2="19.5" y2="7"/>
+    <circle cx="4.5"  cy="17.5" r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <circle cx="10"   cy="12"   r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <circle cx="16.5" cy="14.5" r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <circle cx="19.5" cy="7"    r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <path d="M7.4 14.6 Q8.2 12.9 9.9 13.1" stroke-width="1.1" opacity=".8"/>
+  </svg>`,
+
+  pathvibviz: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 18 Q8 18 10 12 T21 6" stroke-dasharray="2.4 1.8" opacity=".85"/>
+    <circle cx="3"  cy="18" r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <circle cx="10" cy="12" r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <circle cx="21" cy="6"  r="2.0" fill="currentColor" fill-opacity=".22"/>
+    <path d="M10 8.2 L10 5.6 M8.4 6.9 L10 5.3 L11.6 6.9" stroke-width="1.2" opacity=".8"/>
+  </svg>`,
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -582,9 +1003,10 @@ const ICONS = {
    ══════════════════════════════════════════════════════════════════════════ */
 
 const STATUS = {
-  stable: { label: 'Stable',  bg: 'rgba(46,204,113,.14)', color: '#2ecc71', border: 'rgba(46,204,113,.35)' },
-  beta:   { label: 'Beta',    bg: 'rgba(243,156,18,.14)', color: '#f39c12', border: 'rgba(243,156,18,.35)' },
-  dev:    { label: 'Dev',     bg: 'rgba(52,152,219,.14)', color: '#3498db', border: 'rgba(52,152,219,.35)' },
+  stable: { label: 'Stable',  bg: 'rgba(46,204,113,.14)', color: 'var(--green)',  border: 'rgba(46,204,113,.35)' },
+  beta:   { label: 'Beta',    bg: 'rgba(243,156,18,.14)', color: 'var(--yellow)', border: 'rgba(243,156,18,.35)' },
+  dev:    { label: 'Dev',     bg: 'rgba(52,152,219,.14)', color: 'var(--blue)',   border: 'rgba(52,152,219,.35)' },
+  writing: { label: 'Being written', bg: 'rgba(52,152,219,.14)', color: 'var(--blue)', border: 'rgba(52,152,219,.35)' },
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -669,6 +1091,10 @@ const COOKIE_DISCLAIMER = "This page does not collect, store, or track any data 
     More tools coming soon
   `;
   grid.appendChild(add);
+
+  /* ── Theme: links and card colours follow the switch ── */
+  applyThemeLinks();
+  window.OPAL_THEME.onChange(onThemeChange);
 })();
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -680,10 +1106,9 @@ function makeCard(tool) {
   const card  = document.createElement('div');
   card.className = 'tool-card';
 
-  /* coloured top accent stripe */
+  /* coloured top accent stripe; painted by paintCard() */
   const accent = document.createElement('div');
   accent.className = 'card-accent';
-  accent.style.background = tool.color;
   card.appendChild(accent);
 
   /* card top: icon + title + badge */
@@ -692,9 +1117,6 @@ function makeCard(tool) {
 
   const iconWrap = document.createElement('div');
   iconWrap.className = 'card-icon';
-  iconWrap.style.background = hexToRgba(tool.color, 0.15);
-  iconWrap.style.border = `1px solid ${hexToRgba(tool.color, 0.3)}`;
-  iconWrap.style.color  = tool.color;
   iconWrap.innerHTML = ICONS[tool.icon] || ICONS.atom;
 
   const titleWrap = document.createElement('div');
@@ -735,7 +1157,7 @@ function makeCard(tool) {
   } else {
     const fname = document.createElement('span');
     fname.className = 'card-file';
-    fname.textContent = tool.file;
+    fname.textContent = tool.fileLabel || tool.file;
     footer.appendChild(fname);
   }
 
@@ -745,9 +1167,9 @@ function makeCard(tool) {
   if (tool.external) {
     btn.target = '_blank';
     btn.rel = 'noopener noreferrer';
+  } else {
+    btn.setAttribute('data-file', tool.file);
   }
-  btn.style.borderColor = tool.color;
-  btn.style.color       = tool.color;
   const btnLabel = tool.external ? 'Open' : 'Launch';
   const btnArrow = tool.external
     ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -760,7 +1182,7 @@ function makeCard(tool) {
       </svg>`;
   btn.innerHTML = `${btnLabel} ${btnArrow}`;
   btn.addEventListener('mouseenter', () => {
-    btn.style.background = hexToRgba(tool.color, 0.12);
+    btn.style.background = hexToRgba(cardColor(tool), 0.12);
   });
   btn.addEventListener('mouseleave', () => {
     btn.style.background = 'transparent';
@@ -769,7 +1191,43 @@ function makeCard(tool) {
   footer.appendChild(btn);
   card.appendChild(footer);
 
+  card._tool = tool;
+  paintCard(card);
   return card;
+}
+
+/* The card colour in the current theme. */
+function cardColor(tool) {
+  return window.OPAL_THEME.isLight() ? tool.colorLight : tool.color;
+}
+
+/* Colours a card from its tool entry. Called when the card is built and again
+   whenever the theme changes, since these colours are set from script. */
+function paintCard(card) {
+  const tool = card._tool;
+  const c = cardColor(tool);
+  card.querySelector('.card-accent').style.background = c;
+  const iconWrap = card.querySelector('.card-icon');
+  iconWrap.style.background = hexToRgba(c, 0.15);
+  iconWrap.style.border = `1px solid ${hexToRgba(c, 0.3)}`;
+  iconWrap.style.color  = c;
+  const btn = card.querySelector('.launch-btn');
+  btn.style.borderColor = c;
+  btn.style.color       = c;
+}
+
+/* Tool links carry the theme fragment while the light theme is on, so the
+   choice follows the user into the tool. External links are left alone. */
+function applyThemeLinks() {
+  const frag = window.OPAL_THEME.fragment();
+  document.querySelectorAll('#tools-grid a.launch-btn[data-file]').forEach(a => {
+    a.setAttribute('href', a.getAttribute('data-file') + frag);
+  });
+}
+
+function onThemeChange() {
+  document.querySelectorAll('#tools-grid .tool-card').forEach(paintCard);
+  applyThemeLinks();
 }
 
 /* ── Utility: hex color → rgba string ─────────────────────────────────── */
@@ -779,6 +1237,237 @@ function hexToRgba(hex, alpha) {
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
+</script>
+
+<script id="opal-offline">
+/* ══════════════════════════════════════════════════════════════════════════
+   OFFLINE COPY
+   Registers the service worker that sits beside this page, shows what it holds,
+   and offers a newer set of files by a banner. Nothing here touches the tools.
+
+   Inert unless the page is served over http or https and the browser has service
+   workers: opened from a file, no registration is attempted, nothing is written
+   and nothing visible changes. The worker never takes over a running page by
+   itself; a newer set of files is applied only when the user presses the button
+   of the banner. The two things below the guard (status line and banner) read
+   what the worker's cache really holds and what the published version file says.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  var doc = document;
+  var statusEl = doc.getElementById('offline-status');
+  var banner = doc.getElementById('update-banner');
+  var RECORD_KEY = 'opal-pwa-versions';
+
+  /* The status bar colour follows the page background, light or dark. */
+  function syncThemeColor() {
+    var meta = doc.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    var bg = '';
+    try { bg = window.getComputedStyle(doc.documentElement).getPropertyValue('--bg').trim(); } catch (e) { bg = ''; }
+    if (bg) meta.setAttribute('content', bg);
+  }
+  syncThemeColor();
+  if (window.OPAL_THEME && typeof window.OPAL_THEME.onChange === 'function') {
+    window.OPAL_THEME.onChange(syncThemeColor);
+  }
+
+  /* A card for a tool that lives on the network is dimmed, with a note, while the
+     device reports no connection. The report is trusted only as a negative signal. */
+  function markNetworkCards() {
+    var offline = navigator.onLine === false;
+    var links = doc.querySelectorAll('#tools-grid a.launch-btn[target]');
+    for (var i = 0; i < links.length; i++) {
+      var card = links[i].closest ? links[i].closest('.tool-card') : null;
+      if (!card) continue;
+      var note = card.querySelector('.network-note');
+      if (offline) {
+        card.classList.add('needs-network');
+        if (!note) {
+          note = doc.createElement('div');
+          note.className = 'network-note';
+          note.textContent = 'Needs a network connection.';
+          card.appendChild(note);
+        }
+      } else {
+        card.classList.remove('needs-network');
+        if (note) note.parentNode.removeChild(note);
+      }
+    }
+  }
+  markNetworkCards();
+  window.addEventListener('online', markNetworkCards);
+  window.addEventListener('offline', markNetworkCards);
+
+  /* ── The guard: everything below needs a worker and a served page ── */
+  if (!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
+
+  var reg = null;
+  var pending = {};
+  var lastStatus = null;
+  var serverVersions;          /* undefined until read, then null or { text, files } */
+  var busy = false;
+
+  navigator.serviceWorker.onmessage = function (ev) {
+    var d = ev.data;
+    if (!d || typeof d.type !== 'string') return;
+    var fn = pending[d.type];
+    if (fn) { delete pending[d.type]; fn(d); }
+  };
+
+  /* Sends one message to the worker and resolves with its reply, or null when no
+     worker is active or (with a time limit) no reply comes. */
+  function ask(msg, replyType, limitMs) {
+    return new Promise(function (resolve) {
+      var timer = null;
+      var target = reg && reg.active;
+      if (!target) { resolve(null); return; }
+      pending[replyType] = function (d) { if (timer) clearTimeout(timer); resolve(d); };
+      if (limitMs) timer = setTimeout(function () { delete pending[replyType]; resolve(null); }, limitMs);
+      target.postMessage(msg);
+    });
+  }
+
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+           navigator.standalone === true;
+  }
+  function pagesOf(list) { return (list || []).filter(function (n) { return /\.html$/.test(n); }); }
+  function displayName(file) {
+    if (file === 'index.html') return 'Launcher';
+    if (typeof TOOLS !== 'undefined') {
+      for (var i = 0; i < TOOLS.length; i++) if (TOOLS[i].file === file) return TOOLS[i].name;
+    }
+    return file;
+  }
+
+  /* ── Status line ── */
+  function setStatus(text, withButton) {
+    statusEl.textContent = text;
+    if (withButton) {
+      var b = doc.createElement('button');
+      b.type = 'button';
+      b.textContent = 'Save for offline use';
+      b.addEventListener('click', function () { fetchTools(); });
+      statusEl.appendChild(b);
+    }
+    statusEl.hidden = false;
+  }
+  function showStatus(st, extra) {
+    if (!st) { setStatus('Offline copy: the state of the saved files could not be read.', false); return; }
+    lastStatus = st;
+    var pagesAll = pagesOf(st.expected).length;
+    var pagesMissing = pagesOf(st.missing).length;
+    var canFetch = navigator.onLine !== false;
+    var text;
+    if (pagesMissing === 0) {
+      text = 'All ' + pagesAll + ' pages are available offline.';
+      if (st.missing.length) text += ' Some icons are not saved yet.';
+    } else {
+      text = (pagesAll - pagesMissing) + ' of ' + pagesAll + ' pages are available offline.';
+    }
+    if (extra) text += ' ' + extra;
+    setStatus(text, pagesMissing > 0 && canFetch);
+  }
+
+  /* ── Saving the tools (the worker fetches what is missing, once) ── */
+  function fetchTools() {
+    if (busy) return Promise.resolve(lastStatus);
+    busy = true;
+    setStatus('Saving the tools for offline use…', false);
+    return ask({ type: 'opal-fetch-tools' }, 'opal-fetch-tools-done', 0).then(function (d) {
+      busy = false;
+      if (!d) { setStatus('Offline copy: the worker did not answer.', false); return lastStatus; }
+      var failed = d.failed || [];
+      showStatus(d.status, failed.length ? failed.length + ' file(s) could not be saved; check the connection and try again.' : '');
+      if (!failed.length && d.status && d.status.missing.length === 0) {
+        getServerVersions().then(function (sv) { if (sv) writeRecord(sv.text); });
+      }
+      return lastStatus;
+    });
+  }
+
+  /* ── Versions: what the cache was filled from, against what is published ── */
+  function readRecord() {
+    try {
+      var t = window.localStorage.getItem(RECORD_KEY);
+      var o = t ? JSON.parse(t) : null;
+      return o && o.files ? o.files : null;
+    } catch (e) { return null; }
+  }
+  function writeRecord(text) {
+    try { window.localStorage.setItem(RECORD_KEY, text); } catch (e) { /* storage refused: no banner later */ }
+  }
+  function getServerVersions() {
+    if (serverVersions !== undefined) return Promise.resolve(serverVersions);
+    if (navigator.onLine === false) return Promise.resolve(null);
+    return fetch('version.json', { cache: 'no-store' }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.text();
+    }).then(function (text) {
+      var o = JSON.parse(text);
+      if (!o || typeof o.files !== 'object' || o.files === null) throw new Error('no file list');
+      serverVersions = { text: text, files: o.files };
+      return serverVersions;
+    }).catch(function () { return null; });     /* not published, or no connection: no banner */
+  }
+  function changes(oldFiles, newFiles) {
+    var out = [];
+    var seen = {};
+    Object.keys(newFiles).concat(Object.keys(oldFiles)).forEach(function (n) {
+      if (seen[n]) return;
+      seen[n] = true;
+      if (oldFiles[n] !== newFiles[n]) out.push({ file: n, from: oldFiles[n], to: newFiles[n] });
+    });
+    return out;
+  }
+  function showBanner(list, sv) {
+    var parts = list.map(function (c) {
+      return displayName(c.file) + ' ' + (c.from ? c.from : 'new') + ' → ' + (c.to ? c.to : 'removed');
+    });
+    banner.textContent = 'Update available: ' + parts.join(', ') + '.';
+    var b = doc.createElement('button');
+    b.type = 'button';
+    b.textContent = 'Update now';
+    b.addEventListener('click', function () {
+      b.disabled = true;
+      ask({ type: 'opal-refresh' }, 'opal-refresh-done', 0).then(function (d) {
+        if (d && d.ok) { writeRecord(sv.text); window.location.reload(); return; }
+        banner.textContent = 'The update could not be completed and nothing was replaced. Try again with a steadier connection.';
+        banner.appendChild(b);
+        b.disabled = false;
+      });
+    });
+    banner.appendChild(b);
+    banner.hidden = false;
+  }
+  function checkUpdate() {
+    return getServerVersions().then(function (sv) {
+      if (!sv) return;
+      var rec = readRecord();
+      if (!rec) {
+        /* First run: the files just saved are the published ones. */
+        if (lastStatus && lastStatus.missing.length === 0) writeRecord(sv.text);
+        return;
+      }
+      var list = changes(rec, sv.files);
+      if (list.length) showBanner(list, sv);
+    });
+  }
+
+  /* ── Start ── */
+  navigator.serviceWorker.register('sw.js').then(function (r) {
+    reg = r;
+    return navigator.serviceWorker.ready;
+  }).then(function (r) {
+    reg = r;
+    return ask({ type: 'opal-status' }, 'opal-status', 8000);
+  }).then(function (st) {
+    showStatus(st);
+    if (st && isStandalone() && navigator.onLine !== false && pagesOf(st.missing).length > 0) return fetchTools();
+  }).then(function () {
+    return checkUpdate();
+  }).catch(function () { /* no worker file beside the page: expected outside the published site */ });
+})();
 </script>
 </body>
 </html>

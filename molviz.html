@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <!--
+************************************************************************
+* This file is part of OpenMolcas.                                     *
+*                                                                      *
+* OpenMolcas is free software; you can redistribute it and/or modify   *
+* it under the terms of the GNU Lesser General Public License, v. 2.1. *
+* OpenMolcas is distributed in the hope that it will be useful, but it *
+* is provided "as is" and without any express or implied warranties.   *
+* For more details see the full text of the license in the file        *
+* LICENSE or in <http://www.gnu.org/licenses/>.                        *
+*                                                                      *
+* Copyright (C) 2025-2026, Luca De Vico                                *
+************************************************************************
+
   OPAL — OpenMolcas Orbitals, Plotting, Analysis and Layout
   MolViz — Molecular Geometry Visualizer
 
-  Copyright (C) 2025–2026 Luca De Vico
   Università degli Studi di Siena
 
-  This file is part of OPAL.
-
-  OPAL is free software: you can redistribute it and/or modify it under
-  the terms of the GNU Lesser General Public License as published by the
-  Free Software Foundation, either version 2.1 of the License, or
-  (at your option) any later version.
-
-  OPAL is distributed in the hope that it will be useful, but WITHOUT
-  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-  License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with OPAL. If not, see <https://www.gnu.org/licenses/>.
+  External code: three.js r128 (MIT licence). Its notice is kept in this file.
 -->
 <html lang="en">
 <head>
@@ -27,6 +26,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MolViz · OpenMolcas OPAL</title>
 <meta name="description" content="OpenMolcas OPAL — Orbitals, Plotting, Analysis and Layout">
+<script id="opal-theme">
+/* Light theme switch. The choice is carried only by the page address fragment:
+   no cookies and no stored values. This block sits in the head so that the first
+   paint is already in the right theme. Dark is the default. */
+(function () {
+  var root = document.documentElement;
+  var KEY = 'theme=light';
+  var listeners = [];
+  function isLight() { return root.getAttribute('data-theme') === 'light'; }
+  function fragment() { return isLight() ? '#' + KEY : ''; }
+  function sync() {
+    var btn = document.getElementById('btn-theme');
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', isLight() ? 'true' : 'false');
+    btn.title = isLight() ? 'Switch to the dark theme' : 'Switch to the light theme';
+  }
+  function set(light) {
+    if (light) root.setAttribute('data-theme', 'light');
+    else root.removeAttribute('data-theme');
+    sync();
+    try {
+      window.history.replaceState(null, '', light ? fragment() : window.location.pathname + window.location.search);
+    } catch (e) { /* a file address may refuse this; the choice still applies */ }
+    for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](light); } catch (err) { console.error(err); }
+    }
+  }
+  window.OPAL_THEME = {
+    isLight: isLight,
+    fragment: fragment,
+    set: set,
+    toggle: function () { set(!isLight()); },
+    onChange: function (fn) { listeners.push(fn); }
+  };
+  if ((window.location.hash || '').replace(/^#/, '').split('&').indexOf(KEY) !== -1) {
+    root.setAttribute('data-theme', 'light');
+  }
+  function wire() {
+    var btn = document.getElementById('btn-theme');
+    if (btn) btn.addEventListener('click', function () { window.OPAL_THEME.toggle(); });
+    sync();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
+</script>
+<script id="opal-panels">
+/* Side panels start hidden on a phone and visible everywhere else. A phone has a
+   coarse primary pointer and a screen whose shorter side is under 600 CSS px. The
+   test reads the screen, not the window, and runs once: turning the phone or
+   resizing a window never opens or closes a panel. This block sits in the head so
+   a phone never paints the panels for a frame and then hides them. Nothing is
+   stored. The rest of the toggle lives in the app script. */
+(function () {
+  var root = document.documentElement;
+  function isPhone() {
+    var s = window.screen || {};
+    var shortSide = Math.min(s.width || 0, s.height || 0);
+    var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    return coarse && shortSide > 0 && shortSide < 600;
+  }
+  var phone = isPhone();
+  if (phone) {
+    root.setAttribute('data-left-panel', 'hidden');
+    root.setAttribute('data-right-panel', 'hidden');
+  }
+  window.OPAL_PANELS = { phone: phone };
+})();
+</script>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <script>
 /* three.js r128 | https://threejs.org/license */
@@ -40,6 +108,21 @@
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* iOS long press. Text selection and the callout menu are two separate switches, so
+   both are set, and on the chrome containers rather than on single buttons: a long
+   press lands on whatever is under the finger. A selector here that matches no
+   element fails silently, so the harness resolves every one against the page. The
+   second rule opts back in for text the user may want to copy and for text entry. */
+#toolbar,#left-panel,#right-panel,.modal,#toast,#info-bar,.corner-btn,.panel-handle,.tb-dropdown-menu,.export-dropdown,#welcome-inner,.psect-title,.psect-body,table,#file-bar{
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+#mol-name,#sel-info,#meas-list,#com-info,input[type="text"],input[type="number"]{
+  -webkit-touch-callout:default;
+  -webkit-user-select:text;
+  user-select:text;
+}
 :root{
   /* Backgrounds */
   --bg:#12172a;--panel:#16213e;--panel2:#0f3460;--border:#252d4a;--border2:#353d5e;
@@ -52,6 +135,8 @@
   --mono:ui-monospace,'Cascadia Code','SF Mono',monospace;
   /* Radius */
   --r:4px;--r2:8px;--panel-w:244px;
+  /* File bar: its own background, apart from the panels and the 3D view */
+  --filebar-bg:#0a0e1c;--filebar-border:#2f3a5c;--filebar-txt:#c4cee2;--filebar-dim:#7f8bad;
 }
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:var(--sans)}
 #app{display:flex;flex-direction:column;height:100vh}
@@ -78,6 +163,27 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .panel{width:var(--panel-w);flex-shrink:0;background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
 #left-panel{border-right:1px solid var(--border)}
 #right-panel{border-left:1px solid var(--border)}
+/* ─── SIDE PANEL TOGGLE ─────────────────────────────────────
+   A hidden panel is fully hidden, never half open. The viewport takes the freed
+   width. The state is carried by two attributes on the root element, set before
+   first paint on a phone. The slide is 180 ms; visibility switches at the end when
+   hiding and at the start when showing, so a hidden panel leaves the tab order. */
+.panel{transition:width .18s ease,visibility 0s linear 0s}
+html[data-left-panel="hidden"] #left-panel,html[data-right-panel="hidden"] #right-panel{width:0;min-width:0;border:none;visibility:hidden;transition:width .18s ease,visibility 0s linear .18s}
+@media (prefers-reduced-motion:reduce){.panel,html[data-left-panel="hidden"] #left-panel,html[data-right-panel="hidden"] #right-panel{transition:none}}
+/* The panel content keeps its width while the panel slides, so it is clipped, not re-wrapped. */
+.panel>.panel-scroll{min-width:calc(var(--panel-w) - 1px)}
+/* The handle is a sibling of the panels, inside the viewport, so a hidden panel cannot hide it.
+   The button is a 44 px square hit area; the visible tab is the narrow part at the viewport edge. */
+.panel-handle{position:absolute;top:50%;transform:translateY(-50%);z-index:30;width:44px;height:44px;padding:0;display:flex;align-items:center;background:transparent;border:0;cursor:pointer;touch-action:manipulation}
+.panel-handle[data-side="left"]{left:0;justify-content:flex-start}
+.panel-handle[data-side="right"]{right:0;justify-content:flex-end}
+.panel-handle-tab{display:flex;align-items:center;justify-content:center;width:20px;height:44px;background:var(--panel);border:1px solid var(--border);color:var(--txt3);font-family:var(--mono);font-size:16px;line-height:1}
+.panel-handle[data-side="left"] .panel-handle-tab{border-left:0;border-radius:0 8px 8px 0}
+.panel-handle[data-side="right"] .panel-handle-tab{border-right:0;border-radius:8px 0 0 8px}
+.panel-handle:hover .panel-handle-tab{background:var(--panel2);color:var(--txt)}
+/* The launcher link at the left end of the toolbar. */
+.back-link{text-decoration:none;font-family:var(--mono);font-weight:600;letter-spacing:.05em}
 /* ─── PANEL SECTIONS (collapsible) ──────────────────────── */
 .psect{border-bottom:1px solid var(--border)}
 .psect-title{background:var(--panel2);padding:6px 10px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
@@ -92,6 +198,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .export-dropdown.open{display:flex;flex-direction:column;gap:2px}
 .export-opt{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2);padding:4px 6px;cursor:pointer;user-select:none}
 .export-opt input[type=checkbox]{accent-color:var(--accent);cursor:pointer}
+.export-opt select{font-size:11px;background:var(--panel2);color:var(--txt);border:1px solid var(--border2);border-radius:var(--r);padding:2px 4px;margin-left:auto}
 .export-hr{border:none;border-top:1px solid var(--border);margin:4px 0}
 .sym-btn{padding:3px 7px;font-size:14px;font-family:var(--mono);background:var(--panel2);border:1px solid var(--border2);border-radius:var(--r);color:var(--txt);cursor:pointer;transition:border-color 0.15s;}
 .sym-btn:hover{border-color:var(--txt3);}
@@ -115,6 +222,15 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
 .range-val{font-family:var(--mono);font-size:10px;color:var(--accent);min-width:34px;text-align:right}
 
 #viewport{flex:1;position:relative;overflow:hidden}
+/* ─── FILE BAR ──────────────────────────────────────────────
+   One line along the bottom of the page: the loaded file's name and kind. It sits
+   after the main row, outside the viewport, so the 3D view and its exports never
+   include it. Fixed height, so showing a name never changes the viewport size. The
+   padding keeps it above a bottom safe area where the page declares one. */
+#file-bar{flex-shrink:0;display:flex;align-items:center;gap:10px;height:28px;box-sizing:content-box;padding:0 12px;padding-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);background:var(--filebar-bg);border-top:1px solid var(--filebar-border);color:var(--filebar-txt);font-family:var(--mono);font-size:11px;overflow:hidden;white-space:nowrap;cursor:default}
+#file-bar-name{min-width:0;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+#file-bar-kind{flex-shrink:0;color:var(--filebar-dim)}
+#file-bar.empty #file-bar-name{color:var(--filebar-dim);cursor:default}
 #three-canvas{display:block;width:100%;height:100%}
 #welcome{position:absolute;top:0;right:0;bottom:0;left:0;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;pointer-events:none;z-index:5}
 #welcome.hidden{display:none}
@@ -211,7 +327,8 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--border2);border-radius:20px;padding:7px 18px;font-size:12px;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
 #toast.show{opacity:1}
 /* ─── MEASUREMENTS ──────────────────────────────────────── */
-.meas-tools{display:flex;gap:4px;margin-bottom:6px}
+.meas-tools{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.meas-tool-btn.meas-tool-wide{flex-basis:100%}
 .meas-tool-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--r);color:var(--txt2);font-size:9px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:background .12s,color .12s,border-color .12s;white-space:nowrap}
 .meas-tool-btn:hover{background:var(--panel);color:var(--txt);border-color:var(--border2)}
 .meas-tool-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -225,9 +342,25 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
 .meas-icon-btn{background:none;border:none;color:var(--txt2);cursor:pointer;font-size:11px;padding:1px 3px;border-radius:3px;line-height:1;flex-shrink:0}
 .meas-icon-btn:hover{background:var(--panel);color:var(--txt)}
 .meas-atoms{font-family:var(--mono);font-size:9px;color:var(--txt3);margin-bottom:3px}
+.meas-note{font-size:10px;color:var(--txt2);line-height:1.4;margin-bottom:3px}
 .meas-controls-row{display:flex;align-items:center;gap:8px}
 .meas-cb-label{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--txt2);cursor:pointer}
 .meas-cp{width:20px;height:18px;flex-shrink:0;border:none;background:none;cursor:pointer;padding:0;border-radius:3px;margin-left:auto}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+/* ─── LIGHT THEME ───────────────────────────────────────── */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#eef1f5;--panel:#ffffff;--panel2:#dde4ee;--border:#aab4c3;--border2:#6b7686;
+  --accent:#b3123a;--blue:#1356a8;--green:#16702f;--yellow:#8a5000;--red:#b01c1c;
+  --txt:#0f172a;--txt2:#243044;--txt3:#3b4658;--txt4:#525d70;
+  --filebar-bg:#d2dae6;--filebar-border:#8d99ab;--filebar-txt:#0f172a;--filebar-dim:#3b4658;
+}
+:root[data-theme="light"] #toolbar img{filter:invert(1);opacity:1}
+/* The 3D viewport stays dark in the light theme, so the controls drawn over it
+   keep the dark values of the colours they use. */
+:root[data-theme="light"] #info-bar,:root[data-theme="light"] .corner-btn,:root[data-theme="light"] #drop-overlay{--txt:#e0e6f0;--txt2:#b0bcd0;--txt3:#90a0c0;--border:#252d4a;--border2:#353d5e;--accent:#e94560}
+:root[data-theme="light"] #el-table td{border-bottom-color:var(--border)}
+:root[data-theme="light"] .meas-swatch{border-color:rgba(15,23,42,.35)}
 </style>
 <script id="gif-js-src">
 // gif.js 0.2.0 - https://github.com/jnordberg/gif.js
@@ -246,6 +379,7 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
 <div id="app">
 
 <header id="toolbar">
+  <a class="btn back-link" id="back-link" href="index.html" title="Back to the OPAL launcher">OPAL</a>
   <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAB8CAYAAAChbripAAAckklEQVR42u1dabRcVZX+dtUbMpGZYMIURkmCgYBCENEOyiCTCg0ooi2oTfdCGxxABKQRtYmAjQthMSioLYqhI90tSBAEJDIGgQAhAzILmRNCyPCGqvr6x/0Otd9Zt+rVe9R7ee/lnrVq1a1b59577tn77P3tffbZB8hKVrKSlaxkJStZyUpWspKVrGQlK1nJSlaykpWsZCUrWcnKgC02kF6GpOmdaGbMyLsVFZL5ar+zMrCJnwtEJ7kjyWFZr2x9xP80yQUk3yb5d5IXk8zpY1lPDVCxT9JIHs30ckmmDgYwCCSZM7MSyXsBzABQANAIoKgqGwDsamZrSVotwFASxcys6I9T6jVUuEXJzEoRMO2MAYtmRjFqALHFFEyT+l+/JiDJBn2si9eavgeTfE0jvkRyFcmCkwL7elVRizqp9XxX79MXS8OWHr0ASinnapVeBLAjgPHu3L0AjgMwWOdG1yLtnDQ5BMA3AOwK4A0AV5nZHI3AkkbqcABfBdCkNoT7rwMwx8wWk8xLikwC8BlJpbQ2lABcY2ZrSH4ZwE4AFpnZbwKT65mfATAZwNNmNruLfdVngdueJE8XgBvrR3atZp/T/0WN/DNJbnAS4ORORLa/11Ek21KwxKn+HiR3YuWygeQR7t4ns/MySXUX6/dqkkOiZ96v//5QT1yT21Ijn+Q3ADwD4EYAtwB4muQMcXuuRgkAAHu73+sB/BVAu6v3nhpUSUkMeJMwRIvwRKtG+HUkJzpsUQLwtuq0RJ+hAG6QlIDuEe7l623W90b9D0mQAoBRAN4fvWf476160iPXy8TPi/gfBnAFgGYRqw3ABAC3kByVVO1UEjCFAZYCWKSODWW7Tu6TFzj8iuq2Axgk9disTh8K4NwIRDboMyj6tEuMHxnVi+sO1vdQp4rzOs6563PRf3W1aHobAwSiniwCBtQOHW8H4FAz+51EX6HKvYL+28ude9HM1pPcUAsDiMmKJJsBnKo2NQK4DsAsEeFbOv+PJC80s7V6j/D8WwAsFGEOA/BB1f8IgFvdOxcAXKkRbI6BSwBWRkwNAIeTvKCTPuh/dru+f+/034skVwjBl0j+sAadHSyAUSTXuHvN1Pl57tzvK+lM154D9WySvC2qc52717E6tzPJ9Tp3lKs7hOQrOn+Xzh3vsMGITvpnnsMzrSR3d/+FPpvVnzFAKUUvPw5gvkaFAfhAVLeaJJkolB9GyUJ9r3B1t61yv3Cfg3VcBPADmaeDhEUuBbBJo/PgFItihMzYoWa2CcBDkfXhrYSxqtvkzN+GFMxTkIXx0Z4mSK4XR78J4DU6ogDAiwAec7+nkBwmrGCdtHuvCBMs1vFyd360gGcargjE2d8x0Hw5W1pkgr0KYJ4IOC2FmYpmVpAqMQCrdb45Rawz5VNydegYAACO6mmn3ZZwWIwQyg1lqWOAAoBxAN5b40u/z2GZtQBeSZEAIwFs04lE2lnfT8rLlov65wl9bx+IXkPbiinv8JaZFc2sXd/FyJYPDDBfUucQgeIB4QgKwGeMCFIUcFqlF/adtZ86PVdBdIeOmuzOveJG33JXb7g+HcCXk0jNTiX9rQLjvaDvcZppLLg6eeGVvO4XpNv66F45AIeRXKHjwGgrATwXMeRTTuUcCOCueqP/LSEBQkeM03MDEd80szdEtPCSB1S9UeJhyztJAQBL3Gha4Tp0UCRx4jIUwLAUyeEZLZwfpk8xGtUFM9so2z/ghGVRHzfKYrgPwJ8A3C+v5SUpcxRvArhHz/94T6qAhi3AALFjZq2+n3X/7RdMtCou5PfI3qbu/ayrFptVY6t0YpPT1xsqtH2DqztITqBA2NNJHqS+PMy1aWHKMwuRnm+QQyhtYN4F4GLdE5Fzq1/PBUxwjo3NANbo92N6WQLYE8B2ZrbcAbe8RnT4vRuAIeqYRidGoXvS1d02hRhBHXjnSiWbuxA5Y+gY4IQU3Z/XSI9BoO/vRidV0qTSE1Ije5HcWZhgQDDA9o4A6yTugjkYOnuYrIEVAJrMLLhTQbKZZMnp/5yY4PlIhLZotAa1UwlHtOnjkXualAhta4sYqc3pbsrD97gDtt59/LDalXMSYF7K85rNrEByLoBjAHws8m4OCAkQRurbOn5G/vJGdeT+ZnYvgFY5UP4ZwANmNk+MMFn18tK3r7n7rtdncAW140uLnosUrGDOcgl1WyIM0xRdsw7AmY7wntFOMLNVlUzklOfOEQMcORBUQJoTaIXs/RyAvwN4SbZ9cKVeRvKLAC4AsAuAdpLXA/iB0HHACS+a2WaHDzaKENvVwAAbJTEmANihgu9hhwD4dN/R7n1uFvMGlXanmf1N/o72iKjDSK6JrBtW6as/6/0OcQxu/ZIBnGPH++aXO33YJiA3SS9ZIHmnQ8Fh3uArwgp/BDBVYn5JiJhhMpxKJNemeAPp2kMxTJHkUgBTAEzW+Zg4U0J7zaxNZt87cwFmdmcMVCsRVm1DStRQGgMsEbaZKlO27pZbr5iB7gWHOkQOJAEXANAoEXi/JMHJAE5EMtNXdPqyqE+jmZ0lt/H9AB6WAyfvAN1K95yxFdzBucj+f79MuTAlHTyXH3ReywAGGbmCBwW3bpVAjZwYNa94xrwL9Uo1dwHcHYHOfukHMKdjRzpCLJf+20BypEbzfmZ2q5m1CTTFDpA8gGfV0QvM7FAAe5Lc38xaBZ7ykU0/RlPRlaaZH9H3eADHiRkHi5AznMv50RQxHFzBBfkDqs1hvJ3iCSx2cs0clOdJ+r0reKyIXBATLBFRPgvgSQDfA7DRxQj+tQJyXyRR2kBysADioyR/SHKcRs4yB8RGSvpU0rUPoxz8cQnJHeTYGQ3gclf3LxUkSa19/Q8kP0Tyw/oOx+PT9Lv64HExc9NAkADjRJQmPXsiyTsEpHaRXT9VI4nONMxF91kgEVkQQBsuFXEugKfEUOslLYoyK0fEnRwAqJm95KTALgAeJnmTzk0VwZ9zLutSN969EcB/i4ke0Hc4/lQFejSZ2dsA5vYUYXqNASSWdxRRXgZwOoCvAThaEqFd7Znmrlso5J2L9OBiV2cPMVTAChPEUB8B8H963hAAoyqI/3Duah23qZ2nySHVqudeI4bzDp9iBbAXS62ia1/BvW8LyhFRgbGKjsG8Ocjov/7BAFFs/TAA10rP/1yjMkyKhJc9UNc1yGZ+3nV4cB697B6xt+voBnVoCcBQM/skkojclwGMlFRpSJlXyAG4TZZFE8rxe61yDj0O4OcuCMPU9rzz6FUqjarXhI7hYY1Sh43OATXMMayXNPc5/DOkX5iBGm05Eb5E8p8ALDOzH+v/PaSb89HonhaN1CeF9kNnvKiFHg0akVNSQGIOycydmdlvSd4N4FiSi81sZdQ2jy0+B+B3srtDmQ/gRJl/eecQ+qOIsayCPU9n6s51LuI0t3Gw8R9CMjeyIPyvd3iV5A0ykf9axX+w5YuWajW43/u7cKbj3XKuA9xiDv+9keQEd/3pOt+i75uDhNC3D6Py369p0Uij6l1L8g2Sn3P3zrsQ9RBm1kDyBJLnkfyMC8/O1hfWQPy8Ox5P8icuzr5I8gPu/+N03q/iCcTzcfX76nyL6p7vGG2kVgKlMdJbJMe5uue659yvyGQ4olslIqedr3Xhqe6b6+Rjnd2zTy90DY3TcRPJs0gucwQpKMhxF3fNGfq/3REmHJ/vOm6IuxdJHh4xhye6Py6Q3DOSJCUnSUjypqhNQTrlu7tkbWsb8RaN+mNJPuk6uOBG9UofFUvykhQGCNLgTtUJ4vtokg+QnCmiNOrZX0i5h2eCg9zzjnHPKLg6b5K8MOQU8MycldrF/T4k/yciZCkS64vUuSEU+6YU4oXQ8E0kd/NMkIYxSP45RY3438e666anSAt/3SKSn46lQUbp6oQfR/IKkpsdsYsViPFABN7mVCBeuP4+efngRbJ79nlRfaaoki+6+nu4Z8UqwzPhPSSnx/ggI3zH0Zsn+S8kX68wmtKIMStigKeqEDCce5jkIRHTTSR5dZVr/TMvcNdtS3JdCgMwWlwa3uU6kjulMf7WqOf9yDuC5GNRZ5eqrHwNxLjS3W+w0rhUI6I//6wkxkNKAVPtOv/MqxzzNpN8tYZrvfpaRfKbJAdt9fiA5CSSsyp0FGsgxjmRibihymj0TFCqQKRantkVqVPtGc+QPGEg0jXXycg3kiNI/oc8UCfJI1eSB6srunGpOx6L8uycVfGfl5wPvV2fEFlbqOIXj4NBQ1lTxWtXcO9WdB7KIpIFKLNJ/oHk1Go+g/5WqrmCQ7TMdADfjlyX3WGyZe7cOOfrzjkihKjfXBefU9A18azhmKjeqhQGCNHDDSlMEfL7lPSMo5CsYzi1htXL/Z4B4tEIdG91Soh/8xE6EyIGiKN5lmoC5mkkM3+rkcTuNWn+YFfNAUxHEh3c4BjUS7XR0t9htm1lBSJvBPATJNE3zUgikr7g2pdz7WwdSCqg1smgPLo3Dek7eHUFBgjqpA3J9O2vAMw1s04zYQiZ7yOCnYJy8GZghOEAhpvZSjcxE7dvM4CjzewBd/4ukk8jWc/vpVRX1V7/t/dJHt4F4FQJyb+qmLng874qut+skM0rcsRUdMfqvDcPR5P8jjP1ChXcwQEkBqB4g/5rDqZuBdAY6t/kgeWABYF1Lqu13DrvMEAOSVDoiWZ2spnNJ/lO2JOmasNnKMmTSH6C5MEK2SqE6VySTWa21sy+hySe4G6Up4VHu3asTAGej8q0CzjincWjKE+9lgbqQO9pLo4XV4YyGck8+yc1192oQMk2xeGdhiQk+g+KGfwOknCvUDaRXCRC/9bMngmj2MyWADiC5GUAzoksgdURLgGAdSEoUyt7NwHYpOcWBrqk7y0GCLq3qLDreQDOMbM3RbRWkkMBnIUk7n8wgEkiwp461+YshCFIkjrsD+AbJGcjWWUb1gfQzM4lSSQxft4MjC0ZjzWGA2h3q3S2XhdwnTBAe5yzV1ggzPI16fsAeftCOdF53v5Y47MK8trlXLw9SE5w2MO7g8P7+BiF/UK+Qv2+LgUzDCgM0FsvsbSs2pPUKxL7bfKw/UqjvogkLGq29PJ0JEGfz6Nj3GCamdoA4Os6dyWUas7MljoQuV4jfgTKq4PXu3uNBPD61jTQe5oBLGKAALDyZtZO8hMop1Jrl2g+xyWLfBJJZC5rfJZJjAcwF5ZhUdzXSvJNJGv4Tfp+Q8QAljFA/a2MFWWp+s56vL0B/FodHtb93WRm80KeXaQkiKihrKmg0sKSLe+PaEHHdfcZA9QZAIaRvaojLdgM4JdI5gMKGvnrAFwocU1X2WpgshKStYSHoLwiNw/gp2a2QNIk1PNt2YiOGTpGopvRtm6/IoOSStdyTVdS2Nd6376GAdahnAYmiP7PIkkEVXDI/vtmtsyN/gAa2EnnUCrjVSTZPX2ZRvIj0Tlvkm5Akn8gEKJbDOCkC1POVdZZnb9byBbuVxLn67lfQK6HJUAQyQFohSXij6KcZyePJL/v1eL0LjldtLwrb2aPIUnqCCT++jZJhBnqwHwKA6wXEay7EkDMU3JWxHSZtqXOYgeqSbfAlGLuyXKATaj3ZhG9wQCr3Bq8IpJZxoVIFl2G55+rNDDWTREXOvsyJLOOTQ7lfymqu7yCDyD4AUpdHPkkuTvJB5Hk9XkESebzQ2MmcOZoo1LJLiJ5e8wo7r47kLwHSd6EB1V/pouY7jm8Ugc/QLCbb3U+AHOfIcrz+2f/vDq09zQ9N6xHWEFyG9f5x7g23ur8DXkFto6s0Q/QqOtGkXze+SLa3QKX9wViOV0ewtp8P40PDOKIO8gtemmL9jGo215IvTEXEEzAkkDfdyW6NwE4A8B5MfDrZimpQ34pT2MjyplH3+cki7cC3nTSahCStXm1SoCg48+XryLMdTRIBQ0B8J8Vcv/soWe26ZpdHT3yuu9JSJbEhbxJPqv6eSQnunWNfZ8BQtIFJMElx+ncbDN7VLruXU24OFu/hGTLFzqm2jMyE1sdQA3XBgYo1iha20iOkYop6vpVSLKINOvcR0lOCzjFMcAUlFPOG8oZz/xACNFXzUgSSv5CYDosLD2+HjTsDQZ4PTKzGgBc6jJm160NIYOomT0oH0MYNRMiq+TtSAJAI3ZIrRJATHM4ygtc5yHJJTBJ+CYQ/Jho9APlHMdwDBE8pWH/gkmizy1m9jEzOw3Jkvc3xSQHRFirzzFAWijYMDV4EoAztbq33m0IaWAuEMijQGHQweudVbLOXTdUo7grkugQ3b8dwBlmttzM2pFsMvG8/psWuayh9w/iHE4CBGKORjmv0U8DZjKzBUiWsRMdg2r6LAOUIgZodS96Icn3SOTWUwqUADSY2WsAZqKcUyD4IVrdyPcSYBupKNbiDRST7au68xTPkNccB5Hk+jUkexoA5R3HtgGwu54TopB208RYMZJGELOa66f56tuxtfgSthQDeB+AjwZe7Xzvo+X8qanDu8gE7eqsHyMJAtkYieE1KRJgG0mKzkaUOZNxRx3P9TuX6/jJoGqi5W0TkcQovAXgdp3bHsCEiJiBGcaIqcNzb5Uq+Fw9zMCeYoDQiS9oDx9zDPCK8/9/geT7XfbvdyP3gwk1nOT3UN704SyUEzcjYgDvBxiBcpbSWhhgDMqZRZ9zIDTkN7pZaP8wlKONgHKG89VIcgRtFNDbPfJQBhf1eSRHmlmLmZXMbKWZzTWzJ+rhFu5JCeCTPOWV0aMkL2DQh3kAP6qTQyOnDvk8gAuh3TbM7Ldm9lDEmCudePUANd8FUDUa5bUNS2NAZmZtZrbCzNZEUm6KA8dLnIqc7Gz7NbIoiCRN3VMkv0VyV8fwdXHj9xQDhMmLORFDAMD/6r+wx++HAZz0bqSAS+o4DsBFIvTlzlkTM1iYEHo7kgBd2a9wkHcpV5NKEXMEBnhJntFXImDYKHB8r57VIrUxUx7GX5PcWfkQ+6QKCPrqNQB/cU6eoBvvFecH9NwO4PuK3y9186WCP/5i6deCOvRcnc+lMAAdNggSoCvF7wnUmmaSBV++M1FzzicRMp0t0XdIRtmuPrhcdn/Yi7BVVtQpwhw7eO9iX2SAn5nZxuDZChMyQuEzJW5DlqzdAVymzurqRs1hj95pAL6MjnH80yPUTscAmwBsdgw3qh52dRUJBXklg1XwoiReyIK2q3YeC/MlLyHJEv4EOmYSa0ES0HJRPQB0Qw8QP49kwuWasOEyyQNlYj2gc79Sh2/jGGazHCBttUiBFAB0md4nAK4WuEhimWDeBbwW5UBTPxVca4e2OpXQVIHouYipdpeqaZXpWCTp09TuKMkQAmceV98dJWxzrPNVHKvd1TbUGlfQGwxQFLd+XancQsTveQB2M7OpamzYRfPdjqww+o9HsqlCWDiaA/A1M1vk6niAtw7Aygh3jKxx9NONRDiTsIO3z++M7p4xyT3/QEVFjRcjNkk9LA5gVMC5Tebi7Vo8M0v1tkMS8fxs5ELeIgzgt4H9iZndosUarYq6/TiAZpJfNrOfyi4Oo22U69BaX6IxuESVxu2HKC8zawJwhZldpza0qeMOMrNrHWhbGt1zhJNGtbRjjTDEUJT3IzC3OfY06eu35I/YIFdxsCBmu3u1O4D4e3kTOzC61Od8kmcDuFPtTNsKp1cZgE7nNgL4GYCzQj59NfwalCdHfkTyQY3MMFu3C4D/0kgIQSK5KhKmGcDVZvbvYoCznQ3dBOBSMzs/yul/o0ZKYICN6LjDSBjFpS5IgDVSI0ORbG/zzvZw0jUfBfBN1flRZAEA5QWrnuGmiuBTkSxO3SBsFHIp5JBsKbde7e2RBNKe6+J4gJJL++bz6myWmA9z6yHu/6qUbGGLwt56rt4+0X6/1cpaN3++vUs0sUKhZvD5hEhe6RNM6txwkt904BAkX9A9Gty8fbV4ACP5l5B3MPSZe6frdM3D+j1YySurlfmqe6Q7t4eLVzCS2ymzGUnOiFRMj1gBfnvT4O4M897tSFKrTjezmer0nFyx5wL4KspBn2F59V4A7iA5VvWazOxpIfYz0XHzJw8uA+g6L8QOArhB974ayR5Dvw4+ddnJlwI4W9ePj0bfCw4cNiE9FoBOtZRcPwQQOl+/DyI5JewFIJP2CPVRkDQ7uzY8AuAO+Unu0KgGki1rBiHZOqdV/fUB4YkmPXN7qStGruwekwCeG9tILiX5J5Lf1sZNoX6zO76oSiqXcG5BuD4adUNInkjyNyRfiiJhnnDOnZ2V/XNi3Aat9P2ZrmnV99NutOdJTnLXjVTuodfD/XX+xpT2e0nyCXf+QaW+GUbyenf+61HdFpI7Rn39ISdl91YbVujcQmfzD3Lp+FZrHWXPpLF1nTWa5Awt39otJFR09Zrc8QSXR6haDqGCS9LoU7k1+pcRIXdVoOXhoePiFC1RG/Yj+WiK6nkjLFEPia+Cl1CEKygjqa/zXpIf0/vP0LFnnG2UALPoiPK6e3ZbqC9XLkm+THJoUBf63s2l2jtF9e90912h9DSLHaP8qR6OoO5OujREwY4jSX6N5PIakzjFMYZzfO7eWCqknG+IEzkqgPIKlwq2EOUCLJDc3zFWzkmMT7pr9o0lWicS8hKHgxgdz3L1bxQmuNdhJXPt+Zv+D/F+n4qSZMf3PrmecwLdYYTBJA8ieXkEbgpdCBwtRfXvIfl5t4VKZ20YopF5vcAhKwSwht9zNR+PSGotdtJqbizlqgyEnET+M1Gm0zBqd3L1FqctLnXq5iH9f7djkNkV3ul2n+n8XU2dV3tBAaSxSMKPmuV82AnJJg1TUd52PZhouW7apPG165DsxfcUkh29lqMcdDlG7tS9kSwPr7UNAcQuFHh8WWbZv8oD55eEPwfgeoGxUjSZtdTMnnWLNigdfa2cUYZk19B/M7OAO/IAPi3T7REze8r5C8L3DDmKlpvZbbpuEIArkKTAGaF+uQ1JzOPGCh7RujFA8KAd6Wb10jq12Int3lVGALqWjMpPLXfGfKUK7fTnS528yy1mdkrYsMK7YbXHb15+/JpWB3U2AHU8BkkE0GozWxP/3yMM4IDgYCSRr99CEofWjvL2LD0ZT1CKRmXsiAkmaVfbUIo8fmnMW0LHnT2D5/IXAC6RaUdHoFz029wMpccMYX1fqQKmMN2n6O7jdzYJ9eq2RtC6wJETkMTAn4HyJo6G3t96rlcgDso5B4Bky5eLokxiFWf93m2Ie4WBaJ7Jehvw+VzBB5C8qxspY/tL8aD0JZKn+dG31WYOT9kc4kQ5KbqD/vti8anuN5D8AclRae++VZdoe5ih8giuqWDW9YcSt3lW5OzJCF/NEaLjiXK9llI8cH2Z8H5C69FoP6Jso4havYKRT/u+Luwl0Bf0/Ova/MJvhpHtGdQNteAlwqlybfY1fOD1fItcx9tm4r6+jBD82yNIXkxyvRO5xT4i7m8juU9G+N7BB3uQvHkLmo2e8E+RPC4z67YMPjhUc+a9hQ+82llO8myXmTTbG3BL4AMxxZdIvtKD+MDv/tWu7WvHZ+K+D6iFKMhkpvLoVNpv8N3q+TlRHuDMrOuD+GAKyd/VAR94KfJcSDad6fn+41b+OMnHu4EPPMOsUdjVkEzP90+3cgPJryh2rzN8UIz+u1Fz8ZmeHwBqYRzJH7toXo8PYj1/H8mDMz0/MM3GfRX7lmbPP0/y1EzPbx344FMk54vwb8m7ONzVzfT8VoAPmrTl216Znt+K8UEm7utfrJ8wwTt7+NY73i4rWclKVrKSlaxkJStZyUpWspKVrGQlK1nZKsr/A9EZcyX+P0k3AAAAAElFTkSuQmCC" style="height:28px;width:auto;opacity:.9;margin-right:4px" alt="OpenMolcas">
   <span class="logo">MolViz <span style="color:var(--txt4)">· OpenMolcas</span></span><span id="ver-badge" title="MolViz version"></span>
   <div class="tb-sep"></div>
@@ -273,8 +407,17 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="10" rx="1"/><circle cx="5.5" cy="5.5" r="1"/><path d="M2 10l3.5-3.5L8 9l2.5-3L14 10"/></svg>PNG image
       </button>
       <button class="export-fmt" id="btn-export-svg">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M4 10c0-2 2-3 3-1.5S10 10 11 8"/></svg>SVG (raster embed)
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M4 10c0-2 2-3 3-1.5S10 10 11 8"/></svg>SVG (image)
       </button>
+      <button class="export-fmt" id="btn-export-svgv" title="Scalable drawing rebuilt from the atoms and bonds: editable in a vector editor, an approximation of the screen">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="10" r="2.5"/><circle cx="11.5" cy="5" r="2"/><path d="M6.8 8.3l3.2-2"/></svg>SVG (vector)
+      </button>
+      <label class="export-opt" title="Look of the vector SVG">
+        Vector style <select id="export-vector-preset"><option value="default">Gradient</option><option value="flat">Flat</option><option value="print">Print (white)</option></select>
+      </label>
+      <label class="export-opt" title="Draw the atoms as van der Waals spheres that meet along the curves where they cross; bonds are not drawn">
+        <input type="checkbox" id="export-vector-vdw"> Space-filling (van der Waals)
+      </label>
     </div>
   </div>
   <div class="tb-sep"></div>
@@ -326,6 +469,10 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
   </button>
   <div class="spacer"></div>
   <span id="mol-name" style="font-family:var(--mono);font-size:11px;color:var(--txt3);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+  <button class="btn" id="btn-theme" type="button" aria-pressed="false" title="Switch to the light theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9zM12 6.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4zM12 15.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4z"/></svg><span class="btn-label">Theme</span>
+  </button>
+  <button class="btn" id="btn-cite" type="button" title="How to cite OPAL" aria-label="How to cite OPAL" onclick="CITE.open('MolViz', MOLVIZ_VERSION)">&#9432;</button>
 </header>
 
 <div id="main">
@@ -351,6 +498,9 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
       </div></div>
       <div class="field" id="aromatic-row"><div class="field-row" style="gap:10px">
         <label>Detect aromatic bonds</label><input type="checkbox" id="detect-aromatic" checked style="cursor:pointer;accent-color:var(--accent)">
+      </div></div>
+      <div class="field"><div class="field-row" style="gap:10px">
+        <label title="Draw a dashed line for each hydrogen bond found from the geometry">Find H-bonds</label><input type="checkbox" id="find-hbonds" style="cursor:pointer;accent-color:var(--accent)">
       </div></div>
       <button class="btn" id="btn-redetect" style="width:100%;justify-content:center;margin-top:2px">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 1 1.5 4M2 12V8h4"/></svg>Re-detect bonds
@@ -484,6 +634,8 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
   <div id="atom-tooltip"></div>
   <div id="info-bar"></div>
   <button class="corner-btn" id="btn-reset-cam">⌂ Reset</button>
+  <button type="button" class="panel-handle" id="handle-left" data-side="left" aria-controls="left-panel" aria-expanded="true" aria-label="Hide left panel"><span class="panel-handle-tab">‹</span></button>
+  <button type="button" class="panel-handle" id="handle-right" data-side="right" aria-controls="right-panel" aria-expanded="true" aria-label="Hide right panel"><span class="panel-handle-tab">›</span></button>
 </div>
 
 <!-- RIGHT PANEL -->
@@ -576,6 +728,10 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
             <svg viewBox="0 0 18 18"><polyline points="2,14 6,4 12,14 16,4" stroke-dasharray="3,2.5" fill="none"/><path d="M7.5,9 A3,3 0 0,1 10.5,9" fill="none" stroke-dasharray="none"/></svg>
             Dihedral
           </button>
+          <button class="meas-tool-btn meas-tool-wide" id="meas-btn-outofp" onclick="setMeasMode('outofp')" title="Pick 4 atoms: the bond from the first to the fourth, the plane of the second, third and fourth">
+            <svg viewBox="0 0 18 18"><polyline points="2,14 9,14 16,14" stroke-dasharray="3,2.5" fill="none"/><line x1="9" y1="14" x2="12" y2="3" stroke-dasharray="none"/><circle cx="12" cy="3" r="2" fill="currentColor" stroke="none"/></svg>
+            Out-of-plane
+          </button>
         </div>
         <div id="meas-pick-hint" style="display:none" class="meas-pick-hint"></div>
         <div class="field" style="margin-bottom:2px"><div class="field-row">
@@ -599,6 +755,7 @@ input[type=color]{width:28px;height:22px;border:none;border-radius:var(--r);curs
 </aside>
 
 </div>
+<div id="file-bar" class="empty" role="status"><span id="file-bar-name">No file loaded: Open File or drop a file here</span><span id="file-bar-kind"></span></div>
 </div>
 
 <!-- MODALS -->
@@ -793,7 +950,213 @@ function applyFileInputAccept(inputId, acceptString) {
 // v0.60: OpenMolcas HDF5 files open, geometry only (Cartesian coordinates, one
 // geometry per file). Ghost centres are kept, drawn translucent, and left out of
 // bonding and of the centre of mass.
-const MOLVIZ_VERSION = 'v0.62';
+//
+// v0.71: the file picker offers only the formats the loader reads (XYZ, Molden,
+// OpenMolcas HDF5, plain text); the MDL and program-output extensions it used
+// to offer ended in a parse failure.
+const MOLVIZ_VERSION = 'v0.87';
+
+//@@OPAL-SHARED:BEGIN citation@@
+const CITE = (() => {
+  // How to cite OPAL: the two references, their plain-text and BibTeX forms, the
+  // line added to exported files, and the small window every tool and the launcher
+  // open from their info button. One source for all of them.
+  //
+  // TO FILL IN A REFERENCE LATER: edit the entry below (authors, title, venue, year,
+  // doi, url), run the sync script, bump the version of every tool and of the
+  // launcher. While an entry has no title it is shown as "in preparation", offers no
+  // Copy button, and adds nothing to exported files.
+  const CITATIONS = [
+    { id: 'opal', label: 'The OPAL article',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' },
+    { id: 'openmolcas', label: 'The OpenMolcas paper that presents OPAL',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' }
+  ];
+  const PENDING_TEXT = 'In preparation; the reference will appear here.';
+  const INTRO_TEXT = 'If you use OPAL in published work, please cite:';
+
+  // The tutorial page of each tool lives on the published site, so the address is
+  // absolute: the dock carries the same files and has no tutorials of its own. The
+  // page is found from the tool's name, lower-cased, and only when that name is in
+  // the list, so the launcher's window gets no such line.
+  const TUTORIAL_BASE = 'https://lucadevico.github.io/opal/tutorials/tools/';
+  const TUTORIAL_TOOLS = ['csfscalc', 'geodiff', 'intcoords', 'molbuild', 'molviz', 'orbviz', 'pathvibviz', 'rassiviz'];
+  const TUTORIAL_TEXT = 'Tutorial for this tool';
+
+  function list(override) { return override || CITATIONS; }
+  function tutorialUrl(toolName) {
+    const slug = String(toolName == null ? '' : toolName).toLowerCase();
+    return TUTORIAL_TOOLS.indexOf(slug) >= 0 ? TUTORIAL_BASE + slug + '/' : '';
+  }
+  function isEmpty(c) { return !c || !String(c.title || '').trim(); }
+  function field(c, k) { return String(c[k] == null ? '' : c[k]).trim(); }
+
+  // Plain text: Authors. Title. Venue, Year. doi:...  (parts that are empty are left out)
+  function plain(c) {
+    if (isEmpty(c)) return '';
+    const parts = [];
+    const a = field(c, 'authors'), t = field(c, 'title'), v = field(c, 'venue'), y = field(c, 'year');
+    const d = field(c, 'doi'), u = field(c, 'url');
+    if (a) parts.push(a.replace(/\.$/, '') + '.');
+    parts.push(t.replace(/\.$/, '') + '.');
+    if (v || y) parts.push((v + (v && y ? ', ' : '') + y) + '.');
+    if (d) parts.push('doi:' + d);
+    else if (u) parts.push(u);
+    return parts.join(' ');
+  }
+
+  function bibEscape(s) { return s.replace(/[{}]/g, ''); }
+  function bibtex(c) {
+    if (isEmpty(c)) return '';
+    const rows = [];
+    const add = (k, v) => { if (v) rows.push('  ' + k + ' = {' + bibEscape(v) + '}'); };
+    add('author', field(c, 'authors'));
+    add('title', field(c, 'title'));
+    add('journal', field(c, 'venue'));
+    add('year', field(c, 'year'));
+    add('doi', field(c, 'doi'));
+    add('url', field(c, 'url'));
+    const key = 'opal_' + String(c.id).replace(/[^A-Za-z0-9]/g, '') + field(c, 'year');
+    return '@article{' + key + ',\n' + rows.join(',\n') + '\n}';
+  }
+
+  // The DOIs of the entries that have one, and the line exports carry.
+  function dois(override) {
+    return list(override).filter(c => !isEmpty(c) && field(c, 'doi')).map(c => field(c, 'doi'));
+  }
+  // Empty string while no entry has a DOI. Callers add it only when it is not empty.
+  function exportLine(override) {
+    const d = dois(override);
+    return d.length ? 'Please cite: ' + d.map(x => 'doi:' + x).join('; ') : '';
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Copy: the clipboard interface where the page may use it, otherwise a hidden
+  // read-only text field selected and copied. Resolves to true or false.
+  function copyText(text) {
+    const fallback = () => {
+      let ok = false;
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.readOnly = true;
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+      document.body.appendChild(ta);
+      try { ta.focus({ preventScroll: true }); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand('copy'); }
+      catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(() => true, () => fallback());
+    }
+    return Promise.resolve(fallback());
+  }
+
+  const STYLE_ID = 'cite-style';
+  const CSS =
+    '.cite-back{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:12px;box-sizing:border-box}' +
+    '.cite-box{background:var(--panel,#16213e);color:var(--txt,#e8e8f0);border:1px solid var(--border,#2a3a5c);border-radius:var(--r,8px);max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:16px 18px;box-sizing:border-box;font-size:13px;line-height:1.5}' +
+    '.cite-box h2{margin:0 0 2px;font-size:15px}' +
+    '.cite-ver{color:var(--txt3,#9aa3b8);font-size:12px;margin-bottom:10px}' +
+    '.cite-item{margin:10px 0;padding:8px 10px;border:1px solid var(--border,#2a3a5c);border-radius:6px}' +
+    '.cite-label{font-weight:600;margin-bottom:4px}' +
+    '.cite-text{white-space:pre-wrap;word-break:break-word;-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}' +
+    '.cite-pending{color:var(--txt3,#9aa3b8);font-style:italic}' +
+    '.cite-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}' +
+    '.cite-row button,.cite-close{font:inherit;font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid var(--border,#2a3a5c);background:transparent;color:inherit;cursor:pointer}' +
+    '.cite-status{min-height:1.2em;margin-top:6px;font-size:12px;color:var(--txt3,#9aa3b8)}' +
+    '.cite-tut{margin:10px 0 0}.cite-tut a{color:var(--accent,#5dade2)}' +
+    '.cite-close{margin-top:8px}';
+
+  let openState = null;   // { back, keyHandler, returnTo } while the window is shown
+
+  function close() {
+    if (!openState) return;
+    const s = openState; openState = null;
+    document.removeEventListener('keydown', s.keyHandler, true);
+    if (s.back.parentNode) s.back.parentNode.removeChild(s.back);
+    if (s.returnTo && s.returnTo.focus) { try { s.returnTo.focus({ preventScroll: true }); } catch (e) {} }
+  }
+
+  // Body markup of the window; also used by the launcher's own section.
+  function bodyHtml(override) {
+    const items = list(override);
+    let h = '<p>' + esc(INTRO_TEXT) + '</p>';
+    for (let i = 0; i < items.length; i++) {
+      const c = items[i];
+      h += '<div class="cite-item" data-cite="' + esc(c.id) + '"><div class="cite-label">' + esc(c.label) + '</div>';
+      if (isEmpty(c)) {
+        h += '<div class="cite-pending">' + esc(PENDING_TEXT) + '</div>';
+      } else {
+        h += '<div class="cite-text">' + esc(plain(c)) + '</div>' +
+          '<div class="cite-row"><button type="button" data-copy="plain" data-i="' + i + '">Copy text</button>' +
+          '<button type="button" data-copy="bibtex" data-i="' + i + '">Copy BibTeX</button></div>';
+      }
+      h += '</div>';
+    }
+    return h + '<div class="cite-status" role="status"></div>';
+  }
+
+  function wireCopy(root, override) {
+    const items = list(override);
+    root.addEventListener('click', (ev) => {
+      const b = ev.target && ev.target.closest ? ev.target.closest('button[data-copy]') : null;
+      if (!b) return;
+      const c = items[Number(b.getAttribute('data-i'))];
+      if (isEmpty(c)) return;                 // the handler refuses as well as the markup
+      const text = b.getAttribute('data-copy') === 'bibtex' ? bibtex(c) : plain(c);
+      const status = root.querySelector('.cite-status');
+      copyText(text).then((ok) => {
+        if (status) status.textContent = ok ? 'Copied.' : 'Copy failed: select the text above and copy it by hand.';
+      });
+    });
+  }
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = STYLE_ID; st.textContent = CSS;
+    document.head.appendChild(st);
+  }
+
+  function open(toolName, version, override) {
+    close();
+    ensureStyle();
+    const back = document.createElement('div');
+    back.className = 'cite-back';
+    const box = document.createElement('div');
+    box.className = 'cite-box';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'How to cite');
+    const tut = tutorialUrl(toolName);
+    box.innerHTML = '<h2>' + esc(toolName) + '</h2><div class="cite-ver">' + esc(version) + '</div>' +
+      bodyHtml(override) +
+      (tut ? '<p class="cite-tut"><a href="' + esc(tut) + '" target="_blank" rel="noopener">' + esc(TUTORIAL_TEXT) + '</a></p>' : '') +
+      '<button type="button" class="cite-close">Close</button>';
+    back.appendChild(box);
+    wireCopy(box, override);
+    box.querySelector('.cite-close').addEventListener('click', close);
+    back.addEventListener('click', (ev) => { if (ev.target === back) close(); });
+    const keyHandler = (ev) => { if (ev.key === 'Escape') { ev.stopPropagation(); close(); } };
+    document.addEventListener('keydown', keyHandler, true);
+    document.body.appendChild(back);
+    openState = { back: back, keyHandler: keyHandler, returnTo: document.activeElement };
+    const closeBtn = box.querySelector('.cite-close');
+    try { closeBtn.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  return {
+    TUTORIAL_BASE: TUTORIAL_BASE, TUTORIAL_TOOLS: TUTORIAL_TOOLS, tutorialUrl: tutorialUrl,
+    CITATIONS: CITATIONS, PENDING_TEXT: PENDING_TEXT, INTRO_TEXT: INTRO_TEXT,
+    isEmpty: isEmpty, plain: plain, bibtex: bibtex, dois: dois, exportLine: exportLine,
+    bodyHtml: bodyHtml, wireCopy: wireCopy, ensureStyle: ensureStyle,
+    open: open, close: close, isOpen: () => !!openState
+  };
+})();
+//@@OPAL-SHARED:END citation@@
 
 // ══════════════════════════════════════════════════════════════
 // ES2017 COMPATIBILITY HELPERS
@@ -930,7 +1293,7 @@ const CPK={
   Pt:{c:'#D0D0E0',r:1.36,m:195.08,n:'Platinum'},Au:{c:'#FFD123',r:1.36,m:196.97,n:'Gold'},
   Hg:{c:'#B8B8D0',r:1.32,m:200.59,n:'Mercury'},
 };
-const BOHR=0.529177;
+const BOHR=0.529177210903;
 
 // Bond type symbol map (order → display symbol)
 const BSYM={0:'···',1:'–',1.5:'–·',2:'=',2.5:'=·',3:'≡'};
@@ -1005,7 +1368,7 @@ let atoms=[],bonds=[],vectors=[],measurements=[];
 // no longer matches — after every callback boundary, including error paths.
 let _loadGeneration = 0;
 let elColors={},elRadii={};
-let S={ballScale:.5,bondRadius:.12,bondTol:1.20,autoMulti:true,detectAromatic:true,
+let S={ballScale:.5,bondRadius:.12,bondTol:1.20,autoMulti:true,detectAromatic:true,findHbonds:false,
        vecScale:1,arrRadius:.08,bgColor:'#12172a',fog:false,showLabels:false,
        shininess:20,specularStr:18,ambientStr:.7,
        outlineThick:.055,outlineColor:'#111111',outlineAuto:false,
@@ -1022,6 +1385,7 @@ let renderer,scene,camera,controls;
 let molGrp,vecGrp,spinGrp,ambLight,sunLight,fillLight,lightRig;
 let raycaster,mouse={x:0,y:0};
 let aMeshes={},bMeshes={},aObjs={},outlineMeshes={};
+let hbMeshes={},hbonds=[];   // detected H-bond layer: drawn groups, and the contacts found
 let clickDown=null;
 
 // Motion / GIF
@@ -1317,6 +1681,78 @@ function resize(){
 }
 
 // ══════════════════════════════════════════════════════════════
+// SIDE PANELS  —  hide and show
+// A panel is either fully visible or fully hidden. The state is two attributes on
+// the root element (absent means visible), set before first paint on a phone by
+// the head block. Not stored, not part of a saved view. The viewport takes the
+// freed width, so the molecule is never covered.
+// ══════════════════════════════════════════════════════════════
+const PANEL_GLYPH = { left: ['‹', '›'], right: ['›', '‹'] };   // [open, hidden]
+let _panelTimer = null;   // the one pending settle; cleared before a new one is set
+
+function _panelIsHidden(side){
+  return document.documentElement.getAttribute('data-' + side + '-panel') === 'hidden';
+}
+function _panelPhone(){
+  return !!(window.OPAL_PANELS && window.OPAL_PANELS.phone === true);
+}
+function _panelReducedMotion(){
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+function _panelSyncHandle(side){
+  const h = document.getElementById('handle-' + side);
+  if (!h) return;
+  const hidden = _panelIsHidden(side);
+  h.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+  h.setAttribute('aria-label', (hidden ? 'Show ' : 'Hide ') + side + ' panel');
+  h.querySelector('.panel-handle-tab').textContent = PANEL_GLYPH[side][hidden ? 1 : 0];
+}
+// The tool's own resize routine and one render request, once per toggle. The
+// window resize event never fires for a panel change, and the tool renders on demand.
+function _panelSettle(){
+  if (_panelTimer !== null) { clearTimeout(_panelTimer); _panelTimer = null; }
+  resize();
+  requestRender();
+}
+function togglePanel(side){
+  const root = document.documentElement;
+  const other = side === 'left' ? 'right' : 'left';
+  if (_panelIsHidden(side)) {
+    root.removeAttribute('data-' + side + '-panel');
+    // On a phone one panel at a time: both slide in the same step, one resize follows.
+    if (_panelPhone() && !_panelIsHidden(other)) root.setAttribute('data-' + other + '-panel', 'hidden');
+  } else {
+    root.setAttribute('data-' + side + '-panel', 'hidden');
+  }
+  _panelSyncHandle('left');
+  _panelSyncHandle('right');
+  if (_panelTimer !== null) { clearTimeout(_panelTimer); _panelTimer = null; }
+  if (_panelReducedMotion()) { _panelSettle(); return; }
+  // transitionend settles earlier; this timer covers the case where no transition runs.
+  _panelTimer = setTimeout(_panelSettle, 250);
+}
+function initPanels(){
+  ['left', 'right'].forEach(side => {
+    const h = document.getElementById('handle-' + side);
+    // A tap on the handle must reach nothing under it: no rotation, no pick.
+    ['pointerdown', 'mousedown', 'touchstart', 'click'].forEach(type => {
+      h.addEventListener(type, e => { e.stopPropagation(); });
+    });
+    h.addEventListener('click', () => togglePanel(side));
+    _panelSyncHandle(side);
+  });
+  document.getElementById('main').addEventListener('transitionend', e => {
+    if (e.propertyName === 'width' && e.target.classList && e.target.classList.contains('panel') && _panelTimer !== null) _panelSettle();
+  });
+}
+
+// The back link carries the theme fragment, so light stays light on the launcher.
+function syncBackLink(){
+  const a = document.getElementById('back-link');
+  if (a) a.setAttribute('href', 'index.html' + (window.OPAL_THEME ? window.OPAL_THEME.fragment() : ''));
+}
+
+// ══════════════════════════════════════════════════════════════
 // MATERIAL  — MeshPhongMaterial respecting shininess/specular
 // ══════════════════════════════════════════════════════════════
 function makeMat(hexInt){
@@ -1376,11 +1812,13 @@ function parseMolden(txt){
 
 // ══════════════════════════════════════════════════════════════
 // OPENMOLCAS HDF5 — GEOMETRY ONLY
-// The reader below is the pure-JS HDF5 reader carried by OrbViz and GeoDiff,
-// extracted from orbviz.html by brace-matching, not retyped. Provenance and
-// units are recorded in docs/molviz_summary.md. It is the one in-tool reader:
+// The reader below is the pure-JS HDF5 reader shared by all four tools that read
+// HDF5, pasted between the shared-code marker lines from its one canonical source
+// (tools/_shared/hdf5_reader.js in the workshop); never edit the pasted copy.
+// Provenance and units are recorded in docs/molviz_summary.md. It is the one in-tool reader:
 // no WebAssembly HDF5 library is used anywhere in OPAL.
 // ══════════════════════════════════════════════════════════════
+//@@OPAL-SHARED:BEGIN hdf5_reader@@
 const HDF5 = (() => {
   function u8(dv,p){return dv.getUint8(p)}
   function u16(dv,p){return dv.getUint16(p,true)}
@@ -1402,6 +1840,31 @@ const HDF5 = (() => {
     }
     return s;
   }
+  // Unsigned little-endian integer of n bytes (n up to 8), as a Number
+  function readN(dv,p,n){
+    let v=0;
+    for(let i=n-1;i>=0;i--) v=v*256+dv.getUint8(p+i);
+    return v;
+  }
+  // Floor of log2 for a positive integer, by halving (exact for every size used here)
+  function ilog2(n){
+    let l=0;
+    while(n>=2){n=Math.floor(n/2);l++;}
+    return l;
+  }
+  // Bytes needed to store any value up to n, the way the HDF5 library sizes its count fields
+  function limEnc(n){return Math.floor((ilog2(n)+8)/8);}
+  // An undefined address is all ones, which u64 returns as a Number far above any file size
+  function isUndef(a){return a>=9007199254740992;}
+  function hasSig(bytes,p,s){
+    for(let i=0;i<s.length;i++) if(bytes[p+i]!==s.charCodeAt(i)) return false;
+    return true;
+  }
+  // Every feature the reader does not read is refused with this one wording; the tools
+  // turn it into a sentence for the user (h5ErrorMessage)
+  function refuse(what){throw new Error('Unsupported HDF5 feature: '+what);}
+  // A structure that is not where the file says it is: damage, or a feature not recognised
+  function unexpected(what){throw new Error('Unexpected HDF5 structure: '+what);}
 
   // Decompress zlib (0x78…) bytes using native DecompressionStream
   async function decompressZlib(compressed){
@@ -1411,8 +1874,10 @@ const HDF5 = (() => {
         const ds=new DecompressionStream(fmt);
         const wr=ds.writable.getWriter();
         const rd=ds.readable.getReader();
-        wr.write(compressed);
-        wr.close();
+        // data that is not zlib rejects both promises as well as the read below, which is
+        // what reports it; without these the rejections surface as unhandled
+        wr.write(compressed).catch(()=>{});
+        wr.close().catch(()=>{});
         const chunks=[];
         while(true){
           const{done,value}=await rd.read();
@@ -1429,9 +1894,85 @@ const HDF5 = (() => {
     throw new Error('Decompression failed');
   }
 
-  // Parse an HDF5 v1 object header; returns {shape, dtypeClass, dtypeSize, layoutClass,
-  //   dataAddr, dataBtreeAddr, ndims, chunkDims, compactData}
+  const FILTER_NAMES={2:'shuffle',3:'Fletcher-32 checksum',4:'SZIP',5:'N-bit',6:'scale-offset'};
+
+  // One header message that both object header versions use: dataspace (1), datatype (3),
+  // data layout (8), filter pipeline (11). md is the position of the message body. Fills result.
+  function readMessage(dv, bytes, result, mt, md){
+    if(mt===1){// Dataspace
+      const dsv=u8(dv,md);
+      if(dsv!==1&&dsv!==2) refuse('dataspace message version '+dsv);
+      const nd=u8(dv,md+1);
+      const dims=[];
+      // version 1 has four more reserved bytes before the dimensions than version 2
+      for(let d=0;d<nd;d++) dims.push(u64(dv,(dsv===1?md+8:md+4)+d*8));
+      result.shape=dims;
+    }
+    else if(mt===3){// Datatype
+      result.dtypeClass=u8(dv,md)&0x0F;
+      result.dtypeSize=u32(dv,md+4);
+    }
+    else if(mt===8){// Data Layout
+      const layoutVer=u8(dv,md);
+      const lc=u8(dv,md+1);
+      result.layoutClass=lc;
+      if(lc===0){// Compact
+        const sz=u16(dv,md+2);
+        result.compactData=bytes.slice(md+4,md+4+sz);
+      }else if(lc===1){// Contiguous
+        // v3: ver+class+addr(8)+size(8); v1/v2: ver+reserved(7)+addr(8)+size(8)
+        result.dataAddr = layoutVer>=3 ? u64(dv,md+2) : u64(dv,md+8);
+        result.dataSize = layoutVer>=3 ? u64(dv,md+10): u64(dv,md+16);
+      }else if(lc===2){// Chunked
+        if(layoutVer>=4) refuse('chunked storage of layout version '+layoutVer+' (the chunk indexes of the newest file format)');
+        if(layoutVer>=3){
+          // v3 layout: ver(1)+class(1)+ndims(1)+addr(8)+chunkDims(ndims×4)
+          const nd=u8(dv,md+2);
+          result.dataBtreeAddr=u64(dv,md+3);
+          result.ndims=nd;
+          const cd=[];
+          for(let d=0;d<nd;d++) cd.push(u32(dv,md+11+d*4));
+          result.chunkDims=cd;
+        }else{
+          // v1/v2 layout: ver(1)+reserved(3)+ndims(1)+reserved(3)+addr(8)+chunkDims(ndims×4)
+          const nd=u8(dv,md+4);
+          result.dataBtreeAddr=u64(dv,md+8);
+          result.ndims=nd;
+          const cd=[];
+          for(let d=0;d<nd;d++) cd.push(u32(dv,md+16+d*4));
+          result.chunkDims=cd;
+        }
+      }else{
+        refuse('dataset layout class '+lc+' (virtual datasets)');
+      }
+    }
+    else if(mt===0x0B){// Filter pipeline: only the filter ids are kept
+      const fv=u8(dv,md), nf=u8(dv,md+1);
+      if(fv!==1&&fv!==2) refuse('filter pipeline message version '+fv);
+      const ids=[];
+      let p=fv===1?md+8:md+2;
+      for(let i=0;i<nf;i++){
+        const id=u16(dv,p);
+        ids.push(id);
+        if(fv===1){
+          // id(2)+name length(2)+flags(2)+value count(2)+name padded to 8+values(4 each)+4 if odd
+          const nl=u16(dv,p+2), nv=u16(dv,p+6);
+          p+=8+Math.ceil(nl/8)*8+nv*4+(nv%2?4:0);
+        }else{
+          // id(2)+[name length(2) when id>=256]+flags(2)+value count(2)+[name]+values(4 each)
+          const named=id>=256;
+          const nl=named?u16(dv,p+2):0, nv=u16(dv,p+(named?6:4));
+          p+=(named?8:6)+nl+nv*4;
+        }
+      }
+      result.filters=ids;
+    }
+  }
+
+  // Parse an object header, version 1 or 2; returns {shape, dtypeClass, dtypeSize, layoutClass,
+  //   dataAddr, dataBtreeAddr, ndims, chunkDims, compactData, filters}
   function parseObjHeader(dv, bytes, addr){
+    if(hasSig(bytes,addr,'OHDR')) return parseObjHeader2(dv,bytes,addr);
     const ver=u8(dv,addr);
     if(ver!==1) throw new Error(`Unsupported obj header version ${ver} at ${addr}`);
     const headerDataSize=u32(dv,addr+8);
@@ -1448,47 +1989,7 @@ const HDF5 = (() => {
         const md=pos+8;
         if(mt===0) break;
 
-        if(mt===1){// Dataspace
-          const nd=u8(dv,md+1);
-          const dims=[];
-          for(let d=0;d<nd;d++) dims.push(u64(dv,md+8+d*8));
-          result.shape=dims;
-        }
-        else if(mt===3){// Datatype
-          result.dtypeClass=u8(dv,md)&0x0F;
-          result.dtypeSize=u32(dv,md+4);
-        }
-        else if(mt===8){// Data Layout
-          const layoutVer=u8(dv,md);
-          const lc=u8(dv,md+1);
-          result.layoutClass=lc;
-          if(lc===0){// Compact
-            const sz=u16(dv,md+2);
-            result.compactData=bytes.slice(md+4,md+4+sz);
-          }else if(lc===1){// Contiguous
-            // v3: ver+class+addr(8)+size(8); v1/v2: ver+reserved(7)+addr(8)+size(8)
-            result.dataAddr = layoutVer>=3 ? u64(dv,md+2) : u64(dv,md+8);
-            result.dataSize = layoutVer>=3 ? u64(dv,md+10): u64(dv,md+16);
-          }else if(lc===2){// Chunked
-            if(layoutVer>=3){
-              // v3 layout: ver(1)+class(1)+ndims(1)+addr(8)+chunkDims(ndims×4)
-              const nd=u8(dv,md+2);
-              result.dataBtreeAddr=u64(dv,md+3);
-              result.ndims=nd;
-              const cd=[];
-              for(let d=0;d<nd;d++) cd.push(u32(dv,md+11+d*4));
-              result.chunkDims=cd;
-            }else{
-              // v1/v2 layout: ver(1)+reserved(3)+ndims(1)+reserved(3)+addr(8)+chunkDims(ndims×4)
-              const nd=u8(dv,md+4);
-              result.dataBtreeAddr=u64(dv,md+8);
-              result.ndims=nd;
-              const cd=[];
-              for(let d=0;d<nd;d++) cd.push(u32(dv,md+16+d*4));
-              result.chunkDims=cd;
-            }
-          }
-        }
+        if(mt===1||mt===3||mt===8||mt===0x0B) readMessage(dv,bytes,result,mt,md);
         else if(mt===0x10){// Object Header Continuation (type 16)
           const cAddr=u64(dv,md), cLen=u64(dv,md+8);
           parseMessages(cAddr, cLen);
@@ -1500,6 +2001,221 @@ const HDF5 = (() => {
 
     parseMessages(addr+16, headerDataSize);
     return result;
+  }
+
+  // A link message (hard links only) at pos → {name, addr}
+  function parseLink(dv, bytes, pos){
+    if(u8(dv,pos)!==1) refuse('link message version '+u8(dv,pos));
+    const f=u8(dv,pos+1);
+    let p=pos+2, type=0;
+    if(f&0x08){type=u8(dv,p);p++;}      // link type present
+    if(f&0x04) p+=8;                    // creation order
+    if(f&0x10) p++;                     // name character set
+    const nb=1<<(f&3);
+    const nl=readN(dv,p,nb); p+=nb;
+    let name='';
+    for(let i=0;i<nl;i++) name+=String.fromCharCode(bytes[p+i]);
+    p+=nl;
+    if(type!==0) refuse(type===1?'soft links':type===64?'external links':'links of type '+type);
+    return{name,addr:u64(dv,p)};
+  }
+
+  // Parse a version 2 object header; returns what parseObjHeader returns, plus
+  //   links (compact link messages), linkInfo and attrInfo ({heap, btree} of dense storage),
+  //   attrs (positions of compact attribute messages)
+  function parseObjHeader2(dv, bytes, addr){
+    const fl=u8(dv,addr+5);
+    if(fl&0x04) refuse('object headers that track creation order');
+    let p=addr+6;
+    if(fl&0x20) p+=16;                  // four time stamps
+    if(fl&0x10) p+=4;                   // phase change values
+    const nb=1<<(fl&3);
+    const size=readN(dv,p,nb); p+=nb;   // length of the messages in the first block
+    const result={links:[],attrs:[],linkInfo:null,attrInfo:null};
+
+    // messages: type(1)+size(2)+flags(1)+body; checksums are not verified
+    function block(start,end){
+      let q=start;
+      while(q+4<=end){
+        const mt=u8(dv,q), ms=u16(dv,q+1), mf=u8(dv,q+3), md=q+4;
+        q=md+ms;
+        if(q>end) break;
+        if(mt===0) continue;
+        if((mf&2)&&(mt===1||mt===3||mt===6||mt===8||mt===0x0B||mt===0x0C)) refuse('shared object header messages');
+        if(mt===1||mt===3||mt===8||mt===0x0B) readMessage(dv,bytes,result,mt,md);
+        else if(mt===0x10){// continuation: offset(8)+length(8), the block has 'OCHK' and a checksum
+          const ca=u64(dv,md), cl=u64(dv,md+8);
+          if(!hasSig(bytes,ca,'OCHK')) unexpected('object header continuation block');
+          block(ca+4,ca+cl-4);
+        }
+        else if(mt===2||mt===0x15){// link info (2), attribute info (21): ver(1)+flags(1)+heap(8)+name index(8)
+          if(u8(dv,md)!==0) refuse('message version '+u8(dv,md));
+          if(u8(dv,md+1)&3) refuse('groups or attributes that track creation order');
+          const info={heap:u64(dv,md+2),btree:u64(dv,md+10)};
+          if(mt===2) result.linkInfo=info; else result.attrInfo=info;
+        }
+        else if(mt===6) result.links.push(parseLink(dv,bytes,md));
+        else if(mt===0x0C) result.attrs.push(md);
+      }
+    }
+    block(p,p+size);
+    return result;
+  }
+
+  // Fractal heap header at addr → the numbers that locate a managed object
+  function parseFheap(dv, bytes, addr){
+    if(!hasSig(bytes,addr,'FRHP')) unexpected('fractal heap header');
+    if(u16(dv,addr+7)>0) refuse('fractal heaps with filtered data');
+    const h={
+      idLen:u16(dv,addr+5), width:u16(dv,addr+110),
+      startBlock:u64(dv,addr+112), maxDirect:u64(dv,addr+120), heapBits:u16(dv,addr+128),
+      rootAddr:u64(dv,addr+132), curRows:u16(dv,addr+140)};
+    h.offBytes=Math.ceil(h.heapBits/8);
+    h.directRows=ilog2(h.maxDirect/h.startBlock)+2;   // rows of the doubling table that hold direct blocks
+    return h;
+  }
+
+  // Where in the file the object a managed heap ID (at idPos) names starts. The ID is
+  // flags(1)+offset in the heap+length; the length is not needed, the object describes itself.
+  function heapObject(dv, bytes, h, idPos){
+    const b0=u8(dv,idPos);
+    if((b0>>6)!==0) refuse('fractal heap IDs of version '+(b0>>6));
+    if(((b0>>4)&3)!==0) refuse('fractal heap objects stored as huge or tiny objects');
+    const off=readN(dv,idPos+1,h.offBytes);
+    const W=h.width, B0=h.startBlock;
+    let blockAddr, base;
+    if(h.curRows===0){// the root is one direct block
+      blockAddr=h.rootAddr; base=0;
+    }else{
+      // Row 0 holds W blocks of size B0; row r>=1 holds W blocks of size B0*2^(r-1). Rows up to
+      // directRows hold direct blocks. The later rows hold indirect blocks (a heap of more than
+      // 500 000 bytes); no file measured or written for the tests needs them, so they are refused.
+      const ia=h.rootAddr;
+      if(!hasSig(bytes,ia,'FHIB')) unexpected('fractal heap indirect block');
+      let row=0, start=0, bs=B0;
+      if(off>=W*B0){
+        row=1; start=W*B0;
+        while(off>=start*2){start*=2;row++;}
+        bs=start/W;
+      }
+      const col=Math.floor((off-start)/bs);
+      if(row>=h.curRows) unexpected('fractal heap offset outside its blocks');
+      if(row>=h.directRows) refuse('fractal heaps with indirect blocks inside indirect blocks');
+      // block header: signature(4)+version(1)+heap address(8)+block offset, then the entries
+      blockAddr=u64(dv,ia+13+h.offBytes+(row*W+col)*8);
+      base=start+col*bs;
+    }
+    if(!hasSig(bytes,blockAddr,'FHDB')) unexpected('fractal heap direct block');
+    return{pos:blockAddr+(off-base)};
+  }
+
+  // Positions of every record of a version 2 B-tree whose records have type wantType
+  // (5: link names, 8: attribute names); the order is not the order of the names
+  function btreeRecords(dv, bytes, addr, wantType){
+    if(!hasSig(bytes,addr,'BTHD')) unexpected('version 2 B-tree header');
+    const type=u8(dv,addr+5), nodeSize=u32(dv,addr+6), recSize=u16(dv,addr+10), depth=u16(dv,addr+12);
+    if(type!==wantType) refuse('version 2 B-trees of record type '+type);
+    const root=u64(dv,addr+16), nRoot=u16(dv,addr+24);
+    const out=[];
+    if(nRoot===0) return out;
+    // Size of the record-count fields, as the library derives it from the node size
+    const maxN=[Math.floor((nodeSize-10)/recSize)];
+    const nBytes=limEnc(maxN[0]);
+    const cum=[maxN[0]], cumB=[0];
+    for(let u=1;u<=depth;u++){
+      const ptr=8+nBytes+(u>1?cumB[u-1]:0);
+      maxN.push(Math.floor((nodeSize-10-ptr)/(recSize+ptr)));
+      cum.push((maxN[u]+1)*cum[u-1]+maxN[u]);
+      cumB.push(limEnc(cum[u]));
+    }
+    function walk(node,nrec,d){
+      if(!hasSig(bytes,node,d===0?'BTLF':'BTIN')) unexpected('version 2 B-tree node');
+      for(let i=0;i<nrec;i++) out.push(node+6+i*recSize);
+      if(d===0) return;
+      // child pointers: address(8)+record count(nBytes)+[total count when the children are internal]
+      const ptr=8+nBytes+(d>1?cumB[d-1]:0);
+      let p=node+6+nrec*recSize;
+      for(let i=0;i<=nrec;i++){
+        walk(u64(dv,p),readN(dv,p+8,nBytes),d-1);
+        p+=ptr;
+      }
+    }
+    walk(root,nRoot,depth);
+    return out;
+  }
+
+  // Value of a scalar integer or float attribute whose datatype message is at dtPos and
+  // whose data starts at dataOff; null for any other kind
+  function attrValue(dv, dtPos, dataOff){
+    const dtClass = u8(dv, dtPos) & 0x0F;
+    const dtSize  = u32(dv, dtPos+4);
+    if(dtClass === 0 || dtClass === 9){ // integer
+      return dtSize === 4 ? dv.getInt32(dataOff, true) :
+             dtSize === 8 ? (dv.getInt32(dataOff+4, true)*4294967296
+                             + dv.getUint32(dataOff, true)) :
+             dv.getInt16(dataOff, true);
+    } else if(dtClass === 1){ // float
+      return dtSize === 8 ? dv.getFloat64(dataOff, true) : dv.getFloat32(dataOff, true);
+    }
+    return null;
+  }
+
+  // A version 3 attribute message body at md → {name, value}; null for other versions
+  function attrAt(dv, bytes, md){
+    if(u8(dv,md)!==3) return null;
+    if(u8(dv,md+1)&3) refuse('shared attribute datatypes or dataspaces');
+    // ver(1)+flags(1)+name size(2)+datatype size(2)+dataspace size(2)+name encoding(1), then
+    // the name, datatype, dataspace and data with no padding between them
+    const nameLen=u16(dv,md+2), dtLen=u16(dv,md+4), dsLen=u16(dv,md+6);
+    let name='';
+    for(let i=0;i<nameLen-1;i++) name+=String.fromCharCode(bytes[md+9+i]);
+    const dtPos=md+9+nameLen;
+    return{name,value:attrValue(dv,dtPos,dtPos+dtLen+dsLen)};
+  }
+
+  // Everything the reader needs from a file with superblock version 2 or 3: the root group's
+  // links as a Map<name, objHeaderAddr> (sorted by name, like the old symbol table) and a
+  // root attribute reader
+  function openV2(dv, bytes){
+    // superblock: sig(8)+ver(1)+offset size(1)+length size(1)+flags(1)+base(8)+extension(8)+end(8)+root(8)
+    if(u8(dv,9)!==8||u8(dv,10)!==8) refuse('offsets of '+u8(dv,9)+' bytes and lengths of '+u8(dv,10)+' bytes (only 8 and 8 are read)');
+    if(u64(dv,12)!==0) refuse('a file with a user block');
+    const root=parseObjHeader2(dv,bytes,u64(dv,36));
+    const links=root.links.slice();
+    if(root.linkInfo&&!isUndef(root.linkInfo.heap)){// dense: fractal heap plus name index
+      const heap=parseFheap(dv,bytes,root.linkInfo.heap);
+      for(const rp of btreeRecords(dv,bytes,root.linkInfo.btree,5)){
+        // record: name hash(4)+heap ID
+        const o=heapObject(dv,bytes,heap,rp+4);
+        links.push(parseLink(dv,bytes,o.pos));
+      }
+    }
+    links.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
+    const registry=new Map();
+    for(const l of links) registry.set(l.name,l.addr);
+
+    let attrPos=null;
+    function attrPositions(){
+      if(attrPos) return attrPos;
+      attrPos=root.attrs.slice();
+      if(root.attrInfo&&!isUndef(root.attrInfo.heap)){
+        const heap=parseFheap(dv,bytes,root.attrInfo.heap);
+        for(const rp of btreeRecords(dv,bytes,root.attrInfo.btree,8)){
+          // record: heap ID, message flags(1), creation order(4), name hash(4)
+          if(u8(dv,rp+heap.idLen)&2) refuse('shared attribute messages');
+          attrPos.push(heapObject(dv,bytes,heap,rp).pos);
+        }
+      }
+      return attrPos;
+    }
+    function readAttr(name){
+      for(const p of attrPositions()){
+        const a=attrAt(dv,bytes,p);
+        if(a&&a.name===name) return a.value;
+      }
+      return null;
+    }
+    return{registry,readAttr};
   }
 
   // Parse a group B-tree (type 0) + heap to enumerate datasets
@@ -1578,58 +2294,86 @@ const HDF5 = (() => {
 
     // Verify HDF5 signature
     const SIG=[0x89,0x48,0x44,0x46,0x0d,0x0a,0x1a,0x0a];
-    for(let i=0;i<8;i++) if(bytes[i]!==SIG[i]) throw new Error('Not a valid HDF5 file');
+    for(let i=0;i<8;i++) if(bytes[i]!==SIG[i]){
+      // a user block pushes the superblock to 512, 1024, 2048 ... bytes
+      for(let ub=512;ub+8<=bytes.length;ub*=2){
+        let hit=true;
+        for(let j=0;j<8;j++) if(bytes[ub+j]!==SIG[j]){hit=false;break;}
+        if(hit) refuse('a user block before the superblock');
+      }
+      throw new Error('Not a valid HDF5 file');
+    }
 
     const sbVer=u8(dv,8);
-    if(sbVer!==0) throw new Error('Unsupported HDF5 superblock version '+sbVer);
+    if(sbVer!==0&&sbVer!==2&&sbVer!==3) throw new Error('Unsupported HDF5 superblock version '+sbVer);
 
-    // Root group object header address (in v0 superblock: sym table entry at byte 56)
-    // sym table entry: link_name_offset(8) + obj_header_addr(8) + cache_type(4) + reserved(4) + scratch(16)
-    const rootObjAddr=u64(dv,56+8);
+    // Superblock version 0: the root group is a symbol table (version 1 object headers).
+    // Returns the dataset registry and the root object header address.
+    function rootV0(){
+      // Root group object header address (in v0 superblock: sym table entry at byte 56)
+      // sym table entry: link_name_offset(8) + obj_header_addr(8) + cache_type(4) + reserved(4) + scratch(16)
+      const rootObjAddr=u64(dv,56+8);
 
-    // Root group B-tree and heap addresses come from the superblock scratch pad
-    // (superblock bytes 56–79: root sym table entry)
-    // When cache_type==1 (group), bytes 80–95 are the scratch pad:
-    //   bytes 80–87: B-tree address
-    //   bytes 88–95: local heap address
-    // This is more reliable than hunting through nested continuation blocks.
-    const rootCacheType = u32(dv, 72);
-    let btAddr, heapAddr;
-    if(rootCacheType===1){
-      btAddr   = u64(dv, 80);
-      heapAddr = u64(dv, 88);
-    }else{
-      // Fallback: scan root object header + all continuation blocks for Symbol Table msg (0x11)
-      btAddr=0; heapAddr=0;
-      function scanForSymTable(start, len){
-        let pos=start, end=start+len;
-        while(pos<end-8){
-          const mt=u16(dv,pos), ms=u16(dv,pos+2), md=pos+8;
-          if(mt===0x11){btAddr=u64(dv,md); heapAddr=u64(dv,md+8); return true;}
-          if(mt===0x10&&ms===16){// continuation
-            const ca=u64(dv,md), cl=u64(dv,md+8);
-            if(scanForSymTable(ca,cl)) return true;
+      // Root group B-tree and heap addresses come from the superblock scratch pad
+      // (superblock bytes 56–79: root sym table entry)
+      // When cache_type==1 (group), bytes 80–95 are the scratch pad:
+      //   bytes 80–87: B-tree address
+      //   bytes 88–95: local heap address
+      // This is more reliable than hunting through nested continuation blocks.
+      const rootCacheType = u32(dv, 72);
+      let btAddr, heapAddr;
+      if(rootCacheType===1){
+        btAddr   = u64(dv, 80);
+        heapAddr = u64(dv, 88);
+      }else{
+        // Fallback: scan root object header + all continuation blocks for Symbol Table msg (0x11)
+        btAddr=0; heapAddr=0;
+        function scanForSymTable(start, len){
+          let pos=start, end=start+len;
+          while(pos<end-8){
+            const mt=u16(dv,pos), ms=u16(dv,pos+2), md=pos+8;
+            if(mt===0x11){btAddr=u64(dv,md); heapAddr=u64(dv,md+8); return true;}
+            if(mt===0x10&&ms===16){// continuation
+              const ca=u64(dv,md), cl=u64(dv,md+8);
+              if(scanForSymTable(ca,cl)) return true;
+            }
+            if(mt===0) break;
+            pos+=8+ms;
           }
-          if(mt===0) break;
-          pos+=8+ms;
+          return false;
         }
-        return false;
+        const hdrDataSize=u32(dv,rootObjAddr+8);
+        scanForSymTable(rootObjAddr+16, hdrDataSize);
       }
-      const hdrDataSize=u32(dv,rootObjAddr+8);
-      scanForSymTable(rootObjAddr+16, hdrDataSize);
+      if(!btAddr||bytes[btAddr]!==0x54) throw new Error('Root B-tree not found (addr='+btAddr+')');
+      if(!heapAddr||bytes[heapAddr]!==0x48) throw new Error('Root heap not found (addr='+heapAddr+')');
+
+      // Parse local heap
+      // HEAP signature at heapAddr: 'HEAP'(4)+ver(1)+reserved(3)+data_size(8)+free_offset(8)+data_start(8)
+      if(bytes[heapAddr]!==0x48||bytes[heapAddr+1]!==0x45) throw new Error('Heap signature not found');
+      const heapDataSize=u64(dv,heapAddr+8);
+      const heapDataStart=u64(dv,heapAddr+24);
+      const heapData=bytes.slice(heapDataStart,heapDataStart+heapDataSize);
+
+      // Build dataset registry
+      const registry=parseGroupBtree(dv,bytes,btAddr,heapDataStart,heapData);
+      return{registry,rootObjAddr};
     }
-    if(!btAddr||bytes[btAddr]!==0x54) throw new Error('Root B-tree not found (addr='+btAddr+')');
-    if(!heapAddr||bytes[heapAddr]!==0x48) throw new Error('Root heap not found (addr='+heapAddr+')');
 
-    // Parse local heap
-    // HEAP signature at heapAddr: 'HEAP'(4)+ver(1)+reserved(3)+data_size(8)+free_offset(8)+data_start(8)
-    if(bytes[heapAddr]!==0x48||bytes[heapAddr+1]!==0x45) throw new Error('Heap signature not found');
-    const heapDataSize=u64(dv,heapAddr+8);
-    const heapDataStart=u64(dv,heapAddr+24);
-    const heapData=bytes.slice(heapDataStart,heapDataStart+heapDataSize);
-
-    // Build dataset registry
-    const registry=parseGroupBtree(dv,bytes,btAddr,heapDataStart,heapData);
+    // Superblock version 2 or 3: version 2 object headers, links in link messages or in a
+    // fractal heap
+    let v2=null;
+    if(sbVer!==0){
+      try{ v2=openV2(dv,bytes); }
+      catch(e){
+        // a pointer past the end of the data means the file is cut short
+        if(e instanceof RangeError) unexpected('the file ends before the data it points to');
+        throw e;
+      }
+    }
+    const v0=v2?null:rootV0();
+    const registry=v2?v2.registry:v0.registry;
+    const rootObjAddr=v2?0:v0.rootObjAddr;
 
     // Read a named dataset, returning {data: TypedArray|Array, shape: number[]}
     async function readDataset(name){
@@ -1657,20 +2401,56 @@ const HDF5 = (() => {
           return 0;
         });
 
+        // Only deflate is read (filter id 1); any other filter is refused by name. A chunk
+        // the writer stored unfiltered (no pipeline, or bit 0 of its filter mask) is copied.
+        const filters=hdr.filters||[];
+        for(const id of filters) if(id!==1) refuse('the '+_nn(FILTER_NAMES[id],'filter with id '+id)+' data filter');
         const parts=await Promise.all(chunks.map(async c=>{
-          const compressed=bytes.slice(c.dataAddr,c.dataAddr+c.chunkDataSize);
-          return decompressZlib(compressed);
+          const raw=bytes.slice(c.dataAddr,c.dataAddr+c.chunkDataSize);
+          return filters.length===0||(c.filterMask&1) ? raw.buffer : decompressZlib(raw);
         }));
 
         // Calculate expected total size from shape
         let nElem=1; for(const d of shape) nElem*=d;
         const expectedBytes=nElem*ds;
 
-        // Concatenate only the needed bytes
-        let totalRaw=0; for(const p of parts) totalRaw+=p.byteLength;
-        const combined=new Uint8Array(Math.max(totalRaw,expectedBytes));
-        let off=0;
-        for(const p of parts){combined.set(new Uint8Array(p),off);off+=p.byteLength;}
+        // Scatter-write each chunk to its correct N-dimensional position in the
+        // C-order flat array.  Simple sequential concatenation is WRONG when the
+        // chunk covers multiple dataset dimensions (e.g. shape (8,8,91204) with
+        // chunk (8,8,1953)): each chunk interleaves data for all state pairs
+        // across only a slice of the AO-pair axis and must be placed element-wise.
+        const combined=new Uint8Array(expectedBytes);
+        const nd=shape.length;
+        // C-order element strides for the full dataset
+        const fst=new Array(nd); fst[nd-1]=1;
+        for(let d=nd-2;d>=0;d--) fst[d]=fst[d+1]*shape[d+1];
+        // HDF5 chunkDims has an extra trailing element (= dtype size in bytes);
+        // take only the first nd elements as the actual chunk dimensions.
+        const cdims=hdr.chunkDims&&hdr.chunkDims.length>=nd?hdr.chunkDims.slice(0,nd):shape.slice();
+        // Number of "outer" iterations = product of all chunk dims except the last
+        let nOuter=1; for(let d=0;d<nd-1;d++) nOuter*=cdims[d];
+        // C-order strides for decomposing a flat outer index into a multi-index
+        const outerCst=new Array(Math.max(nd-1,0));
+        if(nd>=2){outerCst[nd-2]=1;for(let d=nd-3;d>=0;d--) outerCst[d]=outerCst[d+1]*cdims[d+1];}
+        for(let ci=0;ci<chunks.length;ci++){
+          const c=chunks[ci]; const co=c.offsets; // dataset-space start of this chunk
+          const srcBytes=new Uint8Array(parts[ci]);
+          const lastOff=co[nd-1]||0; // offset along innermost dataset dimension
+          const lastLen=Math.min(cdims[nd-1],shape[nd-1]-lastOff); // elements to copy
+          if(lastLen<=0) continue;
+          for(let k=0;k<nOuter;k++){
+            const srcOuter=k*cdims[nd-1]; // flat start in chunk (C-order)
+            let dstOuter=lastOff; let valid=true;
+            for(let d=0;d<nd-1;d++){
+              const li=Math.floor(k/outerCst[d])%cdims[d]; // local index in dim d
+              const gi=(co[d]||0)+li; // global index in dim d
+              if(gi>=shape[d]){valid=false;break;}
+              dstOuter+=gi*fst[d];
+            }
+            if(!valid) continue;
+            combined.set(srcBytes.subarray(srcOuter*ds,(srcOuter+lastLen)*ds),dstOuter*ds);
+          }
+        }
         rawBuf=combined.buffer;
 
       }else if(hdr.layoutClass===1&&hdr.dataAddr){
@@ -1688,9 +2468,19 @@ const HDF5 = (() => {
         return{data:ds===8?new Float64Array(rawBuf):new Float32Array(rawBuf),shape};
       }else if(dc===0||dc===9){// Integer (signed or unsigned)
         if(ds===8){
-          // Return as regular Number array (avoids BigInt headaches)
-          const bi=new BigInt64Array(rawBuf);
-          return{data:Float64Array.from(bi,v=>Number(v)),shape};
+          // 64-bit signed ints, assembled from two 32-bit reads. The 64-bit typed array
+          // and DataView getter are a runtime global above the suite's Safari 14.1 floor,
+          // invisible to every parser check. Values beyond 2^53 lose precision, as with
+          // the Number conversion this replaces.
+          const _dv=new DataView(rawBuf);
+          const _n64=(rawBuf.byteLength/8)|0;
+          const _out=new Float64Array(_n64);
+          for(let _i=0;_i<_n64;_i++){
+            const _lo=_dv.getUint32(_i*8,   true);   // little-endian
+            const _hi=_dv.getInt32 (_i*8+4, true);   // signed high word
+            _out[_i]=_hi*4294967296+_lo;             // two's complement, exact to 2^53
+          }
+          return{data:_out,shape};
         }
         return{data:ds===4?new Int32Array(rawBuf):new Int16Array(rawBuf),shape};
       }else if(dc===3){// Fixed-length string
@@ -1740,15 +2530,7 @@ const HDF5 = (() => {
               const dataOff  = md + 8 + namePad + dtypePad + dspcPad;
               if(name === attrName){
                 // Read datatype to determine size/class
-                const dtClass = u8(dv, md+8+namePad) & 0x0F;
-                const dtSize  = u32(dv, md+8+namePad+4);
-                if(dtClass === 0 || dtClass === 9){ // integer
-                  found = dtSize === 4 ? dv.getInt32(dataOff, true) :
-                          dtSize === 8 ? Number(dv.getBigInt64(dataOff, true)) :
-                          dv.getInt16(dataOff, true);
-                } else if(dtClass === 1){ // float
-                  found = dtSize === 8 ? dv.getFloat64(dataOff, true) : dv.getFloat32(dataOff, true);
-                }
+                found = attrValue(dv, md+8+namePad, dataOff);
                 return;
               }
             }
@@ -1764,13 +2546,14 @@ const HDF5 = (() => {
       return found;
     }
 
-    function readRootAttr(name){ return readRootAttrInt(name); }
+    function readRootAttr(name){ return v2 ? v2.readAttr(name) : readRootAttrInt(name); }
 
     return{readDataset, readRootAttr, datasetNames:[...registry.keys()]};
   }
 
   return{open};
 })();
+//@@OPAL-SHARED:END hdf5_reader@@
 
 // Atomic-number → symbol table, extracted verbatim from geodiff.html.
 const AN2EL = {
@@ -1792,18 +2575,27 @@ const AN2EL = {
 // buffer, and a load that is superseded mid-await must not leave it reachable.
 let _h5Reader = null;
 
-// One geometry per file: the one stored in CENTER_COORDINATES. Trajectories are
-// not handled here. Coordinates are stored in Bohr and converted with MolViz's
-// own BOHR, so a molecule read from HDF5 and from Molden agrees exactly.
-// Returns { atoms, nUnique, nsym }; nUnique and nsym are null when absent.
+// One geometry per file. Trajectories are not handled here. Coordinates are
+// stored in Bohr and converted with MolViz's own BOHR, so a molecule read from
+// HDF5 and from Molden agrees exactly. With symmetry (NSYM above 1) the plain
+// centre datasets hold only the symmetry-unique atoms; the full list is stored
+// in the desymmetrized centre datasets, which are used when present.
+// Returns { atoms, fullList, nUnique, nsym }; fullList is true when the atoms
+// came from the desymmetrized datasets; nUnique and nsym are null when absent.
 async function parseMolcasHDF5Geometry(arrayBuffer){
   const h5 = await HDF5.open(arrayBuffer);
   _h5Reader = h5;
   try{
     const rd = async n => { const ds = await h5.readDataset(n); return ds ? ds.data : null; };
-    const coordsRaw = await rd('CENTER_COORDINATES');
-    const atnumsRaw = await rd('CENTER_ATNUMS');
-    const labelsRaw = await rd('CENTER_LABELS');
+    const nsymRaw = h5.readRootAttr('NSYM');
+    let pre = 'CENTER_';
+    if(nsymRaw > 1){
+      const full = await rd('DESYM_CENTER_COORDINATES');
+      if(full) pre = 'DESYM_CENTER_';
+    }
+    const coordsRaw = await rd(pre + 'COORDINATES');
+    const atnumsRaw = await rd(pre + 'ATNUMS');
+    const labelsRaw = await rd(pre + 'LABELS');
     if(!coordsRaw) throw new Error('no CENTER_COORDINATES — not an OpenMolcas geometry file');
     const natoms = atnumsRaw ? atnumsRaw.length : Math.round(coordsRaw.length/3);
     const atoms = [];
@@ -1824,6 +2616,7 @@ async function parseMolcasHDF5Geometry(arrayBuffer){
       });
     }
     return { atoms,
+             fullList: pre !== 'CENTER_',
              nUnique: h5.readRootAttr('NATOMS_UNIQUE'),
              nsym:    h5.readRootAttr('NSYM') };
   } finally {
@@ -1943,6 +2736,1058 @@ function detectBonds(atoms, options = {}) {
   }
   return bonds;
 }
+
+// ══════════════════════════════════════════════════════════════
+// HYDROGEN-BOND RECOGNITION (shared block; change it in tools/_shared, then sync)
+// ══════════════════════════════════════════════════════════════
+//@@OPAL-SHARED:BEGIN hbond@@
+const HBOND = (() => {
+  // Automatic hydrogen-bond recognition: a pure function of the atoms and the bonds
+  // the page already holds. Nothing here reads a page element or session state.
+  //
+  // The numbers are the first lines of this file and the only place to change them,
+  // then sync. Where each comes from is in the design note for this rule.
+  const HA_MAX    = 2.5;   // H...A, A in N, O, F (angstrom)
+  const HA_MAX_S  = 2.9;   // H...A, A = S
+  const DA_MAX    = 3.5;   // D...A, A in N, O, F
+  const DA_MAX_S  = 3.9;   // D...A, when the donor or the acceptor is S
+  const ANGLE_MIN = 120;   // D-H...A, degrees
+  const BONDS_MIN = 4;     // bonds on the shortest H-to-A path
+
+  const DONORS    = { N: 1, O: 1, F: 1, S: 1 };
+  const ACCEPTORS = { N: 1, O: 1, F: 1, S: 1 };
+
+  // atoms: [{ id, el, x, y, z, isGhost }]   bonds: [{ i, j, order }] with atom ids.
+  // A bond of order 0 is a drawn contact, not a covalent bond: it is left out of the
+  // bond graph. Returns [{ d, h, a, ha, da, angle }] with atom ids, in atom order.
+  // opts overrides any of the six numbers by the names above (used by the gate's
+  // controls only).
+  function find(atoms, bonds, opts) {
+    const o = opts || {};
+    const haMax = o.HA_MAX != null ? o.HA_MAX : HA_MAX;
+    const haMaxS = o.HA_MAX_S != null ? o.HA_MAX_S : HA_MAX_S;
+    const daMax = o.DA_MAX != null ? o.DA_MAX : DA_MAX;
+    const daMaxS = o.DA_MAX_S != null ? o.DA_MAX_S : DA_MAX_S;
+    const angleMin = o.ANGLE_MIN != null ? o.ANGLE_MIN : ANGLE_MIN;
+    const bondsMin = o.BONDS_MIN != null ? o.BONDS_MIN : BONDS_MIN;
+    const donors = o.DONORS || DONORS;
+
+    const byId = {};
+    for (let k = 0; k < atoms.length; k++) byId[atoms[k].id] = atoms[k];
+    const adj = {};
+    for (let k = 0; k < bonds.length; k++) {
+      const b = bonds[k];
+      if (b.order === 0) continue;
+      if (!byId[b.i] || !byId[b.j]) continue;
+      (adj[b.i] || (adj[b.i] = [])).push(b.j);
+      (adj[b.j] || (adj[b.j] = [])).push(b.i);
+    }
+    const found = [];
+    for (let k = 0; k < atoms.length; k++) {
+      const H = atoms[k];
+      if (H.el !== 'H' || H.isGhost) continue;
+      const nb = adj[H.id] || [];
+      let near = null;               // ids within fewer than bondsMin bonds of H
+      for (let n = 0; n < nb.length; n++) {
+        const D = byId[nb[n]];
+        if (D.isGhost || !donors[D.el]) continue;
+        if (near === null) {
+          near = {}; near[H.id] = 0;
+          let frontier = [H.id];
+          for (let depth = 1; depth < bondsMin && frontier.length; depth++) {
+            const next = [];
+            for (let f = 0; f < frontier.length; f++) {
+              const list = adj[frontier[f]] || [];
+              for (let m = 0; m < list.length; m++) {
+                if (near[list[m]] === undefined) { near[list[m]] = depth; next.push(list[m]); }
+              }
+            }
+            frontier = next;
+          }
+        }
+        for (let q = 0; q < atoms.length; q++) {
+          const A = atoms[q];
+          if (A.id === D.id || A.id === H.id || A.isGhost || !ACCEPTORS[A.el]) continue;
+          const hx = A.x - H.x, hy = A.y - H.y, hz = A.z - H.z;
+          const ha = Math.sqrt(hx * hx + hy * hy + hz * hz);
+          const dx = A.x - D.x, dy = A.y - D.y, dz = A.z - D.z;
+          const da = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          const sulphur = A.el === 'S' || D.el === 'S';
+          if (ha > (A.el === 'S' ? haMaxS : haMax) || da > (sulphur ? daMaxS : daMax)) continue;
+          const vx = D.x - H.x, vy = D.y - H.y, vz = D.z - H.z;
+          const lv = Math.sqrt(vx * vx + vy * vy + vz * vz);
+          if (!(lv > 0) || !(ha > 0)) continue;
+          let c = (vx * hx + vy * hy + vz * hz) / (lv * ha);
+          c = Math.min(1, Math.max(-1, c));
+          const angle = Math.acos(c) * 180 / Math.PI;
+          if (angle < angleMin) continue;
+          if (near[A.id] !== undefined) continue;     // fewer than bondsMin bonds apart
+          found.push({ d: D.id, h: H.id, a: A.id, ha: ha, da: da, angle: angle });
+        }
+      }
+    }
+    return found;
+  }
+
+  return {
+    HA_MAX: HA_MAX, HA_MAX_S: HA_MAX_S, DA_MAX: DA_MAX, DA_MAX_S: DA_MAX_S,
+    ANGLE_MIN: ANGLE_MIN, BONDS_MIN: BONDS_MIN, find: find
+  };
+})();
+//@@OPAL-SHARED:END hbond@@
+
+//@@OPAL-SHARED:BEGIN vector_svg@@
+const VECSVG = (() => {
+  // Vector SVG of a ball-and-stick picture: a pure function of the atoms, the bonds and the
+  // camera matrices the page hands over. It reads no page element, keeps nothing between calls,
+  // and never touches the screen. The picture is rebuilt from the arrays, so it is an
+  // approximation of what the canvas shows (gradients stand in for the lighting, a painter's
+  // order for the per-pixel depth), never a conversion of it.
+  //
+  // input: {
+  //   view, proj      16 numbers each, column-major: the camera's inverse world matrix and its
+  //                   projection matrix (the page's own, so the picture matches the screen)
+  //   width, height   the viewport the matrices were made for, in CSS pixels
+  //   atoms           [{ id, x, y, z, r, color, outline, opacity, group }]  world coordinates and radius, '#rrggbb'; outline is
+  //                   optional, the width of the atom's edge line in world units (else the preset's pixels); opacity
+  //                   (0..1, default 1) makes the whole atom, edge line included, translucent; group is an optional
+  //                   label written on the element, for a picture that holds several structures. Ids must be unique
+  //                   over all structures. The sort is by depth over all of them at once, and at equal depth the
+  //                   input order decides, later on top
+  //   bonds           [{ i, j, order, radius, color, ring, outline, opacity, group }]  atom ids; radius in world units;
+  //                   opacity and group as for an atom (the two halves and all their lines are translucent as one). A bond is
+  //                   drawn as two halves, each from its atom's centre to the bond's middle, in the painter's
+  //                   order just before its own atom (the atom covers the end), with butt caps and a width that is a
+  //                   share of the projected bond diameter at the half's depth; outline is optional, the outline's
+  //                   extra width on each side in world units (else the preset's pixels), drawn as two lines along
+  //                   the long sides. Order 0 is
+  //                   a drawn contact (dashed), 1.5 an aromatic bond (one solid and one dashed line),
+  //                   2 and 3 parallel lines, 2.5 two solid lines and a dashed one between them; any
+  //                   other order is one solid line. ring is optional, { x, y, z } in world units: a point
+  //                   inside the ring the aromatic bond belongs to, so the dashed line goes on that side
+  //   vdw             optional, true for a space-filling picture: the atoms are spheres of the radius given in r
+  //                   (the van der Waals radius, set by the page), bonds are not drawn, and every atom that
+  //                   overlaps another is a polygon, so that neighbouring atoms meet exactly along the curve
+  //                   where their spheres cross. An atom that overlaps nothing stays a circle. See vdwShapes
+  //   vdwSamples      optional { outline, seam }: points sampled on each sphere's horizon and on each crossing
+  //                   circle (default 48 and 32)
+  //   background      '#rrggbb', or null for a transparent picture
+  //   fogColor       colour the depth fog fades toward (the page background)
+  //   preset          'default' | 'flat' | 'print'
+  //   overrides       any preset parameter by name; a value of 0 is a value (see param)
+  //   annotations     optional list drawn on top of the molecule, in the same screen pixels as the
+  //                   projection (the page projects its own points through the same camera). Kinds:
+  //                     { kind: 'text', x, y, text, size, color, anchor, weight, middle, halo, haloWidth, haloOpacity }
+  //                       real text; halo (a colour) is drawn as a stroked copy beneath the fill;
+  //                       middle centres the text vertically on y; anchor is start, middle or end
+  //                     { kind: 'line', x1, y1, x2, y2, color, width, dash, opacity }   dash is 'on off' or null
+  //                     { kind: 'circle', x, y, r, fill, stroke, strokeWidth, dash, opacity, strokeOpacity }
+  //                     { kind: 'arc', cx, cy, r, a0, a1, color, width, dash }   the short arc from a0 to a1 (radians)
+  //   surfaces        optional list of orbital or density surfaces, drawn as the outline of each lobe among the atoms:
+  //                   [{ id, group, color, printColor, opacity, tris }]  tris is nine numbers per triangle (a
+  //                   Float32Array or an array), in world units, the whole mesh of the surface; color is '#rrggbb';
+  //                   opacity is 0..1 (default 1; 0 is a value). The block that outlines lobes (the global named
+  //                   by the lobes block of the shared code) must be present in the page, and the builder throws
+  //                   a plain message when it is not. With no surfaces, or an empty list, nothing changes in the
+  //                   output. A lobe is one path per sheet: a translucent lobe has a far and a near sheet with
+  //                   the same outline, an opaque one (see lobeOpaque) its near sheet only; the atoms and the
+  //                   halves of the bonds are put before, between or after the sheets by where they lie in
+  //                   depth, and the order is a topological one over those constraints. Not combined with vdw
+  //   lobeOptions     optional, any limit of the lobes block by name (weld, minTris, minArea, cell, sub, simplify,
+  //                   maxSide, maxTris); a value of 0 is a value
+  //   title, desc     text for the two descriptive elements
+  //   margin          pixels of padding around the drawing (default 8)
+  // }
+  // Returns { svg, atoms, bonds, texts, annotations, skipped, polygons, hidden, lobes, loops, smallDropped,
+  // behindDropped, cellCapped, openLobes, orderBroken }: the text, the numbers of
+  // atom and bond elements written, of text and of all annotation elements, and how many items were left
+  // out because they lie behind the camera; with vdw, polygons is the number of atoms drawn as a polygon
+  // (included in atoms) and hidden the number of atoms left out because other spheres cover them entirely
+  // (always 0 without vdw). With surfaces: lobes is the number of lobe paths written (two per translucent
+  // lobe), loops the number of closed outlines in them, smallDropped and behindDropped the lobes left out for
+  // being too small or lying behind the camera, cellCapped the lobes traced on a coarser cell than asked,
+  // openLobes the lobes cut by the edge of their grid, orderBroken the order constraints that had to be given
+  // up because they formed a cycle (all 0 without surfaces).
+  // Throws an Error with a plain message when there is nothing to draw.
+
+  // The three looks. Every number is a plain parameter; a page may override any of them.
+  // atomStroke and bondOutline are in pixels; fog is the largest share (0..1) of the fog
+  // colour mixed into the farthest atom; null for a colour means "derive it".
+  // The bond geometry is four named factors, kept together here (the values below were chosen
+  // by reading the first device report, not by measuring the screen; a page may override them):
+  //   bondWidth    the width of a single bond as a share of the bond's projected diameter. A flat
+  //                band reads heavier than the shaded cylinder on the screen, so it is below 1.
+  //   laneWidth    the width of each line of a multiple bond as a share of bondWidth
+  //   laneGap      the clear space between neighbouring lines of a multiple bond (edge to edge),
+  //                as a share of the bond's projected diameter
+  //   bondOverlap  how far, in pixels, each half runs past the bond's middle into the other half,
+  //                so that no seam shows between the halves with anti-aliasing (solid lines only)
+  //   dashInset    where the dashed inner line of an aromatic bond starts and stops, as a share of
+  //                the bond's projected length measured from each atom's centre
+  // A bond is never drawn wider than the smaller of its two atoms' projected diameters.
+  // The lobes of the surfaces (see the surfaces input) have five parameters of their own:
+  //   lobeStroke       the width of a lobe's outline in pixels (0 draws none)
+  //   lobeStrokeColor  its colour; null means a darker shade of the lobe's own colour
+  //   lobeMinOpacity   the least opacity a lobe is written with (a faint lobe stays visible on paper); a lobe
+  //                    whose opacity is exactly 0 stays at 0
+  //   lobePrint        true: a lobe takes the surface's printColor, when it has one, instead of its colour
+  //   lobeOpaque       a lobe whose opacity is this or more is drawn with its near sheet only
+  const PRESETS = {
+    'default': { gradient: true,  fog: 0.5, highlight: 0.55, shade: 0.4, atomStroke: 0.8, atomStrokeColor: null,
+                 bondOutline: 1, bondColor: null, bondOutlineColor: null, bondWidth: 0.6, laneWidth: 0.7, laneGap: 0.45,
+                 bondOverlap: 1, dashInset: 0.25, background: null,
+                 lobeStroke: 1, lobeStrokeColor: null, lobeMinOpacity: 0, lobePrint: false, lobeOpaque: 0.99 },
+    'flat':   { gradient: false, fog: 0,   highlight: 0,    shade: 0,   atomStroke: 1,   atomStrokeColor: null,
+                 bondOutline: 1, bondColor: null, bondOutlineColor: null, bondWidth: 0.6, laneWidth: 0.7, laneGap: 0.45,
+                 bondOverlap: 1, dashInset: 0.25, background: null,
+                 lobeStroke: 0, lobeStrokeColor: null, lobeMinOpacity: 0, lobePrint: false, lobeOpaque: 0.99 },
+    'print':   { gradient: false, fog: 0,   highlight: 0,    shade: 0,   atomStroke: 1.5, atomStrokeColor: '#000000',
+                 bondOutline: 1.5, bondColor: '#8a8a8a', bondOutlineColor: '#000000', bondWidth: 0.6, laneWidth: 0.7, laneGap: 0.45,
+                 bondOverlap: 1, dashInset: 0.25, background: '#ffffff',
+                 lobeStroke: 1.5, lobeStrokeColor: '#000000', lobeMinOpacity: 0.35, lobePrint: true, lobeOpaque: 0.99 }
+  };
+  const NAMES = ['default', 'flat', 'print'];
+
+  // The lines of a bond, as [position, dashed]: the position is the side of the bond in steps of
+  // one line width plus one gap, so neighbouring lines are always one step apart; an order not
+  // listed here is one solid line, and order 0 one dashed line.
+  const LANES = {
+    '1.5': [[-0.5, false], [0.5, true]],
+    '2':   [[-0.5, false], [0.5, false]],
+    '2.5': [[-1, false], [1, false], [0, true]],
+    '3':   [[-1, false], [0, false], [1, false]]
+  };
+  function lanesOf(order) {
+    if (order === 0) return [[0, true]];
+    return LANES[String(order)] || [[0, false]];
+  }
+
+  // A value of 0 (or false, or '') is legitimate in a preset: only a missing value falls back.
+  function nn(v, d) { return (v === null || v === undefined) ? d : v; }
+
+  function hex(c) {
+    let s = String(c).replace('#', '');
+    if (s.length === 3) s = s[0] + s[0] + s[1] + s[1] + s[2] + s[2];
+    const n = parseInt(s, 16);
+    return isNaN(n) ? [128, 128, 128] : [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function toHex(rgb) {
+    let s = '#';
+    for (let k = 0; k < 3; k++) {
+      const v = Math.max(0, Math.min(255, Math.round(rgb[k])));
+      s += (v < 16 ? '0' : '') + v.toString(16);
+    }
+    return s;
+  }
+  // t of the way from colour a to colour b
+  function mix(a, b, t) {
+    const x = hex(a), y = hex(b);
+    return toHex([x[0] + (y[0] - x[0]) * t, x[1] + (y[1] - x[1]) * t, x[2] + (y[2] - x[2]) * t]);
+  }
+  // the optional group label and the optional opacity of an atom or a bond (a value of 1 or a missing one writes nothing)
+  function groupAttr(o) { return (o.group !== undefined && o.group !== null) ? ' data-group="' + esc(o.group) + '"' : ''; }
+  function opacityAttr(o) { return (o.opacity !== undefined && o.opacity !== null && o.opacity < 1) ? ' opacity="' + f2(o.opacity) + '"' : ''; }
+  function f2(v) { const r = Math.round(v * 100) / 100; return String(r === 0 ? 0 : r); }
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // The monospace stack the annotations use; the width of a glyph is taken as 0.62 of the size
+  // when the frame must hold a text (an estimate: the real width depends on the font).
+  const FONT = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+  const GLYPH = 0.62;
+
+  // The short arc from angle a0 to a1 (radians) about (cx, cy): path text, and the end points
+  function arcPath(cx, cy, r, a0, a1) {
+    let delta = a1 - a0;
+    while (delta < -Math.PI) delta += 2 * Math.PI;
+    while (delta > Math.PI) delta -= 2 * Math.PI;
+    const a2 = a0 + delta;
+    const x1 = cx + r * Math.cos(a0), y1 = cy + r * Math.sin(a0);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    return 'M ' + f2(x1) + ' ' + f2(y1) + ' A ' + f2(r) + ' ' + f2(r) + ' 0 0 ' + (delta > 0 ? 1 : 0) + ' ' + f2(x2) + ' ' + f2(y2);
+  }
+
+  // One annotation as SVG text, and the box it needs: [x0, y0, x1, y1]
+  function annotation(a) {
+    const op = (v, name) => (v !== undefined && v !== null && v < 1) ? ' ' + name + '="' + f2(v) + '"' : '';
+    const dash = d => d ? ' stroke-dasharray="' + esc(d) + '"' : '';
+    if (a.kind === 'line') {
+      const w = nn(a.width, 1);
+      return { s: '<line class="ann" x1="' + f2(a.x1) + '" y1="' + f2(a.y1) + '" x2="' + f2(a.x2) + '" y2="' + f2(a.y2) +
+        '" stroke="' + a.color + '" stroke-width="' + f2(w) + '"' + dash(a.dash) + op(a.opacity, 'stroke-opacity') + '/>',
+        box: [Math.min(a.x1, a.x2) - w / 2, Math.min(a.y1, a.y2) - w / 2, Math.max(a.x1, a.x2) + w / 2, Math.max(a.y1, a.y2) + w / 2] };
+    }
+    if (a.kind === 'circle') {
+      const sw = a.stroke ? nn(a.strokeWidth, 1) : 0;
+      return { s: '<circle class="ann" cx="' + f2(a.x) + '" cy="' + f2(a.y) + '" r="' + f2(a.r) + '" fill="' + (a.fill || 'none') + '"' +
+        (a.stroke ? ' stroke="' + a.stroke + '" stroke-width="' + f2(sw) + '"' + dash(a.dash) + op(a.strokeOpacity, 'stroke-opacity') : '') +
+        op(a.opacity, 'opacity') + '/>',
+        box: [a.x - a.r - sw / 2, a.y - a.r - sw / 2, a.x + a.r + sw / 2, a.y + a.r + sw / 2] };
+    }
+    if (a.kind === 'arc') {
+      const w = nn(a.width, 1);
+      return { s: '<path class="ann" d="' + arcPath(a.cx, a.cy, a.r, a.a0, a.a1) + '" fill="none" stroke="' + a.color +
+        '" stroke-width="' + f2(w) + '"' + dash(a.dash) + '/>',
+        box: [a.cx - a.r - w / 2, a.cy - a.r - w / 2, a.cx + a.r + w / 2, a.cy + a.r + w / 2] };
+    }
+    if (a.kind === 'text') {
+      const size = a.size, txt = String(a.text);
+      const anchor = a.anchor || 'start';
+      const y = a.middle ? a.y + size * 0.35 : a.y;
+      const hw = nn(a.haloWidth, 3);
+      const common = ' x="' + f2(a.x) + '" y="' + f2(y) + '" font-family="' + FONT + '" font-size="' + f2(size) + '"' +
+        (a.weight ? ' font-weight="' + esc(a.weight) + '"' : '') + ' text-anchor="' + anchor + '"';
+      let s = '<g class="annotation-text">';
+      if (a.halo && hw > 0) {
+        s += '<text class="halo"' + common + ' fill="none" stroke="' + a.halo + '" stroke-width="' + f2(hw) +
+          '" stroke-linejoin="round"' + op(a.haloOpacity, 'stroke-opacity') + '>' + esc(txt) + '</text>';
+      }
+      s += '<text class="fill"' + common + ' fill="' + a.color + '">' + esc(txt) + '</text></g>';
+      const wd = txt.length * size * GLYPH, e = (a.halo && hw > 0) ? hw / 2 : 0;
+      const left = anchor === 'middle' ? a.x - wd / 2 : (anchor === 'end' ? a.x - wd : a.x);
+      return { s: s, box: [left - e, y - size * 0.8 - e, left + wd + e, y + size * 0.25 + e] };
+    }
+    throw new Error('unknown annotation kind: ' + a.kind);
+  }
+
+  // The 2-D convex hull of a list of [x, y] points (monotone chain), counter-clockwise on a y-up page
+  function hull2(pts) {
+    const p = pts.slice().sort((a, b) => (a[0] - b[0]) || (a[1] - b[1]));
+    const u = [];
+    for (let k = 0; k < p.length; k++) if (!u.length || u[u.length - 1][0] !== p[k][0] || u[u.length - 1][1] !== p[k][1]) u.push(p[k]);
+    if (u.length < 3) return u;
+    const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [];
+    for (let k = 0; k < u.length; k++) {
+      while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], u[k]) <= 0) lo.pop();
+      lo.push(u[k]);
+    }
+    const up = [];
+    for (let k = u.length - 1; k >= 0; k--) {
+      while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], u[k]) <= 0) up.pop();
+      up.push(u[k]);
+    }
+    lo.pop(); up.pop();
+    return lo.concat(up);
+  }
+
+  // Two unit vectors perpendicular to the unit vector n and to each other
+  function basisOf(n) {
+    const h = Math.abs(n[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+    let e1 = [n[1] * h[2] - n[2] * h[1], n[2] * h[0] - n[0] * h[2], n[0] * h[1] - n[1] * h[0]];
+    const l = Math.sqrt(e1[0] * e1[0] + e1[1] * e1[1] + e1[2] * e1[2]);
+    e1 = [e1[0] / l, e1[1] / l, e1[2] / l];
+    const e2 = [n[1] * e1[2] - n[2] * e1[1], n[2] * e1[0] - n[0] * e1[2], n[0] * e1[1] - n[1] * e1[0]];
+    return [e1, e2];
+  }
+
+  // The points of a circle (given by at(angle) -> [x, y, z]) that pass the test seen(point), appended to out:
+  // n evenly spaced samples, and, wherever the test changes between two neighbouring samples, the point on the
+  // passing side where it changes, found by halving the interval, so that a visible arc ends where it really ends
+  function sampleCircle(at, seen, n, out) {
+    const step = 2 * Math.PI / n, flag = [];
+    for (let m = 0; m < n; m++) {
+      const p = at(m * step);
+      flag.push(seen(p));
+      if (flag[m]) out.push(p);
+    }
+    for (let m = 0; m < n; m++) {
+      const m2 = (m + 1) % n;
+      if (flag[m] === flag[m2]) continue;
+      let lo = m * step, hi = lo + step;       // lo has the flag of sample m, hi the other one
+      for (let it = 0; it < 30; it++) {
+        const mid = (lo + hi) / 2;
+        if (seen(at(mid)) === flag[m]) lo = mid; else hi = mid;
+      }
+      out.push(at(flag[m] ? lo : hi));
+    }
+  }
+
+  // Space-filling silhouettes. Every sphere that overlaps another gets one polygon: the 2-D convex hull of
+  // the points of its outline that can be seen, and of the points of its crossing circles with its
+  // neighbours that can be seen. A crossing circle is computed once per pair, so the two atoms share
+  // exactly the same points and meet with no gap and no overlap along it. The test is made in 3-D, along the
+  // ray from the camera, so it holds under perspective as well as for a parallel view:
+  //   - a sphere's outline is its horizon, the circle of points where the ray from the eye just touches it
+  //     (for a perspective camera this circle is not centred on the sphere and is smaller than its
+  //     great circle; it projects to an ellipse), not a circle perpendicular to the view axis;
+  //   - a point is hidden when the ray from it toward the eye runs through the inside of any other sphere,
+  //     which covers both "inside another sphere" and "behind another sphere";
+  //   - a point of a crossing circle must also face the eye on both of its spheres;
+  //   - the painter's order of the polygons is by the power of the eye with respect to each sphere (the
+  //     squared distance to its centre minus its squared radius, larger first): the plane in which two
+  //     spheres cross is where their powers are equal, so for every overlapping pair the sphere on the
+  //     eye's side of that plane, whose polygon is bounded by the seam, is drawn last. For a parallel view
+  //     the key is the position along the viewing direction.
+  // Only spheres that overlap the one being tested are looked at, found through a grid of cells twice the
+  // largest radius wide, so the work grows with the number of atoms and not with its square. Points hidden
+  // by a sphere that touches nothing here are left in: that sphere is nearer and is drawn afterwards.
+  // atomList items need .a {id, x, y, z, r}. Returns { shapes: id -> { pts, R } or { hidden: true },
+  // key: id -> painter's key, cells, pairs } for atoms that overlap another sphere.
+  function vdwShapes(atomList, cam, project, nOut, nSeam) {
+    const n = atomList.length;
+    const shapes = {}, key = {};
+    let rmax = 0;
+    for (let k = 0; k < n; k++) if (atomList[k].a.r > rmax) rmax = atomList[k].a.r;
+    const S = atomList.map(it => ({ x: it.a.x, y: it.a.y, z: it.a.z, r: it.a.r }));
+    for (let k = 0; k < n; k++) {
+      const s = S[k];
+      key[atomList[k].a.id] = cam.ortho ? -2 * (cam.dir[0] * s.x + cam.dir[1] * s.y + cam.dir[2] * s.z)
+        : (cam.eye[0] - s.x) * (cam.eye[0] - s.x) + (cam.eye[1] - s.y) * (cam.eye[1] - s.y) + (cam.eye[2] - s.z) * (cam.eye[2] - s.z) - s.r * s.r;
+    }
+    if (!(rmax > 0) || n < 2) return { shapes: shapes, key: key, cells: 0, pairs: 0 };
+    const cell = 2 * rmax, epsT = 1e-7 * rmax;
+    const grid = new Map();
+    const cid = [];
+    for (let k = 0; k < n; k++) {
+      const c = [Math.floor(S[k].x / cell), Math.floor(S[k].y / cell), Math.floor(S[k].z / cell)];
+      cid.push(c);
+      const g = c[0] + ',' + c[1] + ',' + c[2];
+      if (!grid.has(g)) grid.set(g, []);
+      grid.get(g).push(k);
+    }
+    const nb = [];
+    for (let k = 0; k < n; k++) nb.push([]);
+    let pairs = 0;
+    for (let k = 0; k < n; k++) {
+      const c = cid[k];
+      for (let ix = c[0] - 1; ix <= c[0] + 1; ix++) for (let iy = c[1] - 1; iy <= c[1] + 1; iy++) for (let iz = c[2] - 1; iz <= c[2] + 1; iz++) {
+        const lst = grid.get(ix + ',' + iy + ',' + iz);
+        if (!lst) continue;
+        for (let m = 0; m < lst.length; m++) {
+          const j = lst[m];
+          if (j <= k) continue;
+          const dx = S[j].x - S[k].x, dy = S[j].y - S[k].y, dz = S[j].z - S[k].z;
+          const rr = S[k].r + S[j].r;
+          if (S[k].r > 0 && S[j].r > 0 && dx * dx + dy * dy + dz * dz < rr * rr) { nb[k].push(j); nb[j].push(k); pairs++; }
+        }
+      }
+    }
+    // is the point hidden: does the ray from it toward the eye run through any of the spheres in cand
+    // (other than the two the point lies on)?
+    function hidden(px, py, pz, cand, ia, ib) {
+      let ux, uy, uz, L;
+      if (cam.ortho) { ux = cam.dir[0]; uy = cam.dir[1]; uz = cam.dir[2]; L = Infinity; }
+      else {
+        const dx = cam.eye[0] - px, dy = cam.eye[1] - py, dz = cam.eye[2] - pz;
+        L = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (L < 1e-12) return true;
+        ux = dx / L; uy = dy / L; uz = dz / L;
+      }
+      for (let m = 0; m < cand.length; m++) {
+        const k = cand[m];
+        if (k === ia || k === ib) continue;
+        const s = S[k];
+        const qx = px - s.x, qy = py - s.y, qz = pz - s.z;
+        const b = ux * qx + uy * qy + uz * qz;
+        const disc = b * b - (qx * qx + qy * qy + qz * qz - s.r * s.r);
+        if (disc <= 0) continue;
+        const sq = Math.sqrt(disc);
+        if (Math.min(-b + sq, L) - Math.max(-b - sq, 0) > epsT) return true;
+      }
+      return false;
+    }
+    const facing = (px, py, pz, s) => {
+      let ux, uy, uz;
+      if (cam.ortho) { ux = cam.dir[0]; uy = cam.dir[1]; uz = cam.dir[2]; }
+      else { ux = cam.eye[0] - px; uy = cam.eye[1] - py; uz = cam.eye[2] - pz; const l = Math.sqrt(ux * ux + uy * uy + uz * uz) || 1; ux /= l; uy /= l; uz /= l; }
+      return ux * (px - s.x) + uy * (py - s.y) + uz * (pz - s.z) >= -1e-9 * s.r;
+    };
+    const kept = [];                  // per atom: 3-D points that can be seen
+    for (let k = 0; k < n; k++) kept.push([]);
+    // the outline of every sphere that overlaps another
+    for (let k = 0; k < n; k++) {
+      if (!nb[k].length) continue;
+      const s = S[k];
+      let ux, uy, uz, cx = s.x, cy = s.y, cz = s.z, rho = s.r;
+      if (cam.ortho) { ux = cam.dir[0]; uy = cam.dir[1]; uz = cam.dir[2]; }
+      else {
+        const vx = cam.eye[0] - s.x, vy = cam.eye[1] - s.y, vz = cam.eye[2] - s.z;
+        const D = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        if (D <= s.r * (1 + 1e-9)) continue;           // the eye is inside the sphere: nothing to see
+        ux = vx / D; uy = vy / D; uz = vz / D;
+        const sh = s.r * s.r / D;
+        cx += ux * sh; cy += uy * sh; cz += uz * sh;
+        rho = s.r * Math.sqrt(1 - s.r * s.r / (D * D));
+      }
+      const bs = basisOf([ux, uy, uz]);
+      const at = th => {
+        const c = Math.cos(th) * rho, sn = Math.sin(th) * rho;
+        return [cx + c * bs[0][0] + sn * bs[1][0], cy + c * bs[0][1] + sn * bs[1][1], cz + c * bs[0][2] + sn * bs[1][2]];
+      };
+      sampleCircle(at, p => !hidden(p[0], p[1], p[2], nb[k], k, -1), nOut, kept[k]);
+    }
+    // the crossing circle of every overlapping pair, once, for both atoms
+    for (let i = 0; i < n; i++) {
+      for (let q = 0; q < nb[i].length; q++) {
+        const j = nb[i][q];
+        if (j <= i) continue;
+        const a = S[i], b = S[j];
+        const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z, d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (!(d > Math.abs(a.r - b.r) + 1e-12) || !(d > 1e-12)) continue;      // one sphere lies inside the other
+        const t = (d * d + a.r * a.r - b.r * b.r) / (2 * d);
+        const rho = Math.sqrt(Math.max(0, a.r * a.r - t * t));
+        const nx = dx / d, ny = dy / d, nz = dz / d;
+        const cx = a.x + nx * t, cy = a.y + ny * t, cz = a.z + nz * t;
+        const bs = basisOf([nx, ny, nz]);
+        const cand = nb[i].concat(nb[j]);
+        const at = th => {
+          const c = Math.cos(th) * rho, sn = Math.sin(th) * rho;
+          return [cx + c * bs[0][0] + sn * bs[1][0], cy + c * bs[0][1] + sn * bs[1][1], cz + c * bs[0][2] + sn * bs[1][2]];
+        };
+        const seen = [];
+        sampleCircle(at, p => facing(p[0], p[1], p[2], a) && facing(p[0], p[1], p[2], b) && !hidden(p[0], p[1], p[2], cand, i, j), nSeam, seen);
+        for (let m = 0; m < seen.length; m++) { kept[i].push(seen[m]); kept[j].push(seen[m]); }
+      }
+    }
+    for (let k = 0; k < n; k++) {
+      if (!nb[k].length) continue;
+      const pts2 = [];
+      for (let m = 0; m < kept[k].length; m++) {
+        const p = project(kept[k][m][0], kept[k][m][1], kept[k][m][2]);
+        if (p) pts2.push([p.x, p.y]);
+      }
+      const h = hull2(pts2);
+      const id = atomList[k].a.id;
+      if (h.length < 3) { shapes[id] = { hidden: true }; continue; }
+      let R = 0;
+      for (let m = 0; m < h.length; m++) { const e = Math.hypot(h[m][0] - atomList[k].x, h[m][1] - atomList[k].y); if (e > R) R = e; }
+      shapes[id] = { pts: h, R: R };
+    }
+    return { shapes: shapes, key: key, cells: grid.size, pairs: pairs };
+  }
+
+  // ── lobes among the atoms ────────────────────────────────────────────────
+  // The order of a picture with surfaces is a topological order over constraints "this before that"
+  // between atoms, bond halves and the sheets of lobes. Nodes are numbered by their place in the plain
+  // depth order, and among the nodes that may go next the lowest number goes first, so with no
+  // constraint the plain order is kept. When the constraints form a cycle no order satisfies them all:
+  // the constraint on the cycle between the two nodes whose depths differ least is given up, and counted.
+  // edges: [[u, v], ...]; key: the depth of each node. Returns { order, broken }.
+  function topoOrder(n, edges, key) {
+    const E = [], out = [], inc = [], seen = new Set();
+    for (let k = 0; k < n; k++) { out.push([]); inc.push([]); }
+    const indeg = new Int32Array(n);
+    edges.forEach(e => {
+      const u = e[0], v = e[1];
+      if (u === v) return;
+      const id = u * n + v;
+      if (seen.has(id)) return;
+      seen.add(id);
+      E.push({ u: u, v: v, live: true });
+      out[u].push(E.length - 1); inc[v].push(E.length - 1);
+      indeg[v]++;
+    });
+    // a binary heap of node numbers, the lowest first
+    const heap = [];
+    const push = x => {
+      let i = heap.length; heap.push(x);
+      while (i > 0) { const p = (i - 1) >> 1; if (heap[p] <= heap[i]) break; const t = heap[p]; heap[p] = heap[i]; heap[i] = t; i = p; }
+    };
+    const pop = () => {
+      const top = heap[0], last = heap.pop();
+      if (heap.length) {
+        heap[0] = last;
+        let i = 0;
+        for (;;) {
+          const l = 2 * i + 1, r = l + 1;
+          let m = i;
+          if (l < heap.length && heap[l] < heap[m]) m = l;
+          if (r < heap.length && heap[r] < heap[m]) m = r;
+          if (m === i) break;
+          const t = heap[m]; heap[m] = heap[i]; heap[i] = t; i = m;
+        }
+      }
+      return top;
+    };
+    for (let k = 0; k < n; k++) if (indeg[k] === 0) push(k);
+    const done = new Uint8Array(n), order = [];
+    let broken = 0;
+    while (order.length < n) {
+      if (!heap.length) {
+        // every node left waits for another: walk back along waiting edges to a cycle
+        let x = 0;
+        while (done[x]) x++;
+        const at = new Map(), path = [];
+        for (;;) {
+          if (at.has(x)) break;
+          at.set(x, path.length); path.push(x);
+          let p = -1;
+          for (let q = 0; q < inc[x].length; q++) { const e = E[inc[x][q]]; if (e.live && !done[e.u]) { p = e.u; break; } }
+          x = p;
+        }
+        // the cycle is path[at.get(x) ..], each node waiting for the one after it in the list
+        const cyc = path.slice(at.get(x));
+        let best = null, bd = Infinity;
+        for (let q = 0; q < cyc.length; q++) {
+          const v = cyc[q], u = cyc[(q + 1) % cyc.length];
+          for (let m = 0; m < inc[v].length; m++) {
+            const e = E[inc[v][m]];
+            if (e.live && e.u === u) { const dd = Math.abs(key[u] - key[v]); if (dd < bd) { bd = dd; best = e; } }
+          }
+        }
+        best.live = false; indeg[best.v]--; broken++;
+        if (indeg[best.v] === 0) push(best.v);
+        continue;
+      }
+      const u = pop();
+      done[u] = 1; order.push(u);
+      out[u].forEach(ei => {
+        const e = E[ei];
+        if (!e.live) return;
+        e.live = false;
+        indeg[e.v]--;
+        if (indeg[e.v] === 0 && !done[e.v]) push(e.v);
+      });
+    }
+    return { order: order, broken: broken };
+  }
+
+  // The near and the far depth of a lobe over the page point (x, y), or null where it does not cover it
+  function lobeDepthAt(L, x, y) {
+    const g = L.sh.grid;
+    const i = Math.floor((x - g.ox) / g.cell), j = Math.floor((y - g.oy) / g.cell);
+    if (i < 0 || j < 0 || i >= g.nx || j >= g.ny) return null;
+    const near = L.sh.nearGrid[j * g.nx + i];
+    if (near === Infinity) return null;
+    return [near, L.sh.farGrid[j * g.nx + i]];
+  }
+  // Where an atom of projected centre (x, y), radius r and depth d lies against a lobe: 'behind', 'inside'
+  // (between its two sheets), 'front', or null when the atom's disc and the lobe's shadow have nothing in
+  // common. The centre decides when the lobe covers it; otherwise the ring at 0.6 of the radius is tried.
+  function lobeRelation(L, x, y, r, d, rel) {
+    const b = L.sh.box;
+    if (x + r < b[0] || x - r > b[2] || y + r < b[1] || y - r > b[3]) return null;
+    const tol = rel * d;
+    for (let k = -1; k < 8; k++) {
+      const px = k < 0 ? x : x + 0.6 * r * Math.cos(k * Math.PI / 4), py = k < 0 ? y : y + 0.6 * r * Math.sin(k * Math.PI / 4);
+      const dd = lobeDepthAt(L, px, py);
+      if (!dd) continue;
+      if (d > dd[1] + tol) return 'behind';
+      if (d < dd[0] - tol) return 'front';
+      return 'inside';
+    }
+    return null;
+  }
+  // Whether lobe A lies entirely in front of lobe B (its far sheet nearer than B's near sheet) anywhere over
+  // their common shadow, and the same for B in front of A: { a, b }. The common box is sampled on a grid of
+  // at most about 40000 points.
+  function lobePair(A, B, rel) {
+    const x0 = Math.max(A.sh.box[0], B.sh.box[0]), y0 = Math.max(A.sh.box[1], B.sh.box[1]);
+    const x1 = Math.min(A.sh.box[2], B.sh.box[2]), y1 = Math.min(A.sh.box[3], B.sh.box[3]);
+    const res = { a: false, b: false };
+    if (!(x1 > x0) || !(y1 > y0)) return res;
+    const cell = A.sh.grid.cell;
+    const step = cell * Math.max(1, Math.ceil(Math.sqrt(((x1 - x0) / cell) * ((y1 - y0) / cell) / 40000)));
+    for (let y = y0 + step / 2; y < y1; y += step) {
+      for (let x = x0 + step / 2; x < x1; x += step) {
+        const da = lobeDepthAt(A, x, y), db = lobeDepthAt(B, x, y);
+        if (!da || !db) continue;
+        const tol = rel * da[0];
+        if (da[1] < db[0] - tol) res.a = true;
+        else if (db[1] < da[0] - tol) res.b = true;
+      }
+    }
+    return res;
+  }
+  // the share of a depth that two depths may differ by and still be taken as equal
+  const LOBE_EQUAL = 1e-4;
+
+  function build(input) {
+    const preset =PRESETS[input.preset] || PRESETS['default'];
+    const ov = input.overrides || {};
+    const param = name => nn(ov[name], preset[name]);
+    const V = input.view, P = input.proj, W = input.width, H = input.height;
+    const margin = nn(input.margin, 8);
+    const half = P[5] * H / 2;                 // pixels per world unit at depth 1
+
+    // one point through the camera: screen position, the depth the sort uses, and the scale
+    function project(x, y, z) {
+      const vx = V[0] * x + V[4] * y + V[8] * z + V[12];
+      const vy = V[1] * x + V[5] * y + V[9] * z + V[13];
+      const vz = V[2] * x + V[6] * y + V[10] * z + V[14];
+      const cx = P[0] * vx + P[4] * vy + P[8] * vz + P[12];
+      const cy = P[1] * vx + P[5] * vy + P[9] * vz + P[13];
+      const cw = P[3] * vx + P[7] * vy + P[11] * vz + P[15];
+      if (!(cw > 1e-9)) return null;          // behind the camera
+      return { x: (cx / cw + 1) / 2 * W, y: (1 - cy / cw) / 2 * H, d: cw, s: half / cw };
+    }
+
+    let skipped = 0;
+    const pa = {};                              // atom id -> projected atom
+    const atomList = [];
+    for (let k = 0; k < input.atoms.length; k++) {
+      const a = input.atoms[k];
+      const p = project(a.x, a.y, a.z);
+      if (!p) { skipped++; continue; }
+      const item = { a: a, x: p.x, y: p.y, d: p.d, r: a.r * p.s, seq: k };
+      pa[a.id] = item; atomList.push(item);
+    }
+    const bondList = [];
+    const vdwOn = input.vdw === true;
+    const bondsIn = vdwOn ? [] : input.bonds;     // a space-filling picture has no bonds: they lie inside the spheres
+    for (let k = 0; k < bondsIn.length; k++) {
+      const b = bondsIn[k];
+      const p = pa[b.i], q = pa[b.j];
+      if (!p || !q) { skipped++; continue; }
+      // the middle of the bond, through the camera (a point on the projected line); the bond is
+      // drawn as two halves, each from its own atom's edge to this point
+      const mp = project((p.a.x + q.a.x) / 2, (p.a.y + q.a.y) / 2, (p.a.z + q.a.z) / 2);
+      const mx = mp ? mp.x : (p.x + q.x) / 2, my = mp ? mp.y : (p.y + q.y) / 2, md = mp ? mp.d : (p.d + q.d) / 2;
+      const d = (p.d + q.d) / 2;
+      const w = 2 * b.radius * half / d;         // the bond's projected diameter at its mean depth
+      const lanes = lanesOf(b.order);
+      const multi = lanes.length > 1;
+      const laneShare = multi ? param('laneWidth') : 1;
+      const lwBond = param('bondWidth') * laneShare * w;
+      const outBond = b.outline !== undefined && b.outline !== null ? b.outline * half / d : param('bondOutline');
+      // the widest line pair must fit inside the smaller atom: all widths shrink together if it does not
+      let maxPos = 0;
+      lanes.forEach(ln => { if (Math.abs(ln[0]) > maxPos) maxPos = Math.abs(ln[0]); });
+      const stepFull = multi ? lwBond + param('laneGap') * w : 0;
+      const extent = maxPos * stepFull + lwBond / 2 + (lwBond > 0 ? outBond : 0);
+      const rSmall = Math.min(p.r, q.r);
+      const cap = (extent > rSmall && extent > 0) ? rSmall / extent : 1;
+      const step = stepFull * cap;
+      // the screen-space perpendicular to the bond: the lines are offset after projection, never in 3-D
+      const dx = q.x - p.x, dy = q.y - p.y, len = Math.sqrt(dx * dx + dy * dy);
+      let ux = len > 1e-6 ? -dy / len : 0, uy = len > 1e-6 ? dx / len : 1;
+      // an aromatic bond: the dashed line (position +1) goes on the side of the ring point
+      if (b.order === 1.5 && b.ring) {
+        const rp = project(b.ring.x, b.ring.y, b.ring.z);
+        if (rp) {
+          const side = (rp.x - (p.x + q.x) / 2) * ux + (rp.y - (p.y + q.y) / 2) * uy;
+          if (side < 0) { ux = -ux; uy = -uy; }
+        }
+      }
+      // one half per atom. Its width follows the bond radius at the depth of the half (the mean of
+      // its atom's depth and the middle's); its lines run from the atom's centre (the atom drawn
+      // after the half covers the end, at any angle) to the middle, with butt caps. A solid line
+      // runs a little past the middle into the other half, so that no seam shows; the dashed inner
+      // line of an aromatic bond starts and stops short of both atoms.
+      const halves = [];
+      [[p, 'i'], [q, 'j']].forEach(pr => {
+        const e = pr[0];
+        const dh = (e.d + md) / 2;
+        const hw = param('bondWidth') * 2 * b.radius * half / dh * cap;
+        const lw = hw * laneShare;
+        const ow = (b.outline !== undefined && b.outline !== null ? b.outline * half / dh : param('bondOutline')) * cap;
+        const hx = mx - e.x, hy = my - e.y, hl = Math.sqrt(hx * hx + hy * hy);
+        const lines = [];
+        if (hl > 1e-6) {
+          const ex = hx / hl, ey = hy / hl;
+          const past = Math.min(param('bondOverlap'), hl);
+          lanes.forEach(ln => {
+            const o = ln[0] * step;
+            const inner = b.order === 1.5 && ln[1];
+            const t0 = inner ? param('dashInset') * len : 0;
+            if (t0 >= hl) return;
+            const t1 = ln[1] ? hl : hl + past;
+            // a dashed line is fitted so that its end at the middle lies in the centre of a gap: the
+            // pattern starts afresh in each half, so a dash there would be cut and show a seam. The
+            // line holds a whole number of (dash + gap) periods and then half a gap, with the dash
+            // length as near the nominal one as that allows.
+            let dashLen = 0;
+            if (ln[1]) {
+              const segLen = t1 - t0, nominal = Math.max(lw * 1.6, 2);
+              const periods = Math.max(0, Math.round((segLen / nominal - 1.5) / 2));
+              dashLen = segLen / (2 * periods + 1.5);
+            }
+            lines.push({ pos: ln[0], dashed: ln[1], dash: dashLen,
+              x1: e.x + ux * o + ex * t0, y1: e.y + uy * o + ey * t0,
+              x2: e.x + ux * o + ex * t1, y2: e.y + uy * o + ey * t1 });
+          });
+        }
+        halves.push({ end: pr[1], atom: e, d: e.d, dh: dh, lw: lw, ow: ow, lines: lines });
+      });
+      bondList.push({ b: b, p: p, q: q, d: d, w: w, seq: k, lanes: lanes, ux: ux, uy: uy, step: step, len: len, halves: halves });
+    }
+    if (!atomList.length) throw new Error('nothing to draw: no atom lies in front of the camera');
+
+    // surfaces: the outline of every lobe, from the mesh, through the same camera. Every array made here is a
+    // local of this call; nothing is kept for the next one.
+    const surfaces = input.surfaces || [];
+    const lobeList = [];
+    let nSmall = 0, nBehind = 0, nCapped = 0, nOpen = 0, nLoops = 0;
+    if (surfaces.length) {
+      if (vdwOn) throw new Error('surfaces cannot be drawn in the space-filling picture');
+      if (typeof VECLOBE === 'undefined') throw new Error('this page has no code that outlines lobes, so its surfaces cannot be drawn');
+      const lo = input.lobeOptions || {};
+      const lopts = Object.assign({}, lo, { depth: true });
+      let total = 0;
+      surfaces.forEach(s => { total += Math.floor(s.tris.length / 9); });
+      const cap = nn(lo.maxTris, VECLOBE.DEFAULTS.maxTris);
+      if (total > cap) throw new Error('the surfaces hold ' + total + ' triangles, more than the ' + cap + ' that a vector picture accepts');
+      surfaces.forEach((s, si) => {
+        const L = VECLOBE.lobes(s.tris, lopts);
+        for (let l = 0; l < L.count; l++) {
+          const sh = VECLOBE.shadow(s.tris, L.order.subarray(L.start[l], L.start[l + 1]), project, lopts);
+          if (sh.dropped) { if (sh.dropped === 'behind') nBehind++; else nSmall++; continue; }
+          if (sh.capped) nCapped++;
+          if (L.open[l] === 1) nOpen++;
+          nLoops += sh.loops.length;
+          // the mean depth of each sheet over the cells it covers: where the sheet goes in the plain order
+          let sn = 0, sf = 0, cn = 0;
+          for (let c = 0; c < sh.nearGrid.length; c++) if (sh.nearGrid[c] !== Infinity) { sn += sh.nearGrid[c]; sf += sh.farGrid[c]; cn++; }
+          lobeList.push({ s: s, si: si, num: l, sh: sh, near: sn / cn, far: sf / cn, op: nn(s.opacity, 1) });
+        }
+      });
+    }
+
+    // space-filling: the camera's position (or, for a parallel view, its direction) is read from the view
+    // matrix, which is a rigid motion, and the polygons are worked out
+    let vdw = null;
+    if (vdwOn) {
+      const ortho = Math.abs(P[11]) < 1e-12;
+      const cam = {
+        ortho: ortho,
+        dir: [V[2], V[6], V[10]],
+        eye: [-(V[0] * V[12] + V[1] * V[13] + V[2] * V[14]), -(V[4] * V[12] + V[5] * V[13] + V[6] * V[14]), -(V[8] * V[12] + V[9] * V[13] + V[10] * V[14])]
+      };
+      const vs = input.vdwSamples || {};
+      vdw = vdwShapes(atomList, cam, project, Math.max(8, Math.round(nn(vs.outline, 48))), Math.max(8, Math.round(nn(vs.seam, 32))));
+    }
+
+    // fog: the share of the fog colour grows with depth from the nearest to the farthest atom
+    const fogMax = param('fog');
+    let dmin = Infinity, dmax = -Infinity;
+    for (let k = 0; k < atomList.length; k++) {
+      if (atomList[k].d < dmin) dmin = atomList[k].d;
+      if (atomList[k].d > dmax) dmax = atomList[k].d;
+    }
+    const fogColor = nn(input.fogColor, '#ffffff');
+    const fogAt = d => (fogMax > 0 && dmax > dmin) ? fogMax * Math.max(0, Math.min(1, (d - dmin) / (dmax - dmin))) : 0;
+    const fogged = (c, d) => { const t = fogAt(d); return t > 0 ? mix(c, fogColor, t) : c; };
+
+    // painter's order: far first. A half of a bond has the depth of its own atom and, at equal depth,
+    // goes under it, so each half is drawn just before its atom and never over an atom behind it.
+    const items = [];
+    atomList.forEach(it => items.push({ kind: 1, it: it, d: vdwOn ? vdw.key[it.a.id] : it.d, seq: it.seq }));
+    bondList.forEach(bd => bd.halves.forEach((h, n) => items.push({ kind: 0, it: h, bd: bd, d: h.d, seq: bd.seq * 2 + n })));
+    // the sheets of the lobes: a translucent lobe has a far and a near sheet with one outline, an opaque
+    // one its near sheet only
+    const opaqueFrom = param('lobeOpaque');
+    lobeList.forEach((Lb, k) => {
+      Lb.translucent = Lb.op < opaqueFrom;
+      if (Lb.translucent) items.push({ kind: 2, lobe: Lb, sheet: 'far', d: Lb.far, seq: k * 2 });
+      items.push({ kind: 2, lobe: Lb, sheet: 'near', d: Lb.near, seq: k * 2 + 1 });
+    });
+    items.sort((u, v) => (v.d - u.d) || (u.kind - v.kind) || (u.seq - v.seq));
+    let orderBroken = 0;
+    if (lobeList.length) {
+      // constraints "u before v", by place in the plain order
+      const at = new Map();
+      items.forEach((e, i) => { if (e.kind === 1) at.set(e.it, i); });
+      const halvesOf = new Map();
+      items.forEach((e, i) => {
+        if (e.kind !== 0) return;
+        const a = e.it.atom;
+        if (!halvesOf.has(a)) halvesOf.set(a, []);
+        halvesOf.get(a).push(i);
+      });
+      const sheetAt = new Map();
+      items.forEach((e, i) => { if (e.kind === 2) sheetAt.set(e.lobe, (sheetAt.get(e.lobe) || {})); });
+      items.forEach((e, i) => { if (e.kind === 2) sheetAt.get(e.lobe)[e.sheet] = i; });
+      const edges = [];
+      // a half goes before its own atom
+      halvesOf.forEach((hs, a) => hs.forEach(h => { if (at.has(a)) edges.push([h, at.get(a)]); }));
+      lobeList.forEach(Lb => {
+        const sh = sheetAt.get(Lb);
+        Lb.first = Lb.translucent ? sh.far : sh.near; Lb.last = sh.near;
+        if (Lb.translucent) edges.push([sh.far, sh.near]);
+        atomList.forEach(it => {
+          const rel = lobeRelation(Lb, it.x, it.y, it.r, it.d, LOBE_EQUAL);
+          if (!rel) return;
+          const targets = [at.get(it)].concat(halvesOf.get(it) || []);
+          targets.forEach(t => {
+            if (Lb.translucent) {
+              if (rel === 'behind') edges.push([t, sh.far]);
+              else if (rel === 'inside') { edges.push([sh.far, t]); edges.push([t, sh.near]); }
+              else edges.push([sh.near, t]);
+            } else if (rel === 'front') edges.push([sh.near, t]);
+            else edges.push([t, sh.near]);
+          });
+        });
+      });
+      // two lobes: one whose far sheet is nearer than the other's near sheet over their common shadow goes after it
+      for (let a = 0; a < lobeList.length; a++) for (let b = a + 1; b < lobeList.length; b++) {
+        const A = lobeList[a], B = lobeList[b];
+        const r = lobePair(A, B, LOBE_EQUAL);
+        if (r.a) edges.push([B.last, A.first]);
+        if (r.b) edges.push([A.last, B.first]);
+      }
+      const t = topoOrder(items.length, edges, items.map(e => e.d));
+      orderBroken = t.broken;
+      const sorted = items.slice();
+      items.length = 0;
+      t.order.forEach(i => items.push(sorted[i]));
+    }
+
+    // bounding box of what is drawn, for the viewBox
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    const grow = (x, y, e) => {
+      if (x - e < x0) x0 = x - e; if (x + e > x1) x1 = x + e;
+      if (y - e < y0) y0 = y - e; if (y + e > y1) y1 = y + e;
+    };
+    const sw = param('atomStroke');
+    const atomSw = it => (it.a.outline !== undefined && it.a.outline !== null) ? it.a.outline * half / it.d : sw;
+    atomList.forEach(it => {
+      const shape = vdwOn ? vdw.shapes[it.a.id] : null;
+      if (shape && shape.hidden) return;
+      if (shape) shape.pts.forEach(p => grow(p[0], p[1], atomSw(it) / 2));
+      else grow(it.x, it.y, it.r + atomSw(it) / 2);
+    });
+    bondList.forEach(bd => bd.halves.forEach(h => {
+      const e = h.lw / 2 + (h.lw > 0 ? h.ow : 0);
+      h.lines.forEach(l => { grow(l.x1, l.y1, e); grow(l.x2, l.y2, e); });
+    }));
+    lobeList.forEach(Lb => { const e = param('lobeStroke') / 2; grow(Lb.sh.box[0], Lb.sh.box[1], e); grow(Lb.sh.box[2], Lb.sh.box[3], e); });
+    // annotations: the frame holds them too (a label may stand outside the molecule)
+    const annList = [];
+    let nTexts = 0;
+    (input.annotations || []).forEach(a => {
+      const r = annotation(a);
+      annList.push(r.s);
+      if (a.kind === 'text') nTexts++;
+      grow(r.box[0], r.box[1], 0); grow(r.box[2], r.box[3], 0);
+    });
+
+    const defs = [];
+    const gradId = {};
+    let gradCount = 0;
+    function gradient(color) {
+      if (gradId[color] !== undefined) return gradId[color];
+      const id = 'sph' + (gradCount++);
+      gradId[color] = id;
+      defs.push('<radialGradient id="' + id + '" cx="50%" cy="50%" r="50%" fx="35%" fy="32%">' +
+        '<stop offset="0" stop-color="' + mix(color, '#ffffff', param('highlight')) + '"/>' +
+        '<stop offset="0.55" stop-color="' + color + '"/>' +
+        '<stop offset="1" stop-color="' + mix(color, '#000000', param('shade')) + '"/></radialGradient>');
+      return id;
+    }
+
+    const body = [];
+    let nAtoms = 0, nPolygons = 0, nHidden = 0;
+    const nBonds = bondList.length;
+    const gradientOn = param('gradient');
+    const atomStrokeColor = param('atomStrokeColor');
+    const bondColor = param('bondColor');
+    const bondOutlineColor = param('bondOutlineColor');
+    let nLobes = 0;
+    const lobeStroke = param('lobeStroke'), lobeMinOp = param('lobeMinOpacity');
+    items.forEach(entry => {
+      if (entry.kind === 2) {
+        // one sheet of a lobe: one path, the outline's loops as subpaths with the even-odd rule so that a hole stays a hole;
+        // the opacity is on the fill and on the outline of the path, never on a group
+        const Lb = entry.lobe, s = Lb.s;
+        const col = (param('lobePrint') && s.printColor !== undefined && s.printColor !== null) ? s.printColor : s.color;
+        let fo = Lb.op;
+        if (fo > 0 && fo < lobeMinOp) fo = lobeMinOp;
+        const oc = param('lobeStrokeColor') !== null ? param('lobeStrokeColor') : mix(col, '#000000', 0.4);
+        let p = '<path class="lobe" data-surface="' + esc(nn(s.id, Lb.si)) + '" data-lobe="' + Lb.num + '" data-sheet="' + entry.sheet + '"' + groupAttr(s) +
+          ' d="' + VECLOBE.pathData(Lb.sh.loops, f2) + '" fill-rule="evenodd" fill="' + col + '"' + (fo < 1 ? ' fill-opacity="' + f2(fo) + '"' : '');
+        if (lobeStroke > 0) p += ' stroke="' + oc + '" stroke-width="' + f2(lobeStroke) + '" stroke-linejoin="round"' + (fo < 1 ? ' stroke-opacity="' + f2(fo) + '"' : '');
+        body.push(p + '/>');
+        nLobes++;
+        return;
+      }
+      if (entry.kind === 1) {
+        const it = entry.it;
+        const asw = atomSw(it);
+        const base = fogged(it.a.color, it.d);
+        const shape = vdwOn ? vdw.shapes[it.a.id] : null;
+        if (shape) {
+          if (shape.hidden) { nHidden++; return; }
+          // one gradient per atom, fixed in page coordinates so that it runs on across the polygon
+          let fillP = base;
+          if (gradientOn) {
+            const gid = 'sph' + (gradCount++);
+            const R = shape.R;
+            defs.push('<radialGradient id="' + gid + '" gradientUnits="userSpaceOnUse" cx="' + f2(it.x) + '" cy="' + f2(it.y) + '" r="' + f2(R) +
+              '" fx="' + f2(it.x - 0.3 * R) + '" fy="' + f2(it.y - 0.36 * R) + '">' +
+              '<stop offset="0" stop-color="' + mix(base, '#ffffff', param('highlight')) + '"/>' +
+              '<stop offset="0.55" stop-color="' + base + '"/>' +
+              '<stop offset="1" stop-color="' + mix(base, '#000000', param('shade')) + '"/></radialGradient>');
+            fillP = 'url(#' + gid + ')';
+          }
+          let sp = '<polygon class="atom-vdw" data-id="' + esc(it.a.id) + '"' + groupAttr(it.a) + ' points="' +
+            shape.pts.map(p => f2(p[0]) + ',' + f2(p[1])).join(' ') + '" fill="' + fillP + '"' + opacityAttr(it.a);
+          if (asw > 0) sp += ' stroke="' + (atomStrokeColor !== null ? atomStrokeColor : mix(base, '#000000', 0.5)) +
+            '" stroke-width="' + f2(asw) + '" stroke-linejoin="round"';
+          body.push(sp + '/>');
+          nAtoms++; nPolygons++;
+          return;
+        }
+        const fill = gradientOn ? 'url(#' + gradient(base) + ')' : base;
+        let s ='<circle class="atom" data-id="' + esc(it.a.id) + '"' + groupAttr(it.a) + ' cx="' + f2(it.x) + '" cy="' + f2(it.y) +
+          '" r="' + f2(it.r) + '" fill="' + fill + '"' + opacityAttr(it.a);
+        if (asw > 0) s += ' stroke="' + (atomStrokeColor !== null ? atomStrokeColor : mix(base, '#000000', 0.5)) +
+          '" stroke-width="' + f2(asw) + '"';
+        body.push(s + '/>');
+        nAtoms++;
+      } else {
+        const h = entry.it, b = entry.bd.b;
+        const col = fogged(bondColor !== null ? bondColor : b.color, h.dh);
+        // one line of the half, with a butt cap at each end
+        const line = (l, w, c, cls, extra) =>
+          '<line class="' + cls + '" data-lane="' + l.pos + '" x1="' + f2(l.x1) + '" y1="' + f2(l.y1) +
+          '" x2="' + f2(l.x2) + '" y2="' + f2(l.y2) + '" stroke="' + c + '" stroke-width="' + f2(w) +
+          '" stroke-linecap="butt"' + extra + '/>';
+        let g = '<g class="bond" data-i="' + esc(b.i) + '" data-j="' + esc(b.j) + '" data-end="' + h.end + '" data-order="' + esc(nn(b.order, 1)) + '"' + groupAttr(b) + opacityAttr(b) + '>';
+        // outlines of the solid lines first, so that no outline crosses a neighbouring line. An outline is
+        // two lines along the long sides of a line, never a wider line under it, so nothing is drawn across
+        // the cut where the halves meet or across the end at the atom.
+        if (h.ow > 0 && h.lw > 0) {   // a bond radius of 0 draws no outline either
+          const oc = bondOutlineColor !== null ? bondOutlineColor : mix(col, '#000000', 0.6);
+          const off = h.lw / 2 + h.ow / 2;
+          const ux = entry.bd.ux, uy = entry.bd.uy;
+          h.lines.forEach(l => {
+            if (l.dashed) return;
+            [-1, 1].forEach(sd => {
+              const sh = { pos: l.pos, x1: l.x1 + ux * off * sd, y1: l.y1 + uy * off * sd, x2: l.x2 + ux * off * sd, y2: l.y2 + uy * off * sd };
+              g += line(sh, h.ow, oc, 'outline', '');
+            });
+          });
+        }
+        h.lines.forEach(l => {
+          g += line(l, h.lw, col, 'lane', l.dashed ? ' stroke-dasharray="' + f2(l.dash) + ' ' + f2(l.dash) + '"' : '');
+        });
+        body.push(g + '</g>');
+      }
+    });
+
+    const width = x1 - x0 + 2 * margin, height = y1 - y0 + 2 * margin;
+    // an override wins, then the preset's own background (the print look is on white), then the page's
+    const bgFinal = ov.background !== undefined ? ov.background
+      : (preset.background !== null ? preset.background : nn(input.background, null));
+    const vb = f2(x0 - margin) + ' ' + f2(y0 - margin) + ' ' + f2(width) + ' ' + f2(height);
+    const out = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + f2(width) + '" height="' + f2(height) + '" viewBox="' + vb + '">',
+      '<title>' + esc(nn(input.title, 'molecule')) + '</title>',
+      '<desc>' + esc(nn(input.desc, '')) + '</desc>'
+    ];
+    if (defs.length) out.push('<defs>' + defs.join('') + '</defs>');
+    if (bgFinal) out.push('<rect id="background" x="' + f2(x0 - margin) + '" y="' + f2(y0 - margin) + '" width="' + f2(width) +
+      '" height="' + f2(height) + '" fill="' + bgFinal + '"/>');
+    out.push('<g id="molecule">');
+    for (let k = 0; k < body.length; k++) out.push(body[k]);
+    out.push('</g>');
+    if (annList.length) {
+      out.push('<g id="annotations">');
+      for (let k = 0; k < annList.length; k++) out.push(annList[k]);
+      out.push('</g>');
+    }
+    out.push('</svg>', '');
+    return { svg: out.join('\n'), atoms: nAtoms, bonds: nBonds, texts: nTexts, annotations: annList.length, skipped: skipped,
+      polygons: nPolygons, hidden: nHidden, lobes: nLobes, loops: nLoops, smallDropped: nSmall, behindDropped: nBehind,
+      cellCapped: nCapped, openLobes: nOpen, orderBroken: orderBroken };
+  }
+
+  return { build: build, PRESETS: PRESETS, NAMES: NAMES };
+})();
+//@@OPAL-SHARED:END vector_svg@@
 
 // ══════════════════════════════════════════════════════════════
 // CENTER OF MASS
@@ -2268,6 +4113,17 @@ function makeBondGroup(b){
 // the ring interior, regardless of the molecular COM position.
 // ══════════════════════════════════════════════════════════════
 function findRingCentroid(aId, bId){
+  const ringAtoms = findRingAtoms(aId, bId);
+  if(!ringAtoms) return null;
+  const n = ringAtoms.length;
+  return {
+    x: ringAtoms.reduce((s,a)=>s+a.x,0)/n,
+    y: ringAtoms.reduce((s,a)=>s+a.y,0)/n,
+    z: ringAtoms.reduce((s,a)=>s+a.z,0)/n,
+  };
+}
+// The atoms of the smallest ring that contains the bond A–B, or null (same search as above).
+function findRingAtoms(aId, bId){
   // Build adjacency list, omitting the direct A–B bond
   const adj = {};
   atoms.forEach(a => { adj[a.id] = []; });
@@ -2287,13 +4143,7 @@ function findRingCentroid(aId, bId){
       if(nb === aId && path.length >= 2){
         // Ring found: atoms are [aId, ...path]
         const ringIds   = [aId, ...path];
-        const ringAtoms = ringIds.map(id=>atoms.find(a=>a.id===id)).filter(Boolean);
-        const n = ringAtoms.length;
-        return {
-          x: ringAtoms.reduce((s,a)=>s+a.x,0)/n,
-          y: ringAtoms.reduce((s,a)=>s+a.y,0)/n,
-          z: ringAtoms.reduce((s,a)=>s+a.z,0)/n,
-        };
+        return ringIds.map(id=>atoms.find(a=>a.id===id)).filter(Boolean);
       }
       if(!path.includes(nb)){
         queue.push([nb, [...path, nb]]);
@@ -2463,7 +4313,7 @@ function disposeSession(){
   clrGrp(molGrp);
   clrGrp(vecGrp);
   // 2. JS-heap lookup tables that reference the now-disposed meshes
-  aMeshes={}; bMeshes={}; outlineMeshes={}; aObjs={};
+  aMeshes={}; bMeshes={}; outlineMeshes={}; aObjs={}; hbMeshes={}; hbonds=[];
   // 3. Derived molecule data. The HDF5 reader's closure owns the whole file
   //    buffer; dropping the reference lets a superseded read be collected.
   _h5Reader=null;
@@ -2481,6 +4331,7 @@ function disposeSession(){
   // vectors is intentionally NOT cleared: user-defined vectors (TDM arrows,
   // dipole moments) persist across geometry file loads by design.
   updateSel(); renderMeasList(); updateMeasPickHint();
+  setFileBar('');                   // the bar returns to its empty state
   requestRender();
 }
 
@@ -2489,14 +4340,34 @@ function buildMol(){
   // and this is a no-op. For in-session rebuilds (bond edits, style changes,
   // centerMolecule, alignToPrincipalAxes, applySettings, re-detection) this
   // is the only disposal that runs — do not remove.
-  clrGrp(molGrp); aMeshes={}; bMeshes={}; outlineMeshes={};
+  clrGrp(molGrp); aMeshes={}; bMeshes={}; outlineMeshes={}; hbMeshes={};
   atoms.forEach(a=>{
     const m=makeAtomMesh(a); molGrp.add(m); aMeshes[a.id]=m;
     const o=makeAtomOutlineMesh(a); if(o){molGrp.add(o);outlineMeshes[a.id]=o;}
   });
   bonds.forEach(b=>{const g=makeBondGroup(b);if(g){molGrp.add(g);bMeshes[b.id]=g;}});
+  drawHbonds();
   buildVecs(); updateInfoBar(); updateABCount(); updateCOMInfo();
   requestRender();
+}
+// The H-bond layer: separate from the bond list. Each contact is drawn as the dashed
+// order-0 bond, but is not an entry of the list, cannot be picked and is not saved
+// with it. A pair that already has a bond of any kind is drawn once, by that bond.
+function drawHbonds(){
+  Object.keys(hbMeshes).forEach(k=>{const g=hbMeshes[k];molGrp.remove(g);dispObj(g);});
+  hbMeshes={}; hbonds=[];
+  if(!S.findHbonds||!atoms.length) return;
+  const pair=(x,y)=>x<y?x+'-'+y:y+'-'+x;
+  const have={};
+  bonds.forEach(b=>{have[pair(b.i,b.j)]=1;});
+  hbonds=HBOND.find(atoms,bonds).filter(c=>!have[pair(c.h,c.a)]);
+  hbonds.forEach((c,k)=>{
+    const g=makeBondGroup({i:c.h,j:c.a,order:0,id:'hb'+k});
+    if(!g) return;
+    g.userData.type='hbond';
+    g.children.filter(ch=>(ch.userData||{}).type==='bond-hit').forEach(ch=>{g.remove(ch);dispObj(ch);});
+    molGrp.add(g); hbMeshes[k]=g;
+  });
 }
 function buildVecs(){
   // Safety fallback — see comment in buildMol().
@@ -2833,7 +4704,7 @@ function showDZ(v){document.getElementById('welcome').classList.toggle('hidden',
 // ══════════════════════════════════════════════════════════════
 // MEASUREMENTS
 // ══════════════════════════════════════════════════════════════
-let measMode = null;   // 'distance' | 'angle' | 'dihedral' | null
+let measMode = null;   // 'distance' | 'angle' | 'dihedral' | 'outofp' | null
 let measPending = [];  // atom ids being picked in current measurement
 const MEAS_COLORS = ['#e94560','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#ff6b6b','#4ecdc4','#ffd93d','#c0392b'];
 let _measColorIdx = 0;
@@ -2843,6 +4714,83 @@ function nextMeasColor(){ return MEAS_COLORS[_measColorIdx++ % MEAS_COLORS.lengt
 function getMeasAtomLabel(atomId){
   const idx = atoms.findIndex(a => a.id === atomId);
   return idx < 0 ? '?' : (atoms[idx].el + (idx+1));
+}
+
+// The out-of-plane angle: the bond from the first atom to the fourth against the plane of the
+// second, third and fourth atoms, in degrees from -90 to 90, with the sign SLAPAF prints. The
+// arithmetic, the two limits and the helpers below are PathVibViz's text, so that the same four
+// atoms give the same number in both tools (a gate compares them).
+const MEAS_COINCIDE = 1e-6;   // Å: two atoms nearer than this coincide (SLAPAF stops below the same length)
+// SLAPAF gives an out-of-plane angle the value 0 when the squared norm of R42 x R43 is below 1e-10 Bohr^4; here in Å^4.
+const MEAS_PLANE_FLOOR = 1e-10 * Math.pow(0.529177210903, 4);
+// Vector helpers on [x, y, z]; unit() divides like a three.js normalize: by the length, or by 1 for a zero vector.
+function _mSub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+function _mLen(a) { return Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]); }
+function _mUnit(a) { const k = 1 / (_mLen(a) || 1); return [a[0] * k, a[1] * k, a[2] * k]; }
+function _mDot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+function _mCross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+
+// p holds four [x, y, z] in Å, atoms the four atom ids in the same order. Returns { ok: true, v } or
+// { ok: false, pair, line }: pair names two atoms at one place, line the three atoms of the plane on a
+// line; both null when a coordinate is not a number.
+function measOutOfPlane(p, atoms) {
+  if (p.some(q => !(isFinite(q[0]) && isFinite(q[1]) && isFinite(q[2])))) return { ok: false, pair: null, line: null };
+  const arms = [[0, 3], [1, 3], [2, 3]];
+  for (let k = 0; k < arms.length; k++) {
+    const a = arms[k][0], b = arms[k][1];
+    if (_mLen(_mSub(p[a], p[b])) < MEAS_COINCIDE) return { ok: false, pair: [atoms[a], atoms[b]], line: null };
+  }
+  const nrm = _mCross(_mSub(p[1], p[3]), _mSub(p[2], p[3]));
+  if (_mDot(nrm, nrm) < MEAS_PLANE_FLOOR) return { ok: false, pair: null, line: [atoms[1], atoms[2], atoms[3]] };
+  return { ok: true, v: -Math.asin(Math.max(-1, Math.min(1, _mDot(_mUnit(_mSub(p[0], p[3])), _mUnit(nrm))))) * 180 / Math.PI };
+}
+
+// The dihedral, with the sign SLAPAF prints, from -180 up to but not including 180 degrees. The
+// limit and the lines that build the bond vectors, the two normals and the angle are PathVibViz's
+// text, so that the same four atoms give the same number in both tools (a gate compares them).
+// SLAPAF gives a dihedral the value 0 when the product of the sines of its two bond angles is below this.
+const MEAS_SINE_FLOOR = 1e-13;
+
+// p holds four [x, y, z] in Å, atoms the four atom ids in the same order. Returns { ok: true, v } or
+// { ok: false, pair, line }, as measOutOfPlane does: pair names two neighbouring atoms at one place,
+// line the three atoms that lie on a line; both null when a coordinate is not a number.
+function measDihedral(p, atoms) {
+  if (p.some(q => !(isFinite(q[0]) && isFinite(q[1]) && isFinite(q[2])))) return { ok: false, pair: null, line: null };
+  const arms = [[0, 1], [1, 2], [2, 3]];
+  for (let k = 0; k < arms.length; k++) {
+    const a = arms[k][0], b = arms[k][1];
+    if (_mLen(_mSub(p[a], p[b])) < MEAS_COINCIDE) return { ok: false, pair: [atoms[a], atoms[b]], line: null };
+  }
+  const b1 = _mSub(p[1], p[0]), b2 = _mSub(p[2], p[1]), b3 = _mSub(p[3], p[2]);
+  const s2 = _mLen(_mCross(_mUnit(b1), _mUnit(b2))), s3 = _mLen(_mCross(_mUnit(b2), _mUnit(b3)));
+  if (s2 * s3 < MEAS_SINE_FLOOR) return { ok: false, pair: null, line: s2 <= s3 ? [atoms[0], atoms[1], atoms[2]] : [atoms[1], atoms[2], atoms[3]] };
+  const n1 = _mCross(b1, b2), n2 = _mCross(b2, b3), m = _mCross(n1, _mUnit(b2));
+  const v = -Math.atan2(_mDot(m, n2), _mDot(n1, n2)) * 180 / Math.PI;
+  return { ok: true, v: Math.abs(v) === 180 ? -180 : v };
+}
+
+// The positions of a measurement's atoms in Å, or null when an atom has no mesh.
+function measPositions(m){
+  const _v = new THREE.Vector3();
+  const pos = m.atomIds.map(id => {
+    const mesh = aMeshes[id]; if(!mesh) return null;
+    mesh.getWorldPosition(_v); return [_v.x, _v.y, _v.z];
+  });
+  return pos.some(p => !p) ? null : pos;
+}
+
+// The sentence for a measurement that has no value, or '' when it has one. Only the dihedral and
+// the out-of-plane angle can lack a value for a geometric reason.
+function measNote(m){
+  if(m.type !== 'outofp' && m.type !== 'dihedral') return '';
+  const pos = measPositions(m);
+  const f = m.type === 'dihedral' ? measDihedral : measOutOfPlane;
+  const r = pos ? f(pos, m.atomIds) : { ok: false, pair: null, line: null };
+  if(r.ok) return '';
+  const name = (m.type === 'dihedral' ? 'Dihedral ' : 'Out-of-plane ') + m.atomIds.map(id => getMeasAtomLabel(id)).join('-');
+  if(r.pair) return name + ': ' + getMeasAtomLabel(r.pair[0]) + ' and ' + getMeasAtomLabel(r.pair[1]) + ' are at the same place, so it has no value.';
+  if(r.line) return name + ': ' + getMeasAtomLabel(r.line[0]) + ', ' + getMeasAtomLabel(r.line[1]) + ' and ' + getMeasAtomLabel(r.line[2]) + ' lie on a line, so it has no value.';
+  return name + ': an atom has no usable coordinates, so it has no value.';
 }
 
 // Compute the numerical value string for a measurement
@@ -2860,13 +4808,16 @@ function computeMeasValue(m){
     const v2 = new THREE.Vector3().subVectors(positions[2],positions[1]).normalize();
     return (Math.acos(Math.max(-1,Math.min(1,v1.dot(v2))))*180/Math.PI).toFixed(2) + '°';
   } else if(m.type === 'dihedral'){
-    const b1 = new THREE.Vector3().subVectors(positions[1],positions[0]);
-    const b2 = new THREE.Vector3().subVectors(positions[2],positions[1]);
-    const b3 = new THREE.Vector3().subVectors(positions[3],positions[2]);
-    const n1 = new THREE.Vector3().crossVectors(b1,b2).normalize();
-    const n2 = new THREE.Vector3().crossVectors(b2,b3).normalize();
-    const m1 = new THREE.Vector3().crossVectors(n1,b2.clone().normalize());
-    return (Math.atan2(m1.dot(n2),n1.dot(n2))*180/Math.PI).toFixed(2) + '°';
+    const r = measDihedral(positions.map(q => [q.x, q.y, q.z]), m.atomIds);
+    if(!r.ok) return '—';
+    const t = r.v.toFixed(2);
+    return (/^-0(\.0+)?$/.test(t) ? t.slice(1) : t) + '°';
+  } else if(m.type === 'outofp'){
+    const r = measOutOfPlane(positions.map(q => [q.x, q.y, q.z]), m.atomIds);
+    if(!r.ok) return '—';
+    // a value that rounds to zero is shown without a sign
+    const t = r.v.toFixed(2);
+    return (/^-0(\.0+)?$/.test(t) ? t.slice(1) : t) + '°';
   }
   return '—';
 }
@@ -2876,7 +4827,7 @@ function setMeasMode(mode){
   requestRender();
   measMode = (measMode === mode) ? null : mode;
   measPending = [];
-  ['distance','angle','dihedral'].forEach(m => {
+  ['distance','angle','dihedral','outofp'].forEach(m => {
     const btn = document.getElementById('meas-btn-' + m);
     if(btn) btn.classList.toggle('active', measMode === m);
   });
@@ -2887,10 +4838,11 @@ function setMeasMode(mode){
 function updateMeasPickHint(){
   const hint = document.getElementById('meas-pick-hint');
   if(!measMode){ hint.style.display = 'none'; return; }
-  const needed = {distance:2, angle:3, dihedral:4}[measMode];
+  const needed = {distance:2, angle:3, dihedral:4, outofp:4}[measMode];
   let msg;
   if(measPending.length === 0){
-    const verb = {distance:'2 atoms',angle:'vertex atom, then 2 flanking atoms',dihedral:'4 atoms in sequence'}[measMode];
+    const verb = {distance:'2 atoms',angle:'3 atoms, the vertex second',dihedral:'4 atoms, in the order of the chain',
+      outofp:'4 atoms: the bond from the first to the fourth, the plane of the second, third and fourth'}[measMode];
     msg = `Click ${verb}`;
   } else {
     const labels = measPending.map(id => getMeasAtomLabel(id)).join(' → ');
@@ -2904,7 +4856,7 @@ function updateMeasPickHint(){
 function handleMeasClick(atomId){
   if(measPending.includes(atomId)) return; // no duplicate atoms
   measPending.push(atomId);
-  const needed = {distance:2, angle:3, dihedral:4}[measMode];
+  const needed = {distance:2, angle:3, dihedral:4, outofp:4}[measMode];
   updateMeasPickHint();
   if(measPending.length === needed){
     const id = nid();
@@ -2913,7 +4865,8 @@ function handleMeasClick(atomId){
     measPending = [];
     updateMeasPickHint();
     renderMeasList();
-    toast('Measurement added');
+    const note = measNote(measurements[measurements.length - 1]);
+    if(note) toast(note, 6000); else toast('Measurement added');
   }
 }
 
@@ -2928,7 +4881,8 @@ function renderMeasList(){
   measurements.forEach(m => {
     const val = computeMeasValue(m);
     const atomLabels = m.atomIds.map(id => getMeasAtomLabel(id)).join(' – ');
-    const typeLabel = m.type.charAt(0).toUpperCase() + m.type.slice(1);
+    const typeLabel = m.type === 'outofp' ? 'Out-of-plane' : m.type.charAt(0).toUpperCase() + m.type.slice(1);
+    const note = measNote(m);
     const div = document.createElement('div');
     div.className = 'meas-item';
     div.innerHTML = `
@@ -2939,6 +4893,7 @@ function renderMeasList(){
         <button class="meas-icon-btn" data-id="${m.id}" data-a="del" title="Delete" style="color:var(--red)">✕</button>
       </div>
       <div class="meas-atoms">${atomLabels}</div>
+      ${note ? '<div class="meas-note"></div>' : ''}
       <div class="meas-controls-row">
         <label class="meas-cb-label">
           <input type="checkbox" style="accent-color:var(--accent);cursor:pointer" ${m.showLabel?'checked':''} data-id="${m.id}" data-a="lbl">
@@ -2950,6 +4905,7 @@ function renderMeasList(){
         </label>
         <input type="color" class="meas-cp" data-id="${m.id}" value="${m.color}" title="Color">
       </div>`;
+    if(note) div.querySelector('.meas-note').textContent = note;
     list.appendChild(div);
   });
   list.querySelectorAll('[data-a="del"]').forEach(btn =>
@@ -3043,6 +4999,12 @@ function updateMeasureLayer(){
       html += `<path d="${svgArcPath(mx,my,14,aIn,aOut)}" stroke="${col}" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>`;
       [pA,pB,pC,pD].forEach(p => { html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${dotR}" fill="${col}" stroke="rgba(0,0,0,.4)" stroke-width="1"/>`; });
       if(m.showLabel) html += `<text x="${mx.toFixed(1)}" y="${(my-21).toFixed(1)}" ${txtAttr}>${computeMeasValue(m)}</text>`;
+    } else if(m.type === 'outofp'){
+      // the bond from the fourth atom to the first, and the two edges of the plane that meet at the fourth
+      const [pA,pB,pC,pD] = pts;
+      [pA,pB,pC].forEach(p => { html += `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${pD.x.toFixed(1)}" y2="${pD.y.toFixed(1)}" stroke="${col}" stroke-width="1.5" stroke-dasharray="5,3"/>`; });
+      [pA,pB,pC,pD].forEach(p => { html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${dotR}" fill="${col}" stroke="rgba(0,0,0,.4)" stroke-width="1"/>`; });
+      if(m.showLabel) html += `<text x="${((pA.x+pD.x)/2).toFixed(1)}" y="${((pA.y+pD.y)/2-9).toFixed(1)}" ${txtAttr}>${computeMeasValue(m)}</text>`;
     }
     html += atomLabelHtml + `</g>`;
   });
@@ -3050,7 +5012,7 @@ function updateMeasureLayer(){
   // Draw pending pick highlights
   measPending.forEach((atomId,k) => {
     const pt = projAtom(atomId); if(!pt) return;
-    const col = measMode==='distance'?'#e94560':measMode==='angle'?'#3498db':'#2ecc71';
+    const col = measMode==='distance'?'#e94560':measMode==='angle'?'#3498db':measMode==='outofp'?'#f39c12':'#2ecc71';
     html += `<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="9" fill="none" stroke="${col}" stroke-width="2.5"/>`;
     html += `<text x="${pt.x.toFixed(1)}" y="${(pt.y+19).toFixed(1)}" text-anchor="middle" font-family="monospace" font-size="9" fill="${col}" font-weight="600">${k+1}</text>`;
   });
@@ -3145,6 +5107,12 @@ function bakeMeasurements(outCanvas, cropX, cropY){
       ctx.beginPath(); ctx.arc(mx,my,arcR2,aIn,aIn+delta2,delta2<0);
       ctx.setLineDash([3*dpr,2*dpr]); ctx.strokeStyle=col; ctx.lineWidth=1.5*dpr; ctx.stroke(); ctx.setLineDash([]);
       drawLabel(mx,my-(arcR2+7*dpr),val);
+      drawAtomLabels();
+    } else if(m.type==='outofp'){
+      const [pA,pB,pC,pD]=pts;
+      dashedLine(pA,pD); dashedLine(pB,pD); dashedLine(pC,pD);
+      pts.forEach(p=>dot(p));
+      drawLabel((pA.x+pD.x)/2,(pA.y+pD.y)/2-9*dpr,val);
       drawAtomLabels();
     }
     ctx.restore();
@@ -3296,9 +5264,11 @@ function restoreSession(s){
   const _maxId = arr => arr.reduce((mx,o)=> (o && o.id > mx ? o.id : mx), 0);
   idC = Math.max(_maxId(atoms), _maxId(bonds), _maxId(vectors), _maxId(measurements));
   elColors=s.elColors||{};elRadii=s.elRadii||{};
+  S.findHbonds=false;               // a session saved before the option existed has it off
   if(s.settings)Object.assign(S,s.settings);
   molName=s.fileName||'session';
   document.getElementById('mol-name').textContent=molName;
+  setFileBar(molName,'Saved session');
   syncSliders(); buildMol();
   renderMeasList();
   if(s.camera){camera.position.set(s.camera.px,s.camera.py,s.camera.pz);spinGrp.position.set(s.camera.tx,s.camera.ty,s.camera.tz);}
@@ -3351,6 +5321,54 @@ function importSession(file){
 // ══════════════════════════════════════════════════════════════
 // FILE LOADING
 // ══════════════════════════════════════════════════════════════
+// ── FILE BAR ─────────────────────────────────────────────────
+// The loaded file's name and kind, along the bottom of the page. Set after a load
+// has succeeded, cleared by disposeSession(). The listener is added once at start.
+const FILE_BAR_EMPTY='No file loaded: Open File or drop a file here';
+const FILE_BAR_MAXLEN=40;                 // longest name shown whole
+const BASE_TITLE=document.title;
+// Shortened in the middle so the extension stays visible. A short name is returned as it is.
+function shortenFileName(name,max){
+  if(name.length<=max) return name;
+  const m=/\.[^.\/\\]{1,8}$/.exec(name);
+  const ext=m?m[0]:'';
+  const stem=name.slice(0,name.length-ext.length);
+  const room=max-ext.length-1;
+  if(room<2) return name;
+  const front=Math.ceil(room*0.6), back=room-front;
+  return stem.slice(0,front)+'…'+(back>0?stem.slice(stem.length-back):'')+ext;
+}
+function setFileBar(name,kind){
+  const bar=document.getElementById('file-bar');
+  const nm=document.getElementById('file-bar-name');
+  const kd=document.getElementById('file-bar-kind');
+  if(name){
+    bar.classList.remove('empty');
+    nm.textContent=shortenFileName(name,FILE_BAR_MAXLEN);
+    nm.title=name;
+    kd.textContent=kind||'';
+    document.title=name+' · MolViz';
+  }else{
+    bar.classList.add('empty');
+    nm.textContent=FILE_BAR_EMPTY;
+    nm.title='';
+    kd.textContent='';
+    document.title=BASE_TITLE;
+  }
+  // The bar has a fixed height, so the view normally keeps its size; the guarded
+  // resize runs only when it did not, and never while a GIF is being recorded.
+  if(!gifRecording&&renderer&&renderer.domElement){
+    const vp=document.getElementById('viewport');
+    if(vp&&(vp.clientWidth!==renderer.domElement.clientWidth||vp.clientHeight!==renderer.domElement.clientHeight)) resize();
+  }
+}
+// A touch screen has no hover: a tap on the name shows the whole name.
+function initFileBar(){
+  document.getElementById('file-bar-name').addEventListener('click',function(){
+    if(this.title) toast(this.title,4000);
+  });
+}
+
 function loadFile(file){
   if(!file)return;
   disposeSession();                 // FIRST call — never delegated to the caller
@@ -3360,7 +5378,7 @@ function loadFile(file){
   const isH5=/\.(h5|hdf5)$/i.test(file.name);
   r.onload=e=>{
     if(myGen!==_loadGeneration) return;      // superseded — abandon quietly
-    if(isH5){ parseH5AndBuild(e.target.result,myGen); return; }
+    if(isH5){ parseH5AndBuild(e.target.result,myGen,file.name); return; }
     parseAndBuild(e.target.result,file.name);
   };
   r.onerror=()=>{
@@ -3373,6 +5391,10 @@ function loadFile(file){
 // Turns a reader failure into something a user can act on.
 function h5ErrorMessage(err){
   const m=err&&err.message?err.message:String(err);
+  const nf=/^Unsupported HDF5 feature: (.*)$/.exec(m);
+  if(nf) return 'This HDF5 file uses '+nf[1]+', which OPAL cannot read yet. The file itself is not damaged.';
+  const ux=/^Unexpected HDF5 structure: (.*)$/.exec(m);
+  if(ux) return 'This HDF5 file has an unexpected structure ('+ux[1]+'). It may be damaged, or use a feature OPAL cannot read yet.';
   const sb=/superblock version (\d+)/.exec(m);
   if(sb) return 'This HDF5 file uses a newer file layout (superblock version '+sb[1]+') that OPAL cannot read yet. The file itself is not damaged.';
   if(/Not a valid HDF5 file/.test(m)) return 'This is not an HDF5 file.';
@@ -3380,7 +5402,7 @@ function h5ErrorMessage(err){
 }
 // HDF5 is read asynchronously, so the generation is re-checked after the await:
 // a newer load (or a reset) that ran meanwhile has already disposed this one.
-async function parseH5AndBuild(buf,myGen){
+async function parseH5AndBuild(buf,myGen,fname){
   let res;
   try{ res=await parseMolcasHDF5Geometry(buf); }
   catch(err){
@@ -3390,10 +5412,10 @@ async function parseH5AndBuild(buf,myGen){
   }
   if(myGen!==_loadGeneration) return;
   if(!res.atoms.length){toast('Could not parse file');return;}
-  // Whether the coordinate list holds every atom or only the symmetry-unique
-  // ones is unverified (no symmetric sample exists), so say so rather than guess.
-  const sym=(res.nUnique!==null&&res.nUnique!==res.atoms.length)||_nn(res.nsym,1)>1;
-  installAtoms(res.atoms, sym?' — symmetric file: geometry not verified':'');
+  // A symmetric file is trusted only when the full atom list was read from the
+  // desymmetrized datasets; otherwise the list may hold only the unique atoms.
+  const sym=!res.fullList&&((res.nUnique!==null&&res.nUnique!==res.atoms.length)||_nn(res.nsym,1)>1);
+  installAtoms(res.atoms, sym?' — symmetric file: geometry not verified':'', fname, 'OpenMolcas HDF5 geometry');
 }
 function parseAndBuild(txt,fname){
   // The id allocator is deliberately NOT reset here. atoms, bonds and vectors all
@@ -3408,15 +5430,16 @@ function parseAndBuild(txt,fname){
   // findIndex+1, so display labels are unaffected.
   // See audit_check_render_gating.md §8.13 / §8.13a.
   const fl=fname.toLowerCase();
-  let parsed=fl.endsWith('.molden')||txt.toLowerCase().includes('[atoms]')||txt.includes('[Molden Format]')
-    ?parseMolden(txt):parseXYZ(txt);
+  const isMolden=fl.endsWith('.molden')||txt.toLowerCase().includes('[atoms]')||txt.includes('[Molden Format]');
+  let parsed=isMolden?parseMolden(txt):parseXYZ(txt);
   if(!parsed.length){toast('Could not parse file');return;}
-  installAtoms(parsed,'');
+  installAtoms(parsed,'',fname,isMolden?'Molden file':'XYZ geometry');
 }
-function installAtoms(parsed,note){
+function installAtoms(parsed,note,fname,kind){
   atoms=parsed; centerAtCOM(); S.atomSymbols={}; bonds=detectBonds(atoms,{bondTol:S.bondTol,autoMulti:S.autoMulti,detectAromatic:S.detectAromatic});
   measurements=[]; measPending=[]; setMeasMode(null); renderMeasList();
   buildMol(); fitCamera(); showDZ(false);
+  setFileBar(fname,kind);
   toast(`Loaded ${atoms.length} atoms, ${bonds.length} bonds${note}`);
 }
 
@@ -3651,7 +5674,7 @@ function exportSVG(){
         `     xmlns:xlink="http://www.w3.org/1999/xlink"`,
         `     width="${cw}" height="${ch}" viewBox="0 0 ${cw} ${ch}">`,
         `  <title>${filename}</title>`,
-        `  <desc>Generated by MolViz ${MOLVIZ_VERSION} — OpenMolcas OPAL</desc>`,
+        `  <desc>Generated by MolViz ${MOLVIZ_VERSION} — OpenMolcas OPAL${CITE.exportLine()?' — '+CITE.exportLine().replace(/&/g,'&amp;').replace(/</g,'&lt;'):''}</desc>`,
         `  <image x="0" y="0" width="${cw}" height="${ch}"`,
         `         xlink:href="${dataURI}"`,
         `         image-rendering="optimizeQuality"/>`,
@@ -3664,6 +5687,154 @@ function exportSVG(){
     };
     reader.readAsDataURL(blob);
   },'image/png');
+}
+
+// ── Vector SVG: MolViz's side of the shared builder ──
+// The picture is rebuilt from the atom and bond arrays through the camera's own matrices, so
+// it lines up with the screen; the look (lighting, per-pixel depth) is an approximation.
+// Ghost centres are left out. Bond orders, aromatic rings, detected H-bonds, atom labels (when the export
+// asks for them) and the measurements are drawn; atom symbols are not.
+//
+// The annotations of the screen, as items for the builder: real text with a halo, lines, circles, arcs.
+// They are placed with the same projection and the same offsets as the overlay and the PNG export.
+function vectorAnnotations(withLabels){
+  const out=[];
+  const canvas=renderer.domElement;
+  const wp=new THREE.Vector3();
+  const projAtom=id=>{ const mesh=aMeshes[id]; if(!mesh) return null; mesh.getWorldPosition(wp); return project3D(wp,camera,canvas); };
+  if(withLabels&&S.labels&&S.labels.permanent){
+    const fs=S.labels.fontSize;
+    atoms.forEach((atom,i)=>{
+      if(atom.isGhost) return;
+      if(!S.labels.showH&&atom.el==='H') return;
+      const p=projAtom(atom.id); if(!p) return;
+      out.push({kind:'text',x:p.x+fs*0.6,y:p.y-fs*0.6,text:atom.el+(i+1),size:fs,weight:'600',color:'#ffffff',
+        halo:'#000000',haloOpacity:0.75,haloWidth:LABEL_STROKE_W});
+    });
+  }
+  measurements.forEach(m=>{
+    const pts=m.atomIds.map(projAtom);
+    if(pts.some(p=>!p)) return;
+    const col=m.color||'#e94560';
+    const fs=S.measFontSize;
+    const dashed=(a,b)=>out.push({kind:'line',x1:a.x,y1:a.y,x2:b.x,y2:b.y,color:col,width:1.5,dash:'5 3'});
+    const dot=p=>out.push({kind:'circle',x:p.x,y:p.y,r:2.5,fill:col,stroke:'#000000',strokeWidth:1,strokeOpacity:0.4});
+    const val=computeMeasValue(m);
+    const label=(x,y)=>{ if(m.showLabel) out.push({kind:'text',x:x,y:y,text:val,size:fs,weight:'600',color:col,anchor:'middle',middle:true,
+      halo:'#000000',haloOpacity:0.8,haloWidth:3}); };
+    if(m.type==='distance'){
+      dashed(pts[0],pts[1]); dot(pts[0]); dot(pts[1]);
+      label((pts[0].x+pts[1].x)/2,(pts[0].y+pts[1].y)/2-7);
+    } else if(m.type==='angle'){
+      const [pA,pB,pC]=pts;
+      const aA=Math.atan2(pA.y-pB.y,pA.x-pB.x), aC=Math.atan2(pC.y-pB.y,pC.x-pB.x);
+      const arcR=Math.max(10,Math.min(22,Math.hypot(pA.x-pB.x,pA.y-pB.y)*.35,Math.hypot(pC.x-pB.x,pC.y-pB.y)*.35));
+      dashed(pA,pB); dashed(pC,pB);
+      out.push({kind:'arc',cx:pB.x,cy:pB.y,r:arcR,a0:aA,a1:aC,color:col,width:1.5});
+      [pA,pB,pC].forEach(dot);
+      let bx=Math.cos(aA)+Math.cos(aC), by=Math.sin(aA)+Math.sin(aC);
+      const bl=Math.hypot(bx,by)||1; bx/=bl; by/=bl;
+      label(pB.x+bx*(arcR+13),pB.y+by*(arcR+13));
+    } else if(m.type==='dihedral'){
+      const [pA,pB,pC,pD]=pts;
+      const mx=(pB.x+pC.x)/2, my=(pB.y+pC.y)/2;
+      dashed(pA,pB);
+      out.push({kind:'line',x1:pB.x,y1:pB.y,x2:pC.x,y2:pC.y,color:col,width:2.5});
+      dashed(pC,pD);
+      out.push({kind:'arc',cx:mx,cy:my,r:14,a0:Math.atan2(pA.y-pB.y,pA.x-pB.x),a1:Math.atan2(pD.y-pC.y,pD.x-pC.x),color:col,width:1.5,dash:'3 2'});
+      pts.forEach(dot);
+      label(mx,my-21);
+    } else if(m.type==='outofp'){
+      const [pA,pB,pC,pD]=pts;
+      [pA,pB,pC].forEach(p=>dashed(p,pD));
+      pts.forEach(dot);
+      label((pA.x+pD.x)/2,(pA.y+pD.y)/2-9);
+    }
+    if(m.showAtomLabels){
+      m.atomIds.forEach((id,k)=>{
+        const p=pts[k];
+        out.push({kind:'circle',x:p.x,y:p.y,r:fs*0.82,fill:null,stroke:col,strokeWidth:1.5,dash:'3 2',strokeOpacity:0.7});
+        out.push({kind:'text',x:p.x,y:p.y-(fs+2),text:getMeasAtomLabel(id),size:Math.round(fs*0.9),weight:'600',color:col,anchor:'middle',
+          halo:'#000000',haloOpacity:0.8,haloWidth:2.5});
+      });
+    }
+  });
+  return out;
+}
+// van der Waals radii in Å for the space-filling vector picture: A. Bondi, J. Phys. Chem. 68, 441 (1964); the
+// elements Bondi did not give take DEFAULT, which is a convenience and not a published value
+const VDW_RADII={H:1.20,He:1.40,Li:1.82,C:1.70,N:1.55,O:1.52,F:1.47,Ne:1.54,Na:2.27,Mg:1.73,Si:2.10,P:1.80,S:1.80,Cl:1.75,Ar:1.88,
+  K:2.75,Ni:1.63,Cu:1.40,Zn:1.39,Ga:1.87,As:1.85,Se:1.90,Br:1.85,Kr:2.02,Pd:1.63,Ag:1.72,Cd:1.58,In:1.93,Sn:2.17,Te:2.06,I:1.98,Xe:2.16,
+  Pt:1.72,Au:1.66,Hg:1.55,Tl:1.96,Pb:2.02,U:1.86,DEFAULT:2.0};
+const getVdwR=el=>_nn(VDW_RADII[el],VDW_RADII.DEFAULT);
+// Returns { svg, atoms, bonds, texts, annotations, skipped, polygons, hidden, filename }; throws when nothing can be drawn.
+// With spaceFilling the atoms are van der Waals spheres drawn as polygons that meet along their crossing curves, and no bonds.
+function buildVectorSVG(presetName,transparent,spaceFilling){
+  scene.updateMatrixWorld(true);
+  camera.updateMatrixWorld(true);
+  const canvas=renderer.domElement;
+  const wp=new THREE.Vector3();
+  const list=[];
+  atoms.forEach(a=>{
+    if(a.isGhost) return;
+    const m=aMeshes[a.id]; if(!m) return;
+    m.getWorldPosition(wp);   // world, not local: the group may be spun or tilted
+    list.push({id:a.id,x:wp.x,y:wp.y,z:wp.z,r:spaceFilling?getVdwR(a.el):getR(a.el)*S.ballScale,color:getC(a.el)});
+    // the screen's atom outline is a shell of 'outlineThick' times the radius; the print look keeps its own pixels
+    if(presetName!=='print'&&S.outlineThick>0) list[list.length-1].outline=list[list.length-1].r*S.outlineThick;
+  });
+  const shown={}; list.forEach(a=>{shown[a.id]=1;});
+  const bl=[];
+  const worldOf={}; list.forEach(a=>{worldOf[a.id]=a;});
+  const meanOf=arr=>{ const n=arr.length; return {x:arr.reduce((s,a)=>s+a.x,0)/n,y:arr.reduce((s,a)=>s+a.y,0)/n,z:arr.reduce((s,a)=>s+a.z,0)/n}; };
+  // an aromatic bond gets a point inside its ring (world coordinates), so the dashed line goes on
+  // the ring side; with no ring found, the centre of the drawn atoms stands in, as on the screen
+  const ringPoint=b=>{
+    const ra=(findRingAtoms(b.i,b.j)||[]).map(a=>worldOf[a.id]).filter(Boolean);
+    return ra.length?meanOf(ra):meanOf(list);
+  };
+  bonds.forEach(b=>{
+    if(!(shown[b.i]&&shown[b.j])) return;
+    const o=_nn(b.order,1);
+    const e={i:b.i,j:b.j,order:o,radius:S.bondRadius*0.78,color:'#b0b8c8'};
+    // the screen's bond outline is a shell 2.5 times 'outlineThick' of the radius wider on each side
+    if(presetName!=='print'&&S.outlineThick>0) e.outline=e.radius*S.outlineThick*2.5;
+    if(o===1.5) e.ring=ringPoint(b);
+    bl.push(e);
+  });
+  // detected H-bonds (when the layer is on) are drawn as dashed contacts, like the screen's dashes
+  hbonds.forEach(c=>{ if(shown[c.h]&&shown[c.a]) bl.push({i:c.h,j:c.a,order:0,radius:S.bondRadius*0.78,color:'#b0b8c8'}); });
+  // a parameter set to 0 is a value: the page's own settings go in as overrides, including the zeros
+  const ov={fog:S.fog?VECSVG.PRESETS[presetName].fog:0};
+  if(S.outlineThick<=0) ov.bondOutline=0;
+  if(presetName!=='print') ov.bondOutlineColor=S.outlineColor;
+  const filename=exportFilename('svg');
+  const res=VECSVG.build({
+    view:Array.prototype.slice.call(camera.matrixWorldInverse.elements),
+    proj:Array.prototype.slice.call(camera.projectionMatrix.elements),
+    width:canvas.clientWidth, height:canvas.clientHeight,
+    atoms:list, bonds:bl, vdw:spaceFilling===true,
+    annotations:vectorAnnotations(_nn((document.getElementById('export-labels')||{}).checked,false)),
+    background:transparent?null:S.bgColor, fogColor:S.bgColor,
+    preset:presetName, overrides:ov,
+    title:filename, desc:'Generated by MolViz '+MOLVIZ_VERSION+' — OpenMolcas OPAL — vector drawing rebuilt from the atoms and bonds'+(CITE.exportLine()?' — '+CITE.exportLine():'')
+  });
+  res.filename=filename;
+  return res;
+}
+function exportSVGVector(){
+  const transparent=document.getElementById('export-transparent').checked;
+  const presetName=document.getElementById('export-vector-preset').value;
+  const spaceFilling=_nn((document.getElementById('export-vector-vdw')||{}).checked,false)===true;
+  let res;
+  try{ res=buildVectorSVG(presetName,transparent,spaceFilling); }
+  catch(e){ toast('Vector SVG export failed — '+(e&&e.message?e.message:'unknown error')); return; }
+  const blob=new Blob([res.svg],{type:'image/svg+xml;charset=utf-8'});
+  // built and saved inside the tap, with no asynchronous step in between (iOS)
+  const msg=spaceFilling
+    ? 'Vector SVG exported — '+res.atoms+' van der Waals spheres ('+res.polygons+' as polygons'+(res.hidden?', '+res.hidden+' hidden inside others':'')+'), no bonds, '+res.texts+' texts'
+    : 'Vector SVG exported — '+res.atoms+' atoms, '+res.bonds+' bonds, '+res.texts+' texts (atom symbols are not drawn)';
+  _downloadBlob(blob,res.filename,'image/svg+xml',msg);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3788,6 +5959,7 @@ function syncSliders(){
   document.getElementById('auto-multi').checked=S.autoMulti;
   document.getElementById('detect-aromatic').checked=S.detectAromatic;
   document.getElementById('aromatic-row').style.display=S.autoMulti?'':'none';
+  document.getElementById('find-hbonds').checked=S.findHbonds;
   const sszEl=document.getElementById('symbol-size');
   if(sszEl){sszEl.value=S.symbolSize;document.getElementById('symbol-size-val').textContent=S.symbolSize;}
 }
@@ -3809,13 +5981,15 @@ function rebuildBonds(){
     molGrp.remove(g); dispObj(g);
     const ng=makeBondGroup(b); if(ng){molGrp.add(ng);bMeshes[+id]=ng;}
   });
+  drawHbonds();
 }
 
 // ══════════════════════════════════════════════════════════════
 // EVENTS
 // ══════════════════════════════════════════════════════════════
 function setupEvents(){
-  applyFileInputAccept('file-input',         '.xyz,.molden,.h5,.hdf5,.mol,.log,.out,.txt');
+  initFileBar();
+  applyFileInputAccept('file-input',         '.xyz,.molden,.h5,.hdf5,.txt');
   applyFileInputAccept('session-file-input', '.json,application/json');
   document.getElementById('btn-load').addEventListener('click',()=>document.getElementById('file-input').click());
   document.getElementById('file-input').addEventListener('change',e=>{loadFile(e.target.files[0]);e.target.value='';});
@@ -3862,6 +6036,10 @@ function setupEvents(){
     S.autoMulti=e.target.checked;
     document.getElementById('aromatic-row').style.display=S.autoMulti?'':'none';
   });
+  document.getElementById('find-hbonds').addEventListener('change',e=>{
+    S.findHbonds=e.target.checked;
+    drawHbonds(); requestRender();
+  });
   document.getElementById('detect-aromatic').addEventListener('change',e=>{
     S.detectAromatic=e.target.checked;
     bonds=detectBonds(atoms,{bondTol:S.bondTol,autoMulti:S.autoMulti,detectAromatic:S.detectAromatic});
@@ -3885,6 +6063,9 @@ function setupEvents(){
   });
   document.getElementById('btn-export-svg').addEventListener('click',()=>{
     exportDropdown.classList.remove('open'); exportSVG();
+  });
+  document.getElementById('btn-export-svgv').addEventListener('click',()=>{
+    exportDropdown.classList.remove('open'); exportSVGVector();
   });
   document.getElementById('btn-settings').addEventListener('click',openSettingsModal);
   document.getElementById('btn-presets').addEventListener('click',()=>{renderPresets();openModal('presets-modal');});
@@ -4463,6 +6644,9 @@ function animate(){
 initThree();
 syncSliders();
 setupEvents();
+initPanels();
+syncBackLink();
+if (window.OPAL_THEME) window.OPAL_THEME.onChange(syncBackLink);
 initGifOffline();
 animate();
 </script>

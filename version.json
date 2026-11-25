@@ -1,0 +1,13 @@
+{
+  "files": {
+    "index.html": "v0.64",
+    "csfscalc.html": "v0.59",
+    "geodiff.html": "v0.87",
+    "intcoords.html": "v0.61",
+    "molbuild.html": "v0.80",
+    "molviz.html": "v0.87",
+    "orbviz.html": "v0.98",
+    "pathvibviz.html": "v0.84",
+    "rassiviz.html": "v0.91"
+  }
+}

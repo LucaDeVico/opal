@@ -1,0 +1,31 @@
+&GATEWAY
+  Coord = $InputDir/s0_min.xyz
+  Basis = ANO-S-VDZP
+  Group = NoSym
+  RICD
+&SEWARD
+&RASSCF
+  Spin = 1
+  FileOrb = $InputDir/t02_step1.rasscf.h5
+  Inactive = 39
+  Ras1 = 5
+  Ras2 = 5
+  Ras3 = 6
+  NActEl = 18 2 2
+  CIRoot = 5 5 1
+  Iter = 150 100
+  PrWF = 0.2
+  Alter = 4
+  1 40 41
+  1 44 45
+  1 45 46
+  1 46 47
+>> COPY $Project.JobIph JOB001
+&RASSI
+  NrOfJobIph
+  1 all
+  TRD1
+  TRDI
+&CASPT2
+  Frozen = 0
+  RMultiState = 5 1 2 3 4 5

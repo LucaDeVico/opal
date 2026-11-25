@@ -1,0 +1,15 @@
+{
+  "name": "OPAL",
+  "short_name": "OPAL",
+  "description": "OPAL: OpenMolcas Orbitals, Plotting, Analysis and Layout",
+  "start_url": "/opal/",
+  "scope": "/opal/",
+  "display": "standalone",
+  "background_color": "#12172a",
+  "theme_color": "#12172a",
+  "icons": [
+    { "src": "icons/opal-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/opal-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/opal-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

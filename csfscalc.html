@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <!--
+************************************************************************
+* This file is part of OpenMolcas.                                     *
+*                                                                      *
+* OpenMolcas is free software; you can redistribute it and/or modify   *
+* it under the terms of the GNU Lesser General Public License, v. 2.1. *
+* OpenMolcas is distributed in the hope that it will be useful, but it *
+* is provided "as is" and without any express or implied warranties.   *
+* For more details see the full text of the license in the file        *
+* LICENSE or in <http://www.gnu.org/licenses/>.                        *
+*                                                                      *
+* Copyright (C) 2025-2026, Luca De Vico                                *
+************************************************************************
+
   OPAL — OpenMolcas Orbitals, Plotting, Analysis and Layout
   CSFsCalc — RASSCF Configuration State Function Calculator
 
-  Copyright (C) 2025–2026 Luca De Vico
   Università degli Studi di Siena
-
-  This file is part of OPAL.
-
-  OPAL is free software: you can redistribute it and/or modify it under
-  the terms of the GNU Lesser General Public License as published by the
-  Free Software Foundation, either version 2.1 of the License, or
-  (at your option) any later version.
-
-  OPAL is distributed in the hope that it will be useful, but WITHOUT
-  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-  License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with OPAL. If not, see <https://www.gnu.org/licenses/>.
 -->
 <html lang="en">
 <head>
@@ -28,6 +25,52 @@
 <title>CSFsCalc · OpenMolcas OPAL</title>
 <meta name="description" content="OpenMolcas OPAL — Orbitals, Plotting, Analysis and Layout">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
+<script id="opal-theme">
+/* Light theme switch. The choice is carried only by the page address fragment:
+   no cookies and no stored values. This block sits in the head so that the first
+   paint is already in the right theme. Dark is the default. */
+(function () {
+  var root = document.documentElement;
+  var KEY = 'theme=light';
+  var listeners = [];
+  function isLight() { return root.getAttribute('data-theme') === 'light'; }
+  function fragment() { return isLight() ? '#' + KEY : ''; }
+  function sync() {
+    var btn = document.getElementById('btn-theme');
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', isLight() ? 'true' : 'false');
+    btn.title = isLight() ? 'Switch to the dark theme' : 'Switch to the light theme';
+  }
+  function set(light) {
+    if (light) root.setAttribute('data-theme', 'light');
+    else root.removeAttribute('data-theme');
+    sync();
+    try {
+      window.history.replaceState(null, '', light ? fragment() : window.location.pathname + window.location.search);
+    } catch (e) { /* a file address may refuse this; the choice still applies */ }
+    for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](light); } catch (err) { console.error(err); }
+    }
+  }
+  window.OPAL_THEME = {
+    isLight: isLight,
+    fragment: fragment,
+    set: set,
+    toggle: function () { set(!isLight()); },
+    onChange: function (fn) { listeners.push(fn); }
+  };
+  if ((window.location.hash || '').replace(/^#/, '').split('&').indexOf(KEY) !== -1) {
+    root.setAttribute('data-theme', 'light');
+  }
+  function wire() {
+    var btn = document.getElementById('btn-theme');
+    if (btn) btn.addEventListener('click', function () { window.OPAL_THEME.toggle(); });
+    sync();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
+</script>
 <style>
 /* ─── Design-system tokens ─────────────────────────────────────────── */
 :root {
@@ -53,6 +96,27 @@
 
 /* ─── Reset & base ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* iOS long press. Text selection and the callout menu are two separate switches, so
+   both are set, and on the chrome containers rather than on single buttons: a long
+   press lands on whatever is under the finger. A selector here that matches no
+   element fails silently, so the harness resolves every one against the page. The
+   second rule opts back in for text the user may want to copy and for text entry. */
+#toolbar, .psect-title, .results-panel-title, .input-group, .drop-zone, .toggle-row,
+.result-card, .result-final, .btn {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#nTotal, #numDeterminants, #numDeterminantsGUGA, #numCSFs, input[type="number"] {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
+}
+/* Number display: a count is shown in groups of three digits. The visual gap is
+   a margin on every group after the first, so the text itself holds digits only:
+   a selected and copied count has no separator, and a screen reader reads one number. */
+.dg { margin-left: 0.28em; }
 
 html, body {
   height: 100%;
@@ -171,7 +235,7 @@ a:hover { text-decoration: underline; }
 /* ─── Two-column inputs grid ────────────────────────────────────────── */
 .inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 14px;
   margin-bottom: 14px;
 }
@@ -341,6 +405,10 @@ a:hover { text-decoration: underline; }
 .btn:hover { background: var(--panel2); border-color: var(--border2); color: var(--txt); }
 .btn.primary { border-color: var(--accent); color: var(--accent); }
 .btn.primary:hover { background: rgba(233,69,96,.12); }
+.btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.back-link, .back-link:hover { text-decoration: none; }
+.back-link { font-family: var(--mono); font-weight: 600; letter-spacing: .05em; }
 
 /* ─── Debug box ─────────────────────────────────────────────────────── */
 .debug-box {
@@ -718,6 +786,12 @@ a:hover { text-decoration: underline; }
   display: flex; justify-content: space-between; align-items: baseline;
   font-size: 11px; font-family: var(--mono); color: var(--txt4); gap: 8px;
 }
+.mem-total-scope {
+  font-size: 10px; color: var(--txt4); font-family: var(--mono); margin-top: 2px;
+}
+.mem-disk {
+  border-top: 1px dashed var(--border); padding-top: 6px; margin-bottom: 8px;
+}
 .mem-row .mem-item-label { color: var(--txt3); }
 .mem-row .mem-item-val   { color: var(--txt2); white-space: nowrap; }
 .mem-note {
@@ -729,16 +803,33 @@ a:hover { text-decoration: underline; }
   background: rgba(243,156,18,.06); border: 1px solid rgba(243,156,18,.2);
   border-radius: var(--r); padding: 5px 8px; margin-top: 6px; line-height: 1.5;
 }
+
+/* ─── LIGHT THEME ───────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:#eef1f5; --panel:#ffffff; --panel2:#dde4ee; --border:#aab4c3; --border2:#6b7686;
+  --accent:#b3123a; --blue:#1356a8; --green:#16702f; --yellow:#8a5000; --red:#b01c1c;
+  --txt:#0f172a; --txt2:#243044; --txt3:#3b4658; --txt4:#525d70;
+}
+:root[data-theme="light"] #toolbar img { filter: invert(1); opacity: 1; }
+/* the knob of a switched-off toggle is a dark grey in the dark theme; on the light
+   track it needs a light one */
+:root[data-theme="light"] .toggle-slider::before { background: #ffffff; }
 </style>
 </head>
 <body>
 
 <!-- ─── Toolbar ─────────────────────────────────────────────────────── -->
 <div id="toolbar">
+  <a class="btn back-link" id="back-link" href="index.html" title="Back to the OPAL launcher">OPAL</a>
   <img src="data:image/png;base64,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" style="height:28px;width:auto;opacity:.9;margin-right:4px" alt="OpenMolcas">
   <span class="logo">CSFsCalc <span style="color:var(--txt4)">· OpenMolcas</span></span><span id="ver-badge" title="CSFsCalc version"></span>
   <span class="spacer"></span>
   <span class="tagline">RASSCF Configuration Calculator</span>
+  <button class="btn" id="btn-theme" type="button" aria-pressed="false" title="Switch to the light theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9zM12 6.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4zM12 15.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4z"/></svg><span>Theme</span>
+  </button>
+  <button class="btn" id="btn-cite" type="button" title="How to cite OPAL" aria-label="How to cite OPAL" onclick="CITE.open('CSFsCalc', CSFSCALC_VERSION)">&#9432;</button>
 </div>
 
 <!-- ─── Page ─────────────────────────────────────────────────────────── -->
@@ -837,7 +928,7 @@ a:hover { text-decoration: underline; }
 
       <div class="determinant-note">
         <h5>ℹ About the Two Determinant Counts</h5>
-        <p><strong style="color:var(--txt)">Combinatorial Count:</strong> Total number of ways to distribute α and β electrons independently: C(n,n_α) × C(n,n_β). This is the mathematical maximum of possible Slater determinant products.</p>
+        <p><strong style="color:var(--txt)">Combinatorial Count:</strong> Number of ways to distribute α and β electrons independently over the orbitals, within the RAS limits (at most the chosen holes in RAS1, at most the chosen electrons in RAS3). With no limits it is C(n,n_α) × C(n,n_β).</p>
         <p><strong style="color:var(--txt)">GUGA-adapted Count:</strong> Approximate count of distinct spin-coupled determinants used in actual GUGA-based CI calculations (as in OpenMolcas, GAMESS). Each CSF is a linear combination of determinants with specific Clebsch-Gordan coefficients.</p>
         <p><strong style="color:var(--txt)">Relationship:</strong> For singlets, Det ≈ 2×CSF + √CSF. The exact expansion depends on the genealogical spin coupling scheme. Programs like OpenMolcas work primarily with the compact CSF basis.</p>
         <div class="formula">References: Shavitt (1977, 1981) on GUGA formalism; Dobrautz et al. (2019) on spin-adapted FCIQMC</div>
@@ -906,21 +997,8 @@ a:hover { text-decoration: underline; }
           </select>
 
           <select class="basis-select" id="basisLevel" onchange="onBasisChange()">
-            <option value="VDZP">VDZP (double-ζ + polarisation)</option>
+            <!-- The options are written by onBasisChange() from the levels of the chosen family's data. -->
             <option value="VTZP" selected>VTZP (triple-ζ + polarisation)</option>
-            <option value="VQZP">VQZP (quadruple-ζ + polarisation)</option>
-            <option value="VDZ">VDZ (double-ζ)</option>
-            <option value="MB">MB (minimal)</option>
-            <!-- ANO-R levels -->
-            <option value="R0" class="ano-r-level">R0 (minimal)</option>
-            <option value="R1" class="ano-r-level">R1 (double-ζ quality)</option>
-            <option value="R2" class="ano-r-level">R2 (triple-ζ quality)</option>
-            <option value="R3" class="ano-r-level">R3 (quadruple-ζ quality)</option>
-            <!-- ANO-ORCA levels -->
-            <option value="pVDZ" class="orca-level">pVDZ</option>
-            <option value="pVTZ" class="orca-level">pVTZ</option>
-            <option value="pVQZ" class="orca-level">pVQZ</option>
-            <option value="pV5Z" class="orca-level">pV5Z</option>
           </select>
         </div>
         <div style="font-size:11px;color:var(--txt4);margin-top:4px" id="basisDesc">
@@ -957,7 +1035,7 @@ a:hover { text-decoration: underline; }
 
   <!-- Debug toggle -->
   <div style="margin-bottom:14px">
-    <button class="btn" onclick="toggleDebug()">Show CSF Distribution Details</button>
+    <button class="btn" id="btn-debug" onclick="toggleDebug()">Show CSF Distribution Details</button>
     <div class="debug-box" id="debugBox" style="margin-top:8px">
       <h4>CSF Contributions by Electron Distribution</h4>
       <div class="debug-content" id="debugContent"></div>
@@ -1010,7 +1088,7 @@ a:hover { text-decoration: underline; }
       <li>
         <strong>Shavitt, I.</strong> (1977). "Graph theoretical concepts for the unitary group approach to the many-electron correlation problem."
         <em>Int. J. Quantum Chem., Symp.</em> <strong>11</strong>, 131–148.
-        [<a href="https://doi.org/10.1002/qua.560120114" target="_blank">DOI</a>]
+        [<a href="https://doi.org/10.1002/qua.560120819" target="_blank">DOI</a>]
       </li>
       <li>
         <strong>Shavitt, I.</strong> (1977). "The method of configuration interaction."
@@ -1043,7 +1121,209 @@ a:hover { text-decoration: underline; }
 // component is frozen at 0 until the suite-wide v1.0 release, so increment
 // the minor component only — it is an unbounded counter, not a two-digit
 // field (v0.99 is followed by v0.100).
-const CSFSCALC_VERSION = 'v0.50';
+const CSFSCALC_VERSION = 'v0.59';
+
+//@@OPAL-SHARED:BEGIN citation@@
+const CITE = (() => {
+  // How to cite OPAL: the two references, their plain-text and BibTeX forms, the
+  // line added to exported files, and the small window every tool and the launcher
+  // open from their info button. One source for all of them.
+  //
+  // TO FILL IN A REFERENCE LATER: edit the entry below (authors, title, venue, year,
+  // doi, url), run the sync script, bump the version of every tool and of the
+  // launcher. While an entry has no title it is shown as "in preparation", offers no
+  // Copy button, and adds nothing to exported files.
+  const CITATIONS = [
+    { id: 'opal', label: 'The OPAL article',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' },
+    { id: 'openmolcas', label: 'The OpenMolcas paper that presents OPAL',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' }
+  ];
+  const PENDING_TEXT = 'In preparation; the reference will appear here.';
+  const INTRO_TEXT = 'If you use OPAL in published work, please cite:';
+
+  // The tutorial page of each tool lives on the published site, so the address is
+  // absolute: the dock carries the same files and has no tutorials of its own. The
+  // page is found from the tool's name, lower-cased, and only when that name is in
+  // the list, so the launcher's window gets no such line.
+  const TUTORIAL_BASE = 'https://lucadevico.github.io/opal/tutorials/tools/';
+  const TUTORIAL_TOOLS = ['csfscalc', 'geodiff', 'intcoords', 'molbuild', 'molviz', 'orbviz', 'pathvibviz', 'rassiviz'];
+  const TUTORIAL_TEXT = 'Tutorial for this tool';
+
+  function list(override) { return override || CITATIONS; }
+  function tutorialUrl(toolName) {
+    const slug = String(toolName == null ? '' : toolName).toLowerCase();
+    return TUTORIAL_TOOLS.indexOf(slug) >= 0 ? TUTORIAL_BASE + slug + '/' : '';
+  }
+  function isEmpty(c) { return !c || !String(c.title || '').trim(); }
+  function field(c, k) { return String(c[k] == null ? '' : c[k]).trim(); }
+
+  // Plain text: Authors. Title. Venue, Year. doi:...  (parts that are empty are left out)
+  function plain(c) {
+    if (isEmpty(c)) return '';
+    const parts = [];
+    const a = field(c, 'authors'), t = field(c, 'title'), v = field(c, 'venue'), y = field(c, 'year');
+    const d = field(c, 'doi'), u = field(c, 'url');
+    if (a) parts.push(a.replace(/\.$/, '') + '.');
+    parts.push(t.replace(/\.$/, '') + '.');
+    if (v || y) parts.push((v + (v && y ? ', ' : '') + y) + '.');
+    if (d) parts.push('doi:' + d);
+    else if (u) parts.push(u);
+    return parts.join(' ');
+  }
+
+  function bibEscape(s) { return s.replace(/[{}]/g, ''); }
+  function bibtex(c) {
+    if (isEmpty(c)) return '';
+    const rows = [];
+    const add = (k, v) => { if (v) rows.push('  ' + k + ' = {' + bibEscape(v) + '}'); };
+    add('author', field(c, 'authors'));
+    add('title', field(c, 'title'));
+    add('journal', field(c, 'venue'));
+    add('year', field(c, 'year'));
+    add('doi', field(c, 'doi'));
+    add('url', field(c, 'url'));
+    const key = 'opal_' + String(c.id).replace(/[^A-Za-z0-9]/g, '') + field(c, 'year');
+    return '@article{' + key + ',\n' + rows.join(',\n') + '\n}';
+  }
+
+  // The DOIs of the entries that have one, and the line exports carry.
+  function dois(override) {
+    return list(override).filter(c => !isEmpty(c) && field(c, 'doi')).map(c => field(c, 'doi'));
+  }
+  // Empty string while no entry has a DOI. Callers add it only when it is not empty.
+  function exportLine(override) {
+    const d = dois(override);
+    return d.length ? 'Please cite: ' + d.map(x => 'doi:' + x).join('; ') : '';
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Copy: the clipboard interface where the page may use it, otherwise a hidden
+  // read-only text field selected and copied. Resolves to true or false.
+  function copyText(text) {
+    const fallback = () => {
+      let ok = false;
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.readOnly = true;
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+      document.body.appendChild(ta);
+      try { ta.focus({ preventScroll: true }); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand('copy'); }
+      catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(() => true, () => fallback());
+    }
+    return Promise.resolve(fallback());
+  }
+
+  const STYLE_ID = 'cite-style';
+  const CSS =
+    '.cite-back{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:12px;box-sizing:border-box}' +
+    '.cite-box{background:var(--panel,#16213e);color:var(--txt,#e8e8f0);border:1px solid var(--border,#2a3a5c);border-radius:var(--r,8px);max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:16px 18px;box-sizing:border-box;font-size:13px;line-height:1.5}' +
+    '.cite-box h2{margin:0 0 2px;font-size:15px}' +
+    '.cite-ver{color:var(--txt3,#9aa3b8);font-size:12px;margin-bottom:10px}' +
+    '.cite-item{margin:10px 0;padding:8px 10px;border:1px solid var(--border,#2a3a5c);border-radius:6px}' +
+    '.cite-label{font-weight:600;margin-bottom:4px}' +
+    '.cite-text{white-space:pre-wrap;word-break:break-word;-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}' +
+    '.cite-pending{color:var(--txt3,#9aa3b8);font-style:italic}' +
+    '.cite-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}' +
+    '.cite-row button,.cite-close{font:inherit;font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid var(--border,#2a3a5c);background:transparent;color:inherit;cursor:pointer}' +
+    '.cite-status{min-height:1.2em;margin-top:6px;font-size:12px;color:var(--txt3,#9aa3b8)}' +
+    '.cite-tut{margin:10px 0 0}.cite-tut a{color:var(--accent,#5dade2)}' +
+    '.cite-close{margin-top:8px}';
+
+  let openState = null;   // { back, keyHandler, returnTo } while the window is shown
+
+  function close() {
+    if (!openState) return;
+    const s = openState; openState = null;
+    document.removeEventListener('keydown', s.keyHandler, true);
+    if (s.back.parentNode) s.back.parentNode.removeChild(s.back);
+    if (s.returnTo && s.returnTo.focus) { try { s.returnTo.focus({ preventScroll: true }); } catch (e) {} }
+  }
+
+  // Body markup of the window; also used by the launcher's own section.
+  function bodyHtml(override) {
+    const items = list(override);
+    let h = '<p>' + esc(INTRO_TEXT) + '</p>';
+    for (let i = 0; i < items.length; i++) {
+      const c = items[i];
+      h += '<div class="cite-item" data-cite="' + esc(c.id) + '"><div class="cite-label">' + esc(c.label) + '</div>';
+      if (isEmpty(c)) {
+        h += '<div class="cite-pending">' + esc(PENDING_TEXT) + '</div>';
+      } else {
+        h += '<div class="cite-text">' + esc(plain(c)) + '</div>' +
+          '<div class="cite-row"><button type="button" data-copy="plain" data-i="' + i + '">Copy text</button>' +
+          '<button type="button" data-copy="bibtex" data-i="' + i + '">Copy BibTeX</button></div>';
+      }
+      h += '</div>';
+    }
+    return h + '<div class="cite-status" role="status"></div>';
+  }
+
+  function wireCopy(root, override) {
+    const items = list(override);
+    root.addEventListener('click', (ev) => {
+      const b = ev.target && ev.target.closest ? ev.target.closest('button[data-copy]') : null;
+      if (!b) return;
+      const c = items[Number(b.getAttribute('data-i'))];
+      if (isEmpty(c)) return;                 // the handler refuses as well as the markup
+      const text = b.getAttribute('data-copy') === 'bibtex' ? bibtex(c) : plain(c);
+      const status = root.querySelector('.cite-status');
+      copyText(text).then((ok) => {
+        if (status) status.textContent = ok ? 'Copied.' : 'Copy failed: select the text above and copy it by hand.';
+      });
+    });
+  }
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = STYLE_ID; st.textContent = CSS;
+    document.head.appendChild(st);
+  }
+
+  function open(toolName, version, override) {
+    close();
+    ensureStyle();
+    const back = document.createElement('div');
+    back.className = 'cite-back';
+    const box = document.createElement('div');
+    box.className = 'cite-box';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'How to cite');
+    const tut = tutorialUrl(toolName);
+    box.innerHTML = '<h2>' + esc(toolName) + '</h2><div class="cite-ver">' + esc(version) + '</div>' +
+      bodyHtml(override) +
+      (tut ? '<p class="cite-tut"><a href="' + esc(tut) + '" target="_blank" rel="noopener">' + esc(TUTORIAL_TEXT) + '</a></p>' : '') +
+      '<button type="button" class="cite-close">Close</button>';
+    back.appendChild(box);
+    wireCopy(box, override);
+    box.querySelector('.cite-close').addEventListener('click', close);
+    back.addEventListener('click', (ev) => { if (ev.target === back) close(); });
+    const keyHandler = (ev) => { if (ev.key === 'Escape') { ev.stopPropagation(); close(); } };
+    document.addEventListener('keydown', keyHandler, true);
+    document.body.appendChild(back);
+    openState = { back: back, keyHandler: keyHandler, returnTo: document.activeElement };
+    const closeBtn = box.querySelector('.cite-close');
+    try { closeBtn.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  return {
+    TUTORIAL_BASE: TUTORIAL_BASE, TUTORIAL_TOOLS: TUTORIAL_TOOLS, tutorialUrl: tutorialUrl,
+    CITATIONS: CITATIONS, PENDING_TEXT: PENDING_TEXT, INTRO_TEXT: INTRO_TEXT,
+    isEmpty: isEmpty, plain: plain, bibtex: bibtex, dois: dois, exportLine: exportLine,
+    bodyHtml: bodyHtml, wireCopy: wireCopy, ensureStyle: ensureStyle,
+    open: open, close: close, isOpen: () => !!openState
+  };
+})();
+//@@OPAL-SHARED:END citation@@
 
 /* ─── UI helpers ─────────────────────────────────────────────────────── */
 function toggleSect(titleEl) {
@@ -1055,7 +1335,7 @@ function toggleSect(titleEl) {
 
 function toggleDebug() {
   const debugBox = document.getElementById('debugBox');
-  const button   = document.querySelector('.btn');
+  const button   = document.getElementById('btn-debug');
   if (debugBox.classList.contains('visible')) {
     debugBox.classList.remove('visible');
     button.textContent = 'Show CSF Distribution Details';
@@ -1122,20 +1402,22 @@ function countSpinAdaptedDeterminants(numCSFs, STotal) {
   }
 }
 
-function canCoupleSpins(S1, S2, S3, STarget) {
+// Number of ways the spins S1, S2 and S3 of the three subspaces couple to the total spin
+// STarget. Each intermediate spin S12 of the first two subspaces is a different spin
+// function, so the product of the three subspace counts is taken once per allowed S12:
+// S12 runs from |S1 - S2| to S1 + S2 in steps of one, must couple with S3 to STarget
+// (triangle rule). The caller passes the spins of electron counts that add up to the total,
+// so S1 + S2 + S3 and STarget always differ by an integer and no separate parity test is needed.
+function countSpinCouplings(S1, S2, S3, STarget) {
   const S12Min = Math.abs(S1 - S2);
   const S12Max = S1 + S2;
-  const S12ReqMin = Math.abs(S3 - STarget);
-  const S12ReqMax = S3 + STarget;
-  const overlapMin = Math.max(S12Min, S12ReqMin);
-  const overlapMax = Math.min(S12Max, S12ReqMax);
-  if (overlapMin > overlapMax) return false;
-  const parityS1S2   = (Math.round(2*S1) + Math.round(2*S2)) % 2;
-  const parityS3Stot = (Math.round(2*S3) + Math.round(2*STarget)) % 2;
-  if (parityS1S2 !== parityS3Stot) return false;
-  const startParity = Math.round(2 * overlapMin) % 2;
-  if (startParity === parityS1S2) return true;
-  return (overlapMin + 1.0) <= overlapMax;
+  let ways = 0;
+  for (let S12 = S12Min; S12 <= S12Max; S12 += 1.0) {
+    if (Math.abs(S12 - S3) > STarget) continue;
+    if ((S12 + S3) < STarget) continue;
+    ways++;
+  }
+  return ways;
 }
 
 function getSpinRange(nOrbitals, nElectrons) {
@@ -1168,8 +1450,8 @@ function countCSFs(n1, n2, n3, NTotal, STotal, maxHoles, maxExcitations) {
             if (K2 > 0) {
               for (let S3 = S3Min; S3 <= S3Max; S3 += 1.0) {
                 const K3 = weylPaldusK(n3, N3, S3);
-                if (K3 > 0 && canCoupleSpins(S1, S2, S3, STotal)) {
-                  distributionCSF += K1 * K2 * K3;
+                if (K3 > 0) {
+                  distributionCSF += K1 * K2 * K3 * countSpinCouplings(S1, S2, S3, STotal);
                 }
               }
             }
@@ -1190,8 +1472,25 @@ const multiplicityNames = {
   5: 'Quintet', 6: 'Sextet',  7: 'Septet',  8: 'Octet'
 };
 
+// The two numbers the RAM estimate needs, held as numbers. They are written where
+// they are computed (calculate and updateNbas) and never read back from the screen.
+let csfCount = 0;
+let nBasValue = 0;
+
+// Integer to markup: digits in groups of three from the right, the first group
+// plain and each later group in its own element with a small left margin. No text
+// node sits between the elements, so the text content is the plain digits.
+function groupDigitsHTML(n) {
+  const s = String(Math.round(n));
+  if (s.length <= 3) return s;
+  const head = s.length % 3 || 3;
+  let html = s.slice(0, head);
+  for (let i = head; i < s.length; i += 3) html += '<span class="dg">' + s.slice(i, i + 3) + '</span>';
+  return html;
+}
+
 function calculate() {
-  const ras1           = parseInt(document.getElementById('ras1').value)           || 0;
+  const ras1         = parseInt(document.getElementById('ras1').value)           || 0;
   const ras2           = parseInt(document.getElementById('ras2').value)           || 0;
   const ras3           = parseInt(document.getElementById('ras3').value)           || 0;
   const nAlpha         = parseInt(document.getElementById('nAlpha').value)         || 0;
@@ -1219,9 +1518,10 @@ function calculate() {
     csfResult.totalCSF, sTotal
   );
 
-  document.getElementById('numDeterminants').textContent    = numDeterminants.toLocaleString();
-  document.getElementById('numDeterminantsGUGA').textContent = numDeterminantsGUGA.toLocaleString();
-  document.getElementById('numCSFs').textContent             = csfResult.totalCSF.toLocaleString();
+  document.getElementById('numDeterminants').innerHTML     = groupDigitsHTML(numDeterminants);
+  document.getElementById('numDeterminantsGUGA').innerHTML = groupDigitsHTML(numDeterminantsGUGA);
+  document.getElementById('numCSFs').innerHTML             = groupDigitsHTML(csfResult.totalCSF);
+  csfCount = csfResult.totalCSF;
 
   document.getElementById('rasNotation').textContent =
     `RAS(${nTotal}, ${maxHoles}, ${maxExcitations}; ${ras1}, ${ras2}, ${ras3})`;
@@ -1233,6 +1533,9 @@ function calculate() {
     div.textContent = line;
     debugContent.appendChild(div);
   });
+
+  // The CSF count, the electrons and the orbitals just changed: bring the RAM estimate along.
+  estimateRAM();
 }
 
 // Wire inputs
@@ -1302,7 +1605,7 @@ const BASIS_DATA = {
     R3: {Ag:101, Al:64, Ar:64, As:89, At:133, Au:128, B:33, Ba:100, Be:34, Bi:113, Br:96, C:33, Ca:75, Cd:101, Ce:126, Cl:71, Co:98, Cr:77, Cs:83, Cu:97, Dy:142, Er:143, Eu:136, F:33, Fe:97, Ga:96, Gd:141, Ge:96, H:14, He:14, Hf:131, Hg:109, Ho:142, I:131, In:104, Ir:128, K:59, Kr:107, La:115, Li:10, Lu:162, Mg:52, Mn:98, Mo:101, N:33, Na:34, Nb:106, Nd:131, Ne:33, Ni:97, O:33, Os:138, P:64, Pb:113, Pd:101, Pm:128, Po:133, Pr:123, Pt:128, Rb:68, Re:118, Rh:101, Rn:133, Ru:101, S:71, Sb:104, Sc:86, Se:96, Si:64, Sm:136, Sn:104, Sr:90, Ta:137, Tb:142, Tc:101, Te:131, Ti:97, Tl:118, Tm:142, V:97, W:137, Xe:131, Y:106, Yb:142, Zn:97, Zr:101},
   },
 
-  /* ── ANO-ORCA (H–Si/Ar, 4 levels) ───────────────────────────────────── */
+  /* ── ANO-ORCA (H–Ar, 4 levels) ──────────────────────────────────────── */
   'ANO-ORCA': {
     pVDZ: {Al:18, Ar:18, B:14, Be:6, C:14, Cl:18, F:14, H:5, He:5, Li:6, Mg:7, N:14, Na:7, Ne:14, O:14, P:18, S:18, Si:18},
     pVTZ: {Al:34, Ar:34, B:30, Be:15, C:30, Cl:34, F:30, H:14, He:14, Li:15, Mg:16, N:30, Na:16, Ne:30, O:30, P:34, S:34, Si:34},
@@ -1341,8 +1644,8 @@ const BASIS_DESC = {
   'ANO-S':       'ANO-S: small ANO (H–Kr, 4 levels). Good structural properties; H/He have no VTZP contraction.',
   'ANO-L':       'ANO-L: large ANO (H–Zn, 5 levels). Non-relativistic; K and Ca not available — use ANO-S or ANO-RCC instead.',
   'ANO-RCC':     'ANO-RCC: relativistic ANO-DKH (H–Cm, 96 elements, 5 levels). Recommended for CASSCF/CASPT2. Use DKH or X2C Hamiltonian.',
-  'ANO-R':       'ANO-R: relativistic ANO-X2C (H–Rn, 4 levels R0–R3). More compact primitives than ANO-RCC. Bates & Sherrill JCTC 2020. Use X2C Hamiltonian.',
-  'ANO-ORCA':    'ANO-ORCA: Neese ANO basis (H–Si/Ar, 4 levels pVDZ–pV5Z). Designed for coupled-cluster / ORCA compatibility.',
+  'ANO-R':       'ANO-R: relativistic ANO-X2C (H–Rn, 4 levels R0–R3). More compact primitives than ANO-RCC. Zobel, Widmark & Veryazov, J. Chem. Theory Comput. 16, 278 (2020); correction 17, 3233 (2021). Use X2C Hamiltonian.',
+  'ANO-ORCA':    'ANO-ORCA: Neese ANO basis (H–Ar, 4 levels pVDZ–pV5Z). Designed for coupled-cluster / ORCA compatibility.',
   'STO-3G':      'STO-3G: minimal Slater-type orbital basis (H–Xe). Qualitative only; not recommended for quantitative CASSCF.',
   '3-21G':       '3-21G: split-valence Pople (H–Xe). Acceptable for geometry; poor for correlated methods.',
   '6-31G':       '6-31G: standard split-valence Pople (H–Zn). Usable for CASSCF with small active spaces.',
@@ -1387,6 +1690,7 @@ const BASIS_REFS = {
   ],
   'ANO-R': [
     'J.P. Zobel, P.-O. Widmark, V. Veryazov. J. Chem. Theory Comput. 16 (2020) 278-294. doi:10.1021/acs.jctc.9b00873',
+    'Correction: J.P. Zobel, P.-O. Widmark, V. Veryazov. J. Chem. Theory Comput. 17 (2021) 3233.',
   ],
   'ANO-ORCA': [
     'F. Neese, E. Valeev. J. Chem. Theory Comput. 7 (2011) 33-43. doi:10.1021/ct100396y',
@@ -1592,9 +1896,8 @@ function estimateRAM() {
   const ramDiv = document.getElementById('ramResult');
   if (!ramDiv) return;
 
-  // Read nBas from the badge rendered by updateNbas()
-  const badge = document.querySelector('.nbas-badge-value');
-  const nBas  = badge ? parseInt(badge.textContent.replace(/,/g,'')) || 0 : 0;
+  // nBas and the CSF count are numbers held in the state, not text read from the page.
+  const nBas  = nBasValue;
 
   const ras1   = parseInt(document.getElementById('ras1').value)           || 0;
   const ras2   = parseInt(document.getElementById('ras2').value)           || 0;
@@ -1603,10 +1906,7 @@ function estimateRAM() {
   const nBeta  = parseInt(document.getElementById('nBeta').value)          || 0;
   const nRoots = Math.max(1, parseInt(document.getElementById('nRoots').value) || 1);
   const cholesky = document.getElementById('useCholesky').checked;
-  const nCSFs  = (() => {
-    const el = document.getElementById('numCSFs');
-    return el ? (parseInt(el.textContent.replace(/,/g,'')) || 1) : 1;
-  })();
+  const nCSFs  = csfCount;
 
   // Update Cholesky label
   const lbl = document.getElementById('choleskyLabel');
@@ -1624,7 +1924,7 @@ function estimateRAM() {
     nInact = r.nInactive;
     chargeStr = r.charge === 0 ? 'neutral' : (r.charge > 0 ? `charge +${r.charge}` : `charge ${r.charge}`);
     if (r.unknown.length) warnUnknown = `No Z for: ${r.unknown.join(', ')}. nInactive may be off. `;
-    if (r.approx) warnApprox = 'Charge outside {−1,0,+1}: using approximate inactive count. ';
+    if (r.approx) warnApprox = 'No charge from −2 to +2 gives a valid inactive-electron count: using approximate inactive count. ';
   } else {
     nInact = Math.round(nBas / 4);  // crude heuristic when no molecule loaded
     chargeStr = 'estimated (no molecule)';
@@ -1632,11 +1932,12 @@ function estimateRAM() {
 
   const nOcc = nInact + nAct;
   const GB   = 1e9;
-  const terms = {};
+  const terms = {};      // memory terms: these make up the total
+  const diskTerms = {};  // stored on disk: shown, but outside the total
 
   if (cholesky) {
     const nChol = 5 * nBas;  // typical N_chol ≈ 3–7 × nBas; 5 is a reasonable midpoint
-    terms['Chol. vectors (disk)']    = nBas * nBas * nChol * 8 / GB;
+    diskTerms['Chol. vectors (disk)'] = nBas * nBas * nChol * 8 / GB;
     terms['3-idx tensor (RAM peak)'] = nChol * nOcc * nBas * 8 / GB;
     terms['K-matrix buffer']         = nOcc * nOcc * nBas * nBas * 8 / GB;
   } else {
@@ -1661,6 +1962,19 @@ function estimateRAM() {
       </div>`
     ).join('');
 
+  const diskHTML = Object.entries(diskTerms)
+    .filter(([,v]) => v > 1e-6)
+    .map(([k,v]) =>
+      `<div class="mem-row">
+        <span class="mem-item-label">${k} — not in the total</span>
+        <span class="mem-item-val">${formatGB(v)}</span>
+      </div>`
+    ).join('');
+
+  const scopeStr = cholesky
+    ? 'Sum of the RAM terms below × 1.5. The Cholesky vectors are on disk and are not in it.'
+    : 'Sum of the terms below × 1.5.';
+
   const modeStr  = cholesky ? 'Cholesky/CD' : 'Conventional';
   const inactStr = xyzAtoms.length > 0
     ? `${nInact} inactive orb. (${chargeStr}, ${nActE} active e⁻)`
@@ -1673,10 +1987,12 @@ function estimateRAM() {
       <div>
         <div class="mem-total-label">Est. RAM — ${modeStr}, ${nRoots} root${nRoots>1?'s':''} (×1.5 safety)</div>
         <div style="font-size:10px;color:var(--txt4);font-family:var(--mono);margin-top:2px">${inactStr}</div>
+        <div class="mem-total-scope">${scopeStr}</div>
       </div>
       <div class="mem-total-value">${formatGB(safeTotal)}</div>
     </div>
     <div class="mem-breakdown">${rowsHTML}</div>
+    ${diskHTML ? `<div class="mem-disk">${diskHTML}</div>` : ''}
     <div class="mem-note">
       Take this with a grain of salt — actual usage depends on screening, integral batching,
       OpenMolcas version, and RASSCF algorithm path.
@@ -1736,7 +2052,7 @@ function renderAtomChips(atoms) {
   const totalChip = document.createElement('span');
   totalChip.className = 'atom-chip';
   totalChip.style.cssText = 'background:var(--panel2);border-color:var(--accent);color:var(--accent)';
-  totalChip.textContent = total + ' atoms';
+  totalChip.textContent = atomCountLabel(total);
   chips.appendChild(totalChip);
 }
 
@@ -1778,7 +2094,7 @@ function disposeSession() {
   }
 
   // Refresh every derived readout so no stale nbas / RAM figure survives.
-  updateNbas();   // also triggers estimateRAM via wrapper
+  updateNbas();   // every path of updateNbas() ends in a call to estimateRAM()
 }
 
 function loadXYZFile(file) {
@@ -1806,9 +2122,9 @@ function loadXYZFile(file) {
     dz.classList.add('loaded');
     dz.querySelector('.dz-icon').textContent  = '✅';
     dz.querySelector('.dz-label').textContent = file.name;
-    dz.querySelector('.dz-sub').textContent   = xyzAtoms.length + ' atoms loaded';
+    dz.querySelector('.dz-sub').textContent   = atomCountLabel(xyzAtoms.length) + ' loaded';
     renderAtomChips(xyzAtoms);
-    updateNbas();              // also triggers estimateRAM via wrapper
+    updateNbas();              // every path of updateNbas() ends in a call to estimateRAM()
   };
 
   reader.onerror = () => {
@@ -1825,6 +2141,33 @@ function isANO(family)   { return family.startsWith('ANO-'); }
 function isANOR(family)  { return family === 'ANO-R'; }
 function isORCA(family)  { return family === 'ANO-ORCA'; }
 function hasLevels(family) { return isANO(family); }
+
+/* Menu text of every level, in the order the menu lists them. A family's menu
+   holds the entries of this list for which BASIS_DATA has a table. */
+const LEVEL_LABELS = {
+  VDZP: 'VDZP (double-ζ + polarisation)',
+  VTZP: 'VTZP (triple-ζ + polarisation)',
+  VQZP: 'VQZP (quadruple-ζ + polarisation)',
+  VDZ:  'VDZ (double-ζ)',
+  MB:   'MB (minimal)',
+  R0:   'R0 (minimal)',
+  R1:   'R1 (double-ζ quality)',
+  R2:   'R2 (triple-ζ quality)',
+  R3:   'R3 (quadruple-ζ quality)',
+  pVDZ: 'pVDZ',
+  pVTZ: 'pVTZ',
+  pVQZ: 'pVQZ',
+  pV5Z: 'pV5Z'
+};
+
+function levelsOfFamily(family) {
+  const data = BASIS_DATA[family] || {};
+  return Object.keys(LEVEL_LABELS).filter(l => data[l] !== undefined);
+}
+
+function atomCountLabel(n) {
+  return n + (n === 1 ? ' atom' : ' atoms');
+}
 
 function getLevelKey(family) {
   if (!hasLevels(family)) return 'DEFAULT';
@@ -1870,6 +2213,8 @@ function updateNbas() {
     desc.textContent = BASIS_DESC[family] || '';
   }
 
+  nBasValue = 0;   // set below only when a molecule and its basis data are both present
+
   if (xyzAtoms.length === 0) {
     // Show refs even without molecule
     const refs = BASIS_REFS[family];
@@ -1898,6 +2243,7 @@ function updateNbas() {
   }
 
   const { total, unknown } = result;
+  nBasValue = total;
   // Build a human-readable label
   let label = family;
   if (isANOR(family))       label = `ANO-R ${level}`;
@@ -1909,7 +2255,7 @@ function updateNbas() {
       <div class="nbas-badge-label">Total contracted basis functions (n<sub>bas</sub>)</div>
       <div class="nbas-badge-note">${label}</div>
     </div>
-    <div class="nbas-badge-value">${total.toLocaleString()}</div>
+    <div class="nbas-badge-value">${groupDigitsHTML(total)}</div>
   </div>`;
 
   if (unknown.length > 0) {
@@ -1945,24 +2291,19 @@ function onBasisChange() {
     levelSel.style.display = 'none';
   } else {
     levelSel.style.display = '';
-    // Show only the relevant option groups
-    const allOpts = Array.from(levelSel.options);
-    allOpts.forEach(o => {
-      const isRLevel    = o.classList.contains('ano-r-level');
-      const isOrcaLevel = o.classList.contains('orca-level');
-      const isStdLevel  = !isRLevel && !isOrcaLevel;
-      if (isANOR(family))       o.style.display = isRLevel    ? '' : 'none';
-      else if (isORCA(family))  o.style.display = isOrcaLevel ? '' : 'none';
-      else                       o.style.display = isStdLevel  ? '' : 'none';
-    });
-    // Set a sensible default when switching families
+    // Offer exactly the levels the family's data hold. The options are
+    // rebuilt, not hidden: a hidden option still shows in some Safari menus.
     const current = levelSel.value;
-    const defaultL = getDefaultLevel(family);
-    const currentVisible = Array.from(levelSel.options)
-      .find(o => o.value === current && o.style.display !== 'none');
-    if (!currentVisible) {
-      levelSel.value = defaultL;
-    }
+    const offered = levelsOfFamily(family);
+    while (levelSel.options.length > 0) levelSel.remove(0);
+    offered.forEach(l => {
+      const o = document.createElement('option');
+      o.value = l;
+      o.textContent = LEVEL_LABELS[l];
+      levelSel.appendChild(o);
+    });
+    // Keep the current level when the new family has it, else use the default
+    levelSel.value = offered.indexOf(current) >= 0 ? current : getDefaultLevel(family);
   }
 
   updateNbas();
@@ -2013,6 +2354,14 @@ function applyFileInputAccept(inputId, acceptString) {
 // Populate the toolbar version badge from the single source of truth, once,
 // at the very end of the script — never hard-coded into the HTML.
 document.getElementById('ver-badge').textContent = CSFSCALC_VERSION;
+
+// The back link carries the theme fragment, so light stays light on the launcher.
+function syncBackLink() {
+  const a = document.getElementById('back-link');
+  if (a) a.setAttribute('href', 'index.html' + (window.OPAL_THEME ? window.OPAL_THEME.fragment() : ''));
+}
+syncBackLink();
+if (window.OPAL_THEME) window.OPAL_THEME.onChange(syncBackLink);
 
 </script>
 </body>

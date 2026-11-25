@@ -1,0 +1,37 @@
+&GATEWAY
+  Coord = $InputDir/molbuild_trans.xyz
+  Basis = ANO-S-VDZP
+  Group = NoSym
+  RICD
+&SEWARD
+&RASSCF
+  Spin = 1
+  FileOrb = $InputDir/t01_scf.scf.h5
+  Inactive = 39
+  Ras1 = 9
+  Ras2 = 0
+  Ras3 = 7
+  NActEl = 18 2 2
+  CIRoot = 5 5 1
+  Iter = 150 100
+  PrWF = 0.2
+  Alter = 15
+  1 30 31
+  1 31 32
+  1 32 33
+  1 33 34
+  1 34 35
+  1 35 36
+  1 36 38
+  1 37 39
+  1 38 41
+  1 39 42
+  1 40 41
+  1 41 42
+  1 53 58
+  1 54 62
+  1 55 64
+>> COPY $Project.JobIph JOB001
+&RASSI
+  NrOfJobIph
+  1 all

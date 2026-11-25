@@ -1,0 +1,185 @@
+/* OPAL tutorials: a lab notebook.
+   Light: cream paper ruled in squares, dark-blue ink, highlighter yellow.
+   Dark: the same notebook at night -- warm charcoal, cream ink, coral and teal. Colours only. */
+
+/* ---- light (the default scheme) ---- */
+[data-md-color-scheme="default"] {
+  --md-default-fg-color: rgba(38, 42, 66, .92);          /* ink */
+  --md-default-fg-color--light: rgba(38, 42, 66, .64);
+  --md-default-fg-color--lighter: rgba(38, 42, 66, .38);
+  --md-default-fg-color--lightest: rgba(38, 42, 66, .10);
+  --md-default-bg-color: #fcf8ec;                        /* cream paper */
+  --md-default-bg-color--light: rgba(252, 248, 236, .88);
+  --md-default-bg-color--lighter: rgba(252, 248, 236, .55);
+  --md-default-bg-color--lightest: rgba(255, 255, 255, .35);
+  --md-code-bg-color: #f3ecd6;
+  --md-code-fg-color: #3b3a4a;
+  --md-accent-fg-color: #d6334f;           /* OPAL red, darkened for paper */
+  --md-typeset-a-color: #1d4f91;           /* pen blue */
+  --opal-grid: rgba(70, 110, 170, .13);
+  --opal-margin: rgba(214, 51, 79, .45);   /* the red hairline under the header */
+  --opal-highlight: #fff0a3;
+  --opal-link: #1d4f91;
+  --opal-note-bg: #fff4b8;
+  --opal-note-edge: #e6c84a;
+  --opal-info-bg: #e5f1f4;
+  --opal-info-edge: #4a9bb0;
+}
+/* ---- dark ---- */
+[data-md-color-scheme="slate"] {
+  --md-default-fg-color: rgba(236, 230, 214, .90);       /* cream ink */
+  --md-default-fg-color--light: rgba(236, 230, 214, .62);
+  --md-default-fg-color--lighter: rgba(236, 230, 214, .34);
+  --md-default-fg-color--lightest: rgba(236, 230, 214, .12);
+  --md-default-bg-color: #24222c;                        /* warm charcoal */
+  --md-default-bg-color--light: rgba(36, 34, 44, .88);
+  --md-default-bg-color--lighter: rgba(36, 34, 44, .55);
+  --md-default-bg-color--lightest: rgba(255, 255, 255, .05);
+  --md-code-bg-color: #2f2c3a;
+  --md-code-fg-color: #ddd5c2;
+  --md-accent-fg-color: #ff7088;
+  --md-typeset-a-color: #7cc7d8;           /* teal */
+  --opal-grid: rgba(255, 255, 255, .045);
+  --opal-margin: rgba(255, 112, 136, .5);
+  --opal-highlight: rgba(255, 112, 136, .30);   /* coral marker */
+  --opal-link: #7cc7d8;
+  --opal-note-bg: #4a4020;
+  --opal-note-edge: #d9b84a;
+  --opal-info-bg: #27414a;
+  --opal-info-edge: #5eb3c6;
+}
+
+/* squared paper */
+body,
+.md-container {
+  background-color: var(--md-default-bg-color);
+  background-image:
+    linear-gradient(var(--opal-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--opal-grid) 1px, transparent 1px);
+  background-size: 1.2rem 1.2rem;
+}
+.md-header,
+.md-tabs {
+  background-color: var(--md-default-bg-color--light);
+}
+.md-header {
+  box-shadow: 0 1px 0 var(--opal-margin);
+}
+.md-footer {
+  position: relative;      /* always above the sidebar, never behind it */
+  z-index: 5;
+  background-color: var(--md-default-bg-color--light);
+}
+/* the navigation never grows past the window, whatever the page height */
+.md-sidebar--primary .md-sidebar__scrollwrap {
+  max-height: calc(100vh - 6rem);
+}
+
+/* headings: a serif, like a printed notebook cover; links with a marker underline */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  letter-spacing: 0;
+}
+.md-typeset h2 {
+  display: inline-block;
+  background: linear-gradient(transparent 62%, var(--opal-highlight) 62%);
+  padding: 0 .15em;
+}
+.md-typeset a:not(.headerlink) {
+  color: var(--opal-link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .15em;
+}
+.md-typeset a:hover {
+  background: var(--opal-highlight);
+}
+.md-typeset code {
+  background-color: var(--md-default-bg-color--light);
+}
+
+/* the Draft notice: a sticky note */
+.md-typeset .admonition.opal-draft-notice {
+  background: var(--opal-note-bg);
+  border: 0;
+  border-left: 4px solid var(--opal-note-edge);
+  border-radius: 2px;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, .16);
+}
+.md-typeset .opal-draft-notice .admonition-title {
+  background: transparent;
+}
+/* the Beta banner: same family as the margin note, with a heavier edge */
+.md-typeset .admonition.opal-beta-banner {
+  background: var(--opal-info-bg);
+  border: 0;
+  border-left: 6px solid var(--opal-info-edge);
+  border-radius: 2px;
+}
+.md-typeset .opal-beta-banner .admonition-title {
+  background: transparent;
+}
+/* "Used in the case study": a margin note */
+.md-typeset .admonition.opal-case-study-box {
+  background: var(--opal-info-bg);
+  border: 0;
+  border-left: 4px solid var(--opal-info-edge);
+  border-radius: 2px;
+}
+.md-typeset .opal-case-study-box .admonition-title {
+  background: transparent;
+}
+
+/* planned image: a taped-in photo outline */
+.opal-shot-placeholder {
+  border: 2px dashed var(--md-default-fg-color--lighter);
+  border-radius: 4px;
+  padding: 1.2em;
+  text-align: center;
+  color: var(--md-default-fg-color--light);
+  background: var(--md-default-bg-color--lightest);
+}
+
+/* current page in the left navigation: highlighter */
+.md-sidebar--primary .md-nav__link--active {
+  background: linear-gradient(transparent 55%, var(--opal-highlight) 55%);
+}
+
+/* Page status in the navigation (status in each page's front matter). The theme draws a
+   mask-image icon after the title; it has none for our values, so supply them. Pages that
+   are reviewed or final carry no marker. */
+.md-status--stub {
+  --md-status: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E");
+}
+.md-status--draft {
+  --md-status: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='black' stroke-width='1.6'/%3E%3Cpath d='M8 3.5a4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
+}
+.md-status--checked {
+  --md-status: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4.5'/%3E%3C/svg%3E");
+}
+.md-status--reviewed,
+.md-status--final {
+  display: none;
+}
+
+/* the always-visible light / dark switch */
+.opal-theme-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 6;
+  padding: .35rem .8rem;
+  font: inherit;
+  font-size: .62rem;
+  color: var(--md-default-fg-color);
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 1rem;
+  box-shadow: 1px 2px 6px rgba(0, 0, 0, .18);
+  cursor: pointer;
+}
+.opal-theme-toggle:hover {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}

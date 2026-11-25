@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <!--
+************************************************************************
+* This file is part of OpenMolcas.                                     *
+*                                                                      *
+* OpenMolcas is free software; you can redistribute it and/or modify   *
+* it under the terms of the GNU Lesser General Public License, v. 2.1. *
+* OpenMolcas is distributed in the hope that it will be useful, but it *
+* is provided "as is" and without any express or implied warranties.   *
+* For more details see the full text of the license in the file        *
+* LICENSE or in <http://www.gnu.org/licenses/>.                        *
+*                                                                      *
+* Copyright (C) 2026, Luca De Vico                                     *
+************************************************************************
+
   OPAL — OpenMolcas Orbitals, Plotting, Analysis and Layout
   MolBuild — Interactive Molecule Builder
 
-  Copyright (C) 2026 Luca De Vico
   Università degli Studi di Siena
 
-  This file is part of OPAL.
-
-  OPAL is free software: you can redistribute it and/or modify it under
-  the terms of the GNU Lesser General Public License as published by the
-  Free Software Foundation, either version 2.1 of the License, or
-  (at your option) any later version.
-
-  OPAL is distributed in the hope that it will be useful, but WITHOUT
-  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-  License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with OPAL. If not, see <https://www.gnu.org/licenses/>.
+  External code: three.js r128 (MIT licence). Its notice is kept in this file.
 -->
 <html lang="en">
 <head>
@@ -28,6 +27,75 @@
 <meta name="description" content="OpenMolcas OPAL — Orbitals, Plotting, Analysis and Layout">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
+<script id="opal-theme">
+/* Light theme switch. The choice is carried only by the page address fragment:
+   no cookies and no stored values. This block sits in the head so that the first
+   paint is already in the right theme. Dark is the default. */
+(function () {
+  var root = document.documentElement;
+  var KEY = 'theme=light';
+  var listeners = [];
+  function isLight() { return root.getAttribute('data-theme') === 'light'; }
+  function fragment() { return isLight() ? '#' + KEY : ''; }
+  function sync() {
+    var btn = document.getElementById('btn-theme');
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', isLight() ? 'true' : 'false');
+    btn.title = isLight() ? 'Switch to the dark theme' : 'Switch to the light theme';
+  }
+  function set(light) {
+    if (light) root.setAttribute('data-theme', 'light');
+    else root.removeAttribute('data-theme');
+    sync();
+    try {
+      window.history.replaceState(null, '', light ? fragment() : window.location.pathname + window.location.search);
+    } catch (e) { /* a file address may refuse this; the choice still applies */ }
+    for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](light); } catch (err) { console.error(err); }
+    }
+  }
+  window.OPAL_THEME = {
+    isLight: isLight,
+    fragment: fragment,
+    set: set,
+    toggle: function () { set(!isLight()); },
+    onChange: function (fn) { listeners.push(fn); }
+  };
+  if ((window.location.hash || '').replace(/^#/, '').split('&').indexOf(KEY) !== -1) {
+    root.setAttribute('data-theme', 'light');
+  }
+  function wire() {
+    var btn = document.getElementById('btn-theme');
+    if (btn) btn.addEventListener('click', function () { window.OPAL_THEME.toggle(); });
+    sync();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
+</script>
+<script id="opal-panels">
+/* Side panels start hidden on a phone and visible everywhere else. A phone has a
+   coarse primary pointer and a screen whose shorter side is under 600 CSS px. The
+   test reads the screen, not the window, and runs once: turning the phone or
+   resizing a window never opens or closes a panel. This block sits in the head so
+   a phone never paints the panels for a frame and then hides them. Nothing is
+   stored. The rest of the toggle lives in the app script. */
+(function () {
+  var root = document.documentElement;
+  function isPhone() {
+    var s = window.screen || {};
+    var shortSide = Math.min(s.width || 0, s.height || 0);
+    var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    return coarse && shortSide > 0 && shortSide < 600;
+  }
+  var phone = isPhone();
+  if (phone) {
+    root.setAttribute('data-left-panel', 'hidden');
+    root.setAttribute('data-right-panel', 'hidden');
+  }
+  window.OPAL_PANELS = { phone: phone };
+})();
+</script>
 <script>
 /* three.js r128 | https://threejs.org/license */
 /* MolSuite offline bundle — do not replace with CDN */
@@ -49,8 +117,25 @@
   --sans:system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:ui-monospace,'Cascadia Code','SF Mono',monospace;
   --r:4px; --r2:8px;
+  /* File bar: its own background, apart from the panels and the 3D view */
+  --filebar-bg:#0a0e1c; --filebar-border:#2f3a5c; --filebar-txt:#c4cee2; --filebar-dim:#7f8bad;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* iOS long press. Text selection and the callout menu are two separate switches, so
+   both are set, and on the chrome containers rather than on single buttons: a long
+   press lands on whatever is under the finger. A selector here that matches no
+   element fails silently, so the harness resolves every one against the page. The
+   second rule opts back in for text the user may want to copy and for text entry. */
+#tb,#lp,.panel-handle,#toast,#sb,#opt-panel,#kb-ring,#p3d-hd,#p3d-empty,#move-popup,#atom-pop,#exp-dd,#elmod,#tmplmod,#xyzmod,#gestmod,#infomod,#file-bar{
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+#smi-in,#smi-out,#sb-f,#con-list,#el-cust,#xyz-ta{
+  -webkit-touch-callout:default;
+  -webkit-user-select:text;
+  user-select:text;
+}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:13px}
 body{display:flex;flex-direction:column}
 
@@ -73,7 +158,7 @@ body{display:flex;flex-direction:column}
 #sb{position:absolute;bottom:0;left:0;right:0;height:24px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:14px;font-size:11px;color:var(--txt3);font-family:var(--mono)}
 
 /* ── 3D viewport pane (Phase 2) — read-only companion to the 2D canvas ── */
-#cvw-3d{flex:1;position:relative;overflow:hidden;min-width:0;border-left:1px solid var(--border);background:var(--bg)}
+#cvw-3d{flex:none;width:50%;position:relative;overflow:hidden;min-width:0;border-left:1px solid var(--border);background:var(--bg)}
 #cvs3d{display:block;width:100%;height:100%}
 #p3d-hd{position:absolute;top:0;left:0;right:0;height:30px;display:flex;align-items:center;gap:8px;
   padding:0 10px;background:linear-gradient(to bottom,rgba(18,23,42,.88),rgba(18,23,42,0));
@@ -88,6 +173,40 @@ body{display:flex;flex-direction:column}
   gap:4px;text-align:center;color:var(--txt4);font-size:11px;line-height:1.5;pointer-events:none}
 #p3d-empty-ico{font-size:24px;color:var(--border2);margin-bottom:2px}
 #p3d-empty-hint{font-size:10px}
+
+/* ─── SIDE PANEL TOGGLE ─────────────────────────────────────
+   Two panels: the left tool panel and the 3D preview pane. A hidden panel is fully
+   hidden, never half open, and the 2D canvas takes the freed width. The state is
+   carried by two attributes on the root element, set before first paint on a phone.
+   The slide is 180 ms; visibility switches at the end when hiding and at the start
+   when showing, so a hidden panel leaves the tab order. The preview pane has an
+   explicit width (half of the area beside the tool panel) so that it can slide. */
+.panel{transition:width .18s ease,visibility 0s linear 0s}
+html[data-left-panel="hidden"] #lp,html[data-right-panel="hidden"] #cvw-3d{width:0;min-width:0;border:none;visibility:hidden;transition:width .18s ease,visibility 0s linear .18s}
+@media (prefers-reduced-motion:reduce){.panel,html[data-left-panel="hidden"] #lp,html[data-right-panel="hidden"] #cvw-3d{transition:none}}
+/* The tool panel keeps a minimum content width while it slides, so it is clipped, not re-wrapped. */
+#lp{overflow-x:hidden}
+#lp>*{min-width:200px}
+/* The handle is a sibling of the panels, inside the 2D canvas area, so a hidden panel cannot hide it.
+   The button is a 44 px square hit area; the visible tab is the narrow part at the canvas edge. */
+.panel-handle{position:absolute;top:50%;transform:translateY(-50%);z-index:30;width:44px;height:44px;padding:0;display:flex;align-items:center;background:transparent;border:0;cursor:pointer;touch-action:manipulation}
+.panel-handle[data-side="left"]{left:0;justify-content:flex-start}
+.panel-handle[data-side="right"]{right:0;justify-content:flex-end}
+.panel-handle-tab{display:flex;align-items:center;justify-content:center;width:20px;height:44px;background:var(--panel);border:1px solid var(--border);color:var(--txt3);font-family:var(--mono);font-size:16px;line-height:1}
+.panel-handle[data-side="left"] .panel-handle-tab{border-left:0;border-radius:0 8px 8px 0}
+.panel-handle[data-side="right"] .panel-handle-tab{border-right:0;border-radius:8px 0 0 8px}
+.panel-handle:hover .panel-handle-tab{background:var(--panel2);color:var(--txt)}
+/* The launcher link at the left end of the toolbar. */
+.back-link{text-decoration:none;font-family:var(--mono);font-weight:600;letter-spacing:.05em}
+/* ─── FILE BAR ──────────────────────────────────────────────
+   One line along the bottom of the page: the imported file's name and kind, or
+   "New drawing". It sits after the main row, outside the 2D and 3D views. Fixed
+   height, so showing a name never changes the view size. The padding keeps it above
+   a bottom safe area where the page declares one. */
+#file-bar{flex-shrink:0;display:flex;align-items:center;gap:10px;height:28px;box-sizing:content-box;padding:0 12px;padding-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);background:var(--filebar-bg);border-top:1px solid var(--filebar-border);color:var(--filebar-txt);font-family:var(--mono);font-size:11px;overflow:hidden;white-space:nowrap;cursor:default}
+#file-bar-name{min-width:0;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+#file-bar-kind{flex-shrink:0;color:var(--filebar-dim)}
+#file-bar.empty #file-bar-name{color:var(--filebar-dim);cursor:default}
 
 /* Toolbar */
 #tb img{height:28px;width:auto;opacity:.9;flex-shrink:0;margin-right:4px}
@@ -128,6 +247,16 @@ body{display:flex;flex-direction:column}
   background:var(--panel);border:1px solid var(--border2);border-radius:var(--r2);
   padding:10px 14px;min-width:310px;z-index:50;
   flex-direction:column;gap:7px;box-shadow:0 4px 20px rgba(0,0,0,.45)}
+/* Ring of actions around a selected atom (a tap on an atom that is already selected). A
+   zero-size anchor at the atom; every button is placed on a circle by the script. */
+#kb-ring{position:absolute;top:0;left:0;width:0;height:0;z-index:55;display:none}
+#kb-ring.on{display:block}
+#kb-ring button{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;padding:0;
+  border-radius:50%;border:1px solid var(--border2);background:var(--panel);color:var(--txt);
+  font:600 12px var(--sans);line-height:1;cursor:pointer;touch-action:manipulation;
+  box-shadow:0 2px 8px rgba(0,0,0,.45)}
+#kb-ring button.kb-grow{border-color:var(--accent)}
+#kb-ring button:active{background:var(--accent);color:#fff}
 #opt-bar-track{background:var(--bg);border-radius:3px;height:4px;overflow:hidden}
 #opt-bar{height:100%;background:var(--blue);border-radius:3px;width:0%;transition:width .35s ease}
 
@@ -280,12 +409,34 @@ body{display:flex;flex-direction:column}
 #lp::-webkit-scrollbar{width:4px}
 #lp::-webkit-scrollbar-track{background:transparent}
 #lp::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.btn svg{width:13px;height:13px;flex-shrink:0}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+/* ─── LIGHT THEME ───────────────────────────────────────── */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#eef1f5;--panel:#ffffff;--panel2:#dde4ee;--border:#aab4c3;--border2:#6b7686;
+  --accent:#b3123a;--blue:#1356a8;--green:#16702f;--yellow:#8a5000;--red:#b01c1c;
+  --txt:#0f172a;--txt2:#243044;--txt3:#3b4658;--txt4:#525d70;
+  --filebar-bg:#d2dae6;--filebar-border:#8d99ab;--filebar-txt:#0f172a;--filebar-dim:#3b4658;
+}
+:root[data-theme="light"]{--con-dihed:#7b3fa0}
+:root[data-theme="light"] #tb img{filter:invert(1);opacity:1}
+/* The drawing area and the 3D preview stay dark in the light theme: the molecule is
+   drawn in script on a dark ground, and everything laid over it keeps the dark values
+   of the colours it uses. */
+:root[data-theme="light"] #cvw{--txt:#e0e6f0;--txt2:#b0bcd0;--txt3:#90a0c0;--border:#252d4a;--border2:#353d5e;--accent:#e94560;--bg:#12172a;--panel:#16213e;--panel2:#0f3460;--blue:#3498db;--green:#2ecc71;--yellow:#f39c12;--red:#e74c3c;--txt4:#606a8a;background:var(--bg)}
+/* An element symbol is drawn in its own colour, chosen for a dark ground (white for
+   hydrogen), so the buttons that carry one keep a dark fill in the light theme. */
+:root[data-theme="light"] .eb,:root[data-theme="light"] .ptb{background:#12172a;border-color:#353d5e}
+:root[data-theme="light"] .eb:hover,:root[data-theme="light"] .ptb:hover{background:#0f3460}
+:root[data-theme="light"] .eb.on{background:#0f3460;border-color:#e94560}
 </style>
 </head>
 <body>
 
 <!-- ═══ Toolbar ═══════════════════════════════════════════════════════════ -->
 <div id="tb">
+  <a class="btn back-link" id="back-link" href="index.html" title="Back to the OPAL launcher">OPAL</a>
   <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAB8CAYAAAChbripAAAckklEQVR42u1dabRcVZX+dtUbMpGZYMIURkmCgYBCENEOyiCTCg0ooi2oTfdCGxxABKQRtYmAjQthMSioLYqhI90tSBAEJDIGgQAhAzILmRNCyPCGqvr6x/0Otd9Zt+rVe9R7ee/lnrVq1a1b59577tn77P3tffbZB8hKVrKSlaxkJStZyUpWspKVrGQlK1nJSlaykpWsZCUrWcnKgC02kF6GpOmdaGbMyLsVFZL5ar+zMrCJnwtEJ7kjyWFZr2x9xP80yQUk3yb5d5IXk8zpY1lPDVCxT9JIHs30ckmmDgYwCCSZM7MSyXsBzABQANAIoKgqGwDsamZrSVotwFASxcys6I9T6jVUuEXJzEoRMO2MAYtmRjFqALHFFEyT+l+/JiDJBn2si9eavgeTfE0jvkRyFcmCkwL7elVRizqp9XxX79MXS8OWHr0ASinnapVeBLAjgPHu3L0AjgMwWOdG1yLtnDQ5BMA3AOwK4A0AV5nZHI3AkkbqcABfBdCkNoT7rwMwx8wWk8xLikwC8BlJpbQ2lABcY2ZrSH4ZwE4AFpnZbwKT65mfATAZwNNmNruLfdVngdueJE8XgBvrR3atZp/T/0WN/DNJbnAS4ORORLa/11Ek21KwxKn+HiR3YuWygeQR7t4ns/MySXUX6/dqkkOiZ96v//5QT1yT21Ijn+Q3ADwD4EYAtwB4muQMcXuuRgkAAHu73+sB/BVAu6v3nhpUSUkMeJMwRIvwRKtG+HUkJzpsUQLwtuq0RJ+hAG6QlIDuEe7l623W90b9D0mQAoBRAN4fvWf476160iPXy8TPi/gfBnAFgGYRqw3ABAC3kByVVO1UEjCFAZYCWKSODWW7Tu6TFzj8iuq2Axgk9disTh8K4NwIRDboMyj6tEuMHxnVi+sO1vdQp4rzOs6563PRf3W1aHobAwSiniwCBtQOHW8H4FAz+51EX6HKvYL+28ude9HM1pPcUAsDiMmKJJsBnKo2NQK4DsAsEeFbOv+PJC80s7V6j/D8WwAsFGEOA/BB1f8IgFvdOxcAXKkRbI6BSwBWRkwNAIeTvKCTPuh/dru+f+/034skVwjBl0j+sAadHSyAUSTXuHvN1Pl57tzvK+lM154D9WySvC2qc52717E6tzPJ9Tp3lKs7hOQrOn+Xzh3vsMGITvpnnsMzrSR3d/+FPpvVnzFAKUUvPw5gvkaFAfhAVLeaJJkolB9GyUJ9r3B1t61yv3Cfg3VcBPADmaeDhEUuBbBJo/PgFItihMzYoWa2CcBDkfXhrYSxqtvkzN+GFMxTkIXx0Z4mSK4XR78J4DU6ogDAiwAec7+nkBwmrGCdtHuvCBMs1vFyd360gGcargjE2d8x0Hw5W1pkgr0KYJ4IOC2FmYpmVpAqMQCrdb45Rawz5VNydegYAACO6mmn3ZZwWIwQyg1lqWOAAoBxAN5b40u/z2GZtQBeSZEAIwFs04lE2lnfT8rLlov65wl9bx+IXkPbiinv8JaZFc2sXd/FyJYPDDBfUucQgeIB4QgKwGeMCFIUcFqlF/adtZ86PVdBdIeOmuzOveJG33JXb7g+HcCXk0jNTiX9rQLjvaDvcZppLLg6eeGVvO4XpNv66F45AIeRXKHjwGgrATwXMeRTTuUcCOCueqP/LSEBQkeM03MDEd80szdEtPCSB1S9UeJhyztJAQBL3Gha4Tp0UCRx4jIUwLAUyeEZLZwfpk8xGtUFM9so2z/ghGVRHzfKYrgPwJ8A3C+v5SUpcxRvArhHz/94T6qAhi3AALFjZq2+n3X/7RdMtCou5PfI3qbu/ayrFptVY6t0YpPT1xsqtH2DqztITqBA2NNJHqS+PMy1aWHKMwuRnm+QQyhtYN4F4GLdE5Fzq1/PBUxwjo3NANbo92N6WQLYE8B2ZrbcAbe8RnT4vRuAIeqYRidGoXvS1d02hRhBHXjnSiWbuxA5Y+gY4IQU3Z/XSI9BoO/vRidV0qTSE1Ije5HcWZhgQDDA9o4A6yTugjkYOnuYrIEVAJrMLLhTQbKZZMnp/5yY4PlIhLZotAa1UwlHtOnjkXualAhta4sYqc3pbsrD97gDtt59/LDalXMSYF7K85rNrEByLoBjAHws8m4OCAkQRurbOn5G/vJGdeT+ZnYvgFY5UP4ZwANmNk+MMFn18tK3r7n7rtdncAW140uLnosUrGDOcgl1WyIM0xRdsw7AmY7wntFOMLNVlUzklOfOEQMcORBUQJoTaIXs/RyAvwN4SbZ9cKVeRvKLAC4AsAuAdpLXA/iB0HHACS+a2WaHDzaKENvVwAAbJTEmANihgu9hhwD4dN/R7n1uFvMGlXanmf1N/o72iKjDSK6JrBtW6as/6/0OcQxu/ZIBnGPH++aXO33YJiA3SS9ZIHmnQ8Fh3uArwgp/BDBVYn5JiJhhMpxKJNemeAPp2kMxTJHkUgBTAEzW+Zg4U0J7zaxNZt87cwFmdmcMVCsRVm1DStRQGgMsEbaZKlO27pZbr5iB7gWHOkQOJAEXANAoEXi/JMHJAE5EMtNXdPqyqE+jmZ0lt/H9AB6WAyfvAN1K95yxFdzBucj+f79MuTAlHTyXH3ReywAGGbmCBwW3bpVAjZwYNa94xrwL9Uo1dwHcHYHOfukHMKdjRzpCLJf+20BypEbzfmZ2q5m1CTTFDpA8gGfV0QvM7FAAe5Lc38xaBZ7ykU0/RlPRlaaZH9H3eADHiRkHi5AznMv50RQxHFzBBfkDqs1hvJ3iCSx2cs0clOdJ+r0reKyIXBATLBFRPgvgSQDfA7DRxQj+tQJyXyRR2kBysADioyR/SHKcRs4yB8RGSvpU0rUPoxz8cQnJHeTYGQ3gclf3LxUkSa19/Q8kP0Tyw/oOx+PT9Lv64HExc9NAkADjRJQmPXsiyTsEpHaRXT9VI4nONMxF91kgEVkQQBsuFXEugKfEUOslLYoyK0fEnRwAqJm95KTALgAeJnmTzk0VwZ9zLutSN969EcB/i4ke0Hc4/lQFejSZ2dsA5vYUYXqNASSWdxRRXgZwOoCvAThaEqFd7Znmrlso5J2L9OBiV2cPMVTAChPEUB8B8H963hAAoyqI/3Duah23qZ2nySHVqudeI4bzDp9iBbAXS62ia1/BvW8LyhFRgbGKjsG8Ocjov/7BAFFs/TAA10rP/1yjMkyKhJc9UNc1yGZ+3nV4cB697B6xt+voBnVoCcBQM/skkojclwGMlFRpSJlXyAG4TZZFE8rxe61yDj0O4OcuCMPU9rzz6FUqjarXhI7hYY1Sh43OATXMMayXNPc5/DOkX5iBGm05Eb5E8p8ALDOzH+v/PaSb89HonhaN1CeF9kNnvKiFHg0akVNSQGIOycydmdlvSd4N4FiSi81sZdQ2jy0+B+B3srtDmQ/gRJl/eecQ+qOIsayCPU9n6s51LuI0t3Gw8R9CMjeyIPyvd3iV5A0ykf9axX+w5YuWajW43/u7cKbj3XKuA9xiDv+9keQEd/3pOt+i75uDhNC3D6Py369p0Uij6l1L8g2Sn3P3zrsQ9RBm1kDyBJLnkfyMC8/O1hfWQPy8Ox5P8icuzr5I8gPu/+N03q/iCcTzcfX76nyL6p7vGG2kVgKlMdJbJMe5uue659yvyGQ4olslIqedr3Xhqe6b6+Rjnd2zTy90DY3TcRPJs0gucwQpKMhxF3fNGfq/3REmHJ/vOm6IuxdJHh4xhye6Py6Q3DOSJCUnSUjypqhNQTrlu7tkbWsb8RaN+mNJPuk6uOBG9UofFUvykhQGCNLgTtUJ4vtokg+QnCmiNOrZX0i5h2eCg9zzjnHPKLg6b5K8MOQU8MycldrF/T4k/yciZCkS64vUuSEU+6YU4oXQ8E0kd/NMkIYxSP45RY3438e666anSAt/3SKSn46lQUbp6oQfR/IKkpsdsYsViPFABN7mVCBeuP4+efngRbJ79nlRfaaoki+6+nu4Z8UqwzPhPSSnx/ggI3zH0Zsn+S8kX68wmtKIMStigKeqEDCce5jkIRHTTSR5dZVr/TMvcNdtS3JdCgMwWlwa3uU6kjulMf7WqOf9yDuC5GNRZ5eqrHwNxLjS3W+w0rhUI6I//6wkxkNKAVPtOv/MqxzzNpN8tYZrvfpaRfKbJAdt9fiA5CSSsyp0FGsgxjmRibihymj0TFCqQKRantkVqVPtGc+QPGEg0jXXycg3kiNI/oc8UCfJI1eSB6srunGpOx6L8uycVfGfl5wPvV2fEFlbqOIXj4NBQ1lTxWtXcO9WdB7KIpIFKLNJ/oHk1Go+g/5WqrmCQ7TMdADfjlyX3WGyZe7cOOfrzjkihKjfXBefU9A18azhmKjeqhQGCNHDDSlMEfL7lPSMo5CsYzi1htXL/Z4B4tEIdG91Soh/8xE6EyIGiKN5lmoC5mkkM3+rkcTuNWn+YFfNAUxHEh3c4BjUS7XR0t9htm1lBSJvBPATJNE3zUgikr7g2pdz7WwdSCqg1smgPLo3Dek7eHUFBgjqpA3J9O2vAMw1s04zYQiZ7yOCnYJy8GZghOEAhpvZSjcxE7dvM4CjzewBd/4ukk8jWc/vpVRX1V7/t/dJHt4F4FQJyb+qmLng874qut+skM0rcsRUdMfqvDcPR5P8jjP1ChXcwQEkBqB4g/5rDqZuBdAY6t/kgeWABYF1Lqu13DrvMEAOSVDoiWZ2spnNJ/lO2JOmasNnKMmTSH6C5MEK2SqE6VySTWa21sy+hySe4G6Up4VHu3asTAGej8q0CzjincWjKE+9lgbqQO9pLo4XV4YyGck8+yc1192oQMk2xeGdhiQk+g+KGfwOknCvUDaRXCRC/9bMngmj2MyWADiC5GUAzoksgdURLgGAdSEoUyt7NwHYpOcWBrqk7y0GCLq3qLDreQDOMbM3RbRWkkMBnIUk7n8wgEkiwp461+YshCFIkjrsD+AbJGcjWWUb1gfQzM4lSSQxft4MjC0ZjzWGA2h3q3S2XhdwnTBAe5yzV1ggzPI16fsAeftCOdF53v5Y47MK8trlXLw9SE5w2MO7g8P7+BiF/UK+Qv2+LgUzDCgM0FsvsbSs2pPUKxL7bfKw/UqjvogkLGq29PJ0JEGfz6Nj3GCamdoA4Os6dyWUas7MljoQuV4jfgTKq4PXu3uNBPD61jTQe5oBLGKAALDyZtZO8hMop1Jrl2g+xyWLfBJJZC5rfJZJjAcwF5ZhUdzXSvJNJGv4Tfp+Q8QAljFA/a2MFWWp+s56vL0B/FodHtb93WRm80KeXaQkiKihrKmg0sKSLe+PaEHHdfcZA9QZAIaRvaojLdgM4JdI5gMKGvnrAFwocU1X2WpgshKStYSHoLwiNw/gp2a2QNIk1PNt2YiOGTpGopvRtm6/IoOSStdyTVdS2Nd6376GAdahnAYmiP7PIkkEVXDI/vtmtsyN/gAa2EnnUCrjVSTZPX2ZRvIj0Tlvkm5Akn8gEKJbDOCkC1POVdZZnb9byBbuVxLn67lfQK6HJUAQyQFohSXij6KcZyePJL/v1eL0LjldtLwrb2aPIUnqCCT++jZJhBnqwHwKA6wXEay7EkDMU3JWxHSZtqXOYgeqSbfAlGLuyXKATaj3ZhG9wQCr3Bq8IpJZxoVIFl2G55+rNDDWTREXOvsyJLOOTQ7lfymqu7yCDyD4AUpdHPkkuTvJB5Hk9XkESebzQ2MmcOZoo1LJLiJ5e8wo7r47kLwHSd6EB1V/pouY7jm8Ugc/QLCbb3U+AHOfIcrz+2f/vDq09zQ9N6xHWEFyG9f5x7g23ur8DXkFto6s0Q/QqOtGkXze+SLa3QKX9wViOV0ewtp8P40PDOKIO8gtemmL9jGo215IvTEXEEzAkkDfdyW6NwE4A8B5MfDrZimpQ34pT2MjyplH3+cki7cC3nTSahCStXm1SoCg48+XryLMdTRIBQ0B8J8Vcv/soWe26ZpdHT3yuu9JSJbEhbxJPqv6eSQnunWNfZ8BQtIFJMElx+ncbDN7VLruXU24OFu/hGTLFzqm2jMyE1sdQA3XBgYo1iha20iOkYop6vpVSLKINOvcR0lOCzjFMcAUlFPOG8oZz/xACNFXzUgSSv5CYDosLD2+HjTsDQZ4PTKzGgBc6jJm160NIYOomT0oH0MYNRMiq+TtSAJAI3ZIrRJATHM4ygtc5yHJJTBJ+CYQ/Jho9APlHMdwDBE8pWH/gkmizy1m9jEzOw3Jkvc3xSQHRFirzzFAWijYMDV4EoAztbq33m0IaWAuEMijQGHQweudVbLOXTdUo7grkugQ3b8dwBlmttzM2pFsMvG8/psWuayh9w/iHE4CBGKORjmv0U8DZjKzBUiWsRMdg2r6LAOUIgZodS96Icn3SOTWUwqUADSY2WsAZqKcUyD4IVrdyPcSYBupKNbiDRST7au68xTPkNccB5Hk+jUkexoA5R3HtgGwu54TopB208RYMZJGELOa66f56tuxtfgSthQDeB+AjwZe7Xzvo+X8qanDu8gE7eqsHyMJAtkYieE1KRJgG0mKzkaUOZNxRx3P9TuX6/jJoGqi5W0TkcQovAXgdp3bHsCEiJiBGcaIqcNzb5Uq+Fw9zMCeYoDQiS9oDx9zDPCK8/9/geT7XfbvdyP3gwk1nOT3UN704SyUEzcjYgDvBxiBcpbSWhhgDMqZRZ9zIDTkN7pZaP8wlKONgHKG89VIcgRtFNDbPfJQBhf1eSRHmlmLmZXMbKWZzTWzJ+rhFu5JCeCTPOWV0aMkL2DQh3kAP6qTQyOnDvk8gAuh3TbM7Ldm9lDEmCudePUANd8FUDUa5bUNS2NAZmZtZrbCzNZEUm6KA8dLnIqc7Gz7NbIoiCRN3VMkv0VyV8fwdXHj9xQDhMmLORFDAMD/6r+wx++HAZz0bqSAS+o4DsBFIvTlzlkTM1iYEHo7kgBd2a9wkHcpV5NKEXMEBnhJntFXImDYKHB8r57VIrUxUx7GX5PcWfkQ+6QKCPrqNQB/cU6eoBvvFecH9NwO4PuK3y9186WCP/5i6deCOvRcnc+lMAAdNggSoCvF7wnUmmaSBV++M1FzzicRMp0t0XdIRtmuPrhcdn/Yi7BVVtQpwhw7eO9iX2SAn5nZxuDZChMyQuEzJW5DlqzdAVymzurqRs1hj95pAL6MjnH80yPUTscAmwBsdgw3qh52dRUJBXklg1XwoiReyIK2q3YeC/MlLyHJEv4EOmYSa0ES0HJRPQB0Qw8QP49kwuWasOEyyQNlYj2gc79Sh2/jGGazHCBttUiBFAB0md4nAK4WuEhimWDeBbwW5UBTPxVca4e2OpXQVIHouYipdpeqaZXpWCTp09TuKMkQAmceV98dJWxzrPNVHKvd1TbUGlfQGwxQFLd+XancQsTveQB2M7OpamzYRfPdjqww+o9HsqlCWDiaA/A1M1vk6niAtw7Aygh3jKxx9NONRDiTsIO3z++M7p4xyT3/QEVFjRcjNkk9LA5gVMC5Tebi7Vo8M0v1tkMS8fxs5ELeIgzgt4H9iZndosUarYq6/TiAZpJfNrOfyi4Oo22U69BaX6IxuESVxu2HKC8zawJwhZldpza0qeMOMrNrHWhbGt1zhJNGtbRjjTDEUJT3IzC3OfY06eu35I/YIFdxsCBmu3u1O4D4e3kTOzC61Od8kmcDuFPtTNsKp1cZgE7nNgL4GYCzQj59NfwalCdHfkTyQY3MMFu3C4D/0kgIQSK5KhKmGcDVZvbvYoCznQ3dBOBSMzs/yul/o0ZKYICN6LjDSBjFpS5IgDVSI0ORbG/zzvZw0jUfBfBN1flRZAEA5QWrnuGmiuBTkSxO3SBsFHIp5JBsKbde7e2RBNKe6+J4gJJL++bz6myWmA9z6yHu/6qUbGGLwt56rt4+0X6/1cpaN3++vUs0sUKhZvD5hEhe6RNM6txwkt904BAkX9A9Gty8fbV4ACP5l5B3MPSZe6frdM3D+j1YySurlfmqe6Q7t4eLVzCS2ymzGUnOiFRMj1gBfnvT4O4M897tSFKrTjezmer0nFyx5wL4KspBn2F59V4A7iA5VvWazOxpIfYz0XHzJw8uA+g6L8QOArhB974ayR5Dvw4+ddnJlwI4W9ePj0bfCw4cNiE9FoBOtZRcPwQQOl+/DyI5JewFIJP2CPVRkDQ7uzY8AuAO+Unu0KgGki1rBiHZOqdV/fUB4YkmPXN7qStGruwekwCeG9tILiX5J5Lf1sZNoX6zO76oSiqXcG5BuD4adUNInkjyNyRfiiJhnnDOnZ2V/XNi3Aat9P2ZrmnV99NutOdJTnLXjVTuodfD/XX+xpT2e0nyCXf+QaW+GUbyenf+61HdFpI7Rn39ISdl91YbVujcQmfzD3Lp+FZrHWXPpLF1nTWa5Awt39otJFR09Zrc8QSXR6haDqGCS9LoU7k1+pcRIXdVoOXhoePiFC1RG/Yj+WiK6nkjLFEPia+Cl1CEKygjqa/zXpIf0/vP0LFnnG2UALPoiPK6e3ZbqC9XLkm+THJoUBf63s2l2jtF9e90912h9DSLHaP8qR6OoO5OujREwY4jSX6N5PIakzjFMYZzfO7eWCqknG+IEzkqgPIKlwq2EOUCLJDc3zFWzkmMT7pr9o0lWicS8hKHgxgdz3L1bxQmuNdhJXPt+Zv+D/F+n4qSZMf3PrmecwLdYYTBJA8ieXkEbgpdCBwtRfXvIfl5t4VKZ20YopF5vcAhKwSwht9zNR+PSGotdtJqbizlqgyEnET+M1Gm0zBqd3L1FqctLnXq5iH9f7djkNkV3ul2n+n8XU2dV3tBAaSxSMKPmuV82AnJJg1TUd52PZhouW7apPG165DsxfcUkh29lqMcdDlG7tS9kSwPr7UNAcQuFHh8WWbZv8oD55eEPwfgeoGxUjSZtdTMnnWLNigdfa2cUYZk19B/M7OAO/IAPi3T7REze8r5C8L3DDmKlpvZbbpuEIArkKTAGaF+uQ1JzOPGCh7RujFA8KAd6Wb10jq12Int3lVGALqWjMpPLXfGfKUK7fTnS528yy1mdkrYsMK7YbXHb15+/JpWB3U2AHU8BkkE0GozWxP/3yMM4IDgYCSRr99CEofWjvL2LD0ZT1CKRmXsiAkmaVfbUIo8fmnMW0LHnT2D5/IXAC6RaUdHoFz029wMpccMYX1fqQKmMN2n6O7jdzYJ9eq2RtC6wJETkMTAn4HyJo6G3t96rlcgDso5B4Bky5eLokxiFWf93m2Ie4WBaJ7Jehvw+VzBB5C8qxspY/tL8aD0JZKn+dG31WYOT9kc4kQ5KbqD/vti8anuN5D8AclRae++VZdoe5ih8giuqWDW9YcSt3lW5OzJCF/NEaLjiXK9llI8cH2Z8H5C69FoP6Jso4havYKRT/u+Luwl0Bf0/Ova/MJvhpHtGdQNteAlwqlybfY1fOD1fItcx9tm4r6+jBD82yNIXkxyvRO5xT4i7m8juU9G+N7BB3uQvHkLmo2e8E+RPC4z67YMPjhUc+a9hQ+82llO8myXmTTbG3BL4AMxxZdIvtKD+MDv/tWu7WvHZ+K+D6iFKMhkpvLoVNpv8N3q+TlRHuDMrOuD+GAKyd/VAR94KfJcSDad6fn+41b+OMnHu4EPPMOsUdjVkEzP90+3cgPJryh2rzN8UIz+u1Fz8ZmeHwBqYRzJH7toXo8PYj1/H8mDMz0/MM3GfRX7lmbPP0/y1EzPbx344FMk54vwb8m7ONzVzfT8VoAPmrTl216Znt+K8UEm7utfrJ8wwTt7+NY73i4rWclKVrKSlaxkJStZyUpWspKVrGQlK1nZKsr/A9EZcyX+P0k3AAAAAElFTkSuQmCC"
        style="height:28px;width:auto;opacity:.9;margin-right:4px" alt="OpenMolcas">
   <span class="logo">MolBuild <span>· OpenMolcas</span></span><span id="ver-badge" title="MolBuild version"></span>
@@ -297,6 +448,8 @@ body{display:flex;flex-direction:column}
   <button class="btn" onclick="clearAll()">✕ Clear</button>
   <div class="sep"></div>
   <button class="btn" id="h-btn" onclick="toggleExplicitH()" title="Show/hide explicit hydrogen atoms in the 2D drawing">H</button>
+  <button class="btn" id="bg-btn" onclick="cycleCanvasBackground()" title="Drawing background: none, checkered or honeycomb (never exported)">▦ Grid: None</button>
+  <button class="btn on" id="snap-btn" style="display:none" onclick="toggleLatticeSnap()" title="Snap new atoms and templates to the honeycomb (hold Alt to suspend)">Snap</button>
   <div style="flex:1"></div>
   <button class="btn" id="clean-btn" onclick="clean2D()" title="Detect aromaticity · normalise 2D layout · prerequisite for best 3D geometry">✦ Clean</button>
   <button id="opt-btn" class="btn sec" onclick="startOptimise()" title="UFF geometry optimisation (3-stage L-BFGS) — run Clean first for best results">⚡ Optimise</button>
@@ -310,11 +463,16 @@ body{display:flex;flex-direction:column}
             title="Export the 2D structure as an image">⬇ Export ▾</button>
     <div id="exp-dd">
       <button class="exp-opt" onclick="exportPNG2D()"
-              title="Raster snapshot of the current canvas, exactly as shown on screen">🖼 PNG image</button>
+              title="Raster snapshot of the current canvas as shown on screen, without the grid background">🖼 PNG image</button>
       <button class="exp-opt" onclick="exportSVG2D()"
               title="True vector redraw — bonds and atoms as SVG shapes, independent of current zoom/pan">✎ SVG vector</button>
     </div>
   </div>
+  <div class="sep"></div>
+  <button class="btn" id="btn-theme" type="button" aria-pressed="false" title="Switch to the light theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M12 3a9 9 0 0 1 0 18a4.5 4.5 0 0 1 0-9a4.5 4.5 0 0 0 0-9zM12 6.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4zM12 15.3a1.2 1.2 0 1 0 0 2.4a1.2 1.2 0 1 0 0-2.4z"/></svg><span>Theme</span>
+  </button>
+  <button class="btn" id="btn-cite" type="button" title="How to cite OPAL" aria-label="How to cite OPAL" onclick="CITE.open('MolBuild', MOLBUILD_VERSION)">&#9432;</button>
 </div>
 
 <!-- hidden file picker — triggered by the Load button -->
@@ -323,7 +481,7 @@ body{display:flex;flex-direction:column}
 
 <!-- ═══ App ═══════════════════════════════════════════════════════════════ -->
 <div id="app">
-<div id="lp">
+<div id="lp" class="panel">
 
   <!-- TOOLS -->
   <div class="ps">
@@ -475,6 +633,10 @@ body{display:flex;flex-direction:column}
 <div id="cvw">
 <div id="cvw-2d">
   <canvas id="cvs"></canvas>
+  <div id="kb-ring" role="toolbar" aria-label="Actions on the selected atom"></div>
+  <!-- The two handles are siblings of the panels they control, so hiding a panel cannot hide its handle. -->
+  <button type="button" class="panel-handle" id="handle-left" data-side="left" aria-controls="lp" aria-expanded="true" aria-label="Hide left panel"><span class="panel-handle-tab">‹</span></button>
+  <button type="button" class="panel-handle" id="handle-right" data-side="right" aria-controls="cvw-3d" aria-expanded="true" aria-label="Hide right panel"><span class="panel-handle-tab">›</span></button>
   <!-- Optimisation progress panel (shown while L-BFGS is running) -->
   <div id="opt-panel" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -496,12 +658,13 @@ body{display:flex;flex-direction:column}
      Read-only companion to the 2D canvas. Renders activeGeometry3D only —
      never edits mol.atoms/mol.bonds. No export, no TDM vectors, no labels,
      no measurements, no sessions: that's MolViz's job. ═══════════════════ -->
-<div id="cvw-3d">
+<div id="cvw-3d" class="panel">
   <canvas id="cvs3d"></canvas>
   <div id="p3d-hd">
     <span id="p3d-title">3D PREVIEW</span>
     <span id="p3d-badge" style="display:none"></span>
     <div style="flex:1"></div>
+    <button class="btn" id="p3d-rebuild-btn" style="display:none" onclick="rebuild3DFromDrawing()" title="Replace the kept 3D coordinates (read from a file, or the result of Optimise) by a new 3D built from the 2D drawing (asks for a second click)">↻ Rebuild 3D from the drawing</button>
     <button class="btn" id="p3d-reset-btn" onclick="resetView3D()" title="Reset orientation, pan and zoom">⟲ Reset</button>
   </div>
   <div id="p3d-empty">
@@ -527,6 +690,7 @@ body{display:flex;flex-direction:column}
 </div><!-- /cvw-3d -->
 </div><!-- /cvw -->
 </div><!-- /app -->
+<div id="file-bar" class="empty" role="status"><span id="file-bar-name">New drawing</span><span id="file-bar-kind"></span></div>
 
 <!-- Element modal -->
 <div id="elmod" onclick="if(event.target===this)hideElModal()">
@@ -584,7 +748,7 @@ body{display:flex;flex-direction:column}
       <div class="tcat-hd">Mouse</div>
       <div class="gest-row"><span class="g-in">Click empty (Bond tool)</span><span class="g-out">Place new atom</span></div>
       <div class="gest-row"><span class="g-in">Drag from atom (Bond tool)</span><span class="g-out">Draw bond to new/existing atom</span></div>
-      <div class="gest-row"><span class="g-in">Click atom, no drag (Bond tool)</span><span class="g-out">Retype to the selected element</span></div>
+      <div class="gest-row"><span class="g-in">Click atom, no drag (Bond tool)</span><span class="g-out">Retype to the selected element; if already that element and terminal, extend the chain</span></div>
       <div class="gest-row"><span class="g-in">Click atom/bond (Select tool)</span><span class="g-out">Select atom · cycle bond order</span></div>
       <div class="gest-row"><span class="g-in">Drag empty (Select tool, ⇧ adds)</span><span class="g-out">Marquee-select</span></div>
       <div class="gest-row"><span class="g-in">Drag an atom (Select tool)</span><span class="g-out">Move that atom</span></div>
@@ -613,6 +777,8 @@ body{display:flex;flex-direction:column}
     <div class="tcat">
       <div class="tcat-hd">Touchscreen</div>
       <div class="gest-row"><span class="g-in">One finger: tap / drag</span><span class="g-out">Draw, select, or place — per active tool</span></div>
+      <div class="gest-row"><span class="g-in">Tap a terminal atom (Bond tool)</span><span class="g-out">Extend the chain by one atom, when the chosen element is the atom's own</span></div>
+      <div class="gest-row"><span class="g-in">Tap the selected atom</span><span class="g-out">Ring of actions around it: grow a bond, carbonyl or ring; change the element. Tap again to close</span></div>
       <div class="gest-row"><span class="g-in">Two fingers: drag</span><span class="g-out">Pan</span></div>
       <div class="gest-row"><span class="g-in">Two fingers: pinch</span><span class="g-out">Zoom</span></div>
       <div class="gest-row"><span class="g-in">Two fingers: twist (≥2 sel.)</span><span class="g-out">Rotate selection, together with pan/zoom</span></div>
@@ -624,6 +790,11 @@ body{display:flex;flex-direction:column}
       <div class="tcat-hd">Keyboard</div>
       <div class="gest-row"><span class="g-in">S / B / E</span><span class="g-out">Switch tool — Select / Bond / Erase</span></div>
       <div class="gest-row"><span class="g-in">1 / 2 / 3</span><span class="g-out">Bond order — single / double / triple</span></div>
+      <div class="gest-row"><span class="g-in">With a bond clicked (selected, shown in red)</span><span class="g-out">The bond keys below act on it, with no need to hover</span></div>
+      <div class="gest-row"><span class="g-in">Over an atom (or one selected): C N O S F L B I P H</span><span class="g-out">Change its element (L = Cl, B = Br; S and B stay tool keys if only selected)</span></div>
+      <div class="gest-row"><span class="g-in">Over an atom: 1 / 2 / 3 / 6 / 7</span><span class="g-out">Add a bond / a carbonyl / a benzene / a cyclohexane / a cyclopentane</span></div>
+      <div class="gest-row"><span class="g-in">Over a bond: 1 / 2 / 3</span><span class="g-out">Set its order</span></div>
+      <div class="gest-row"><span class="g-in">Over a bond: 4 – 8</span><span class="g-out">Fuse a ring of that size, away from the molecule</span></div>
       <div class="gest-row"><span class="g-in">← / →  (⇧ = 15°)</span><span class="g-out">Rotate selection 30° (or a placing template)</span></div>
       <div class="gest-row"><span class="g-in">Delete / Backspace</span><span class="g-out">Remove selected atom</span></div>
       <div class="gest-row"><span class="g-in">⌘/Ctrl + A</span><span class="g-out">Select all</span></div>
@@ -755,7 +926,7 @@ const _ISMETAL = new Set([
 // version is visible in the UI and written into every exported XYZ comment
 // line.  Format: v<major>.<minor>  (increment minor for bug-fixes, major for
 // new features that change the output format or UI).
-const MOLBUILD_VERSION = 'v0.62';
+const MOLBUILD_VERSION = 'v0.80';
 
 // ── ES2017 floor helpers ───────────────────────────────────────────────────
 // The vendored three.js r128 bundle contains `this.setSession=async function`,
@@ -824,7 +995,7 @@ function downloadLog(){
 }
 
 // ── Dihedral helper (used by pre-opt and stage-boundary logging) ───────────
-// Returns the signed dihedral angle (degrees) for atoms at flat-array indices
+// Returns the signed dihedral angle (degrees, SLAPAF's sign) for atoms at flat-array indices
 // i,j,k,l in the position vector x (x[3*i], x[3*i+1], x[3*i+2] = xi, yi, zi).
 function _dihXY(x, i, j, k, l){
   const b1=[x[3*j]-x[3*i],x[3*j+1]-x[3*i+1],x[3*j+2]-x[3*i+2]];
@@ -838,7 +1009,9 @@ function _dihXY(x, i, j, k, l){
   const cp=Math.max(-1,Math.min(1,(n1[0]*n2[0]+n1[1]*n2[1]+n1[2]*n2[2])/(l1*l2)));
   const m=[n1[1]*b2[2]-n1[2]*b2[1],n1[2]*b2[0]-n1[0]*b2[2],n1[0]*b2[1]-n1[1]*b2[0]];
   const lb2=Math.sqrt(_sq(b2[0])+_sq(b2[1])+_sq(b2[2]))||1;
-  return Math.atan2((m[0]*n2[0]+m[1]*n2[1]+m[2]*n2[2])/(l1*l2*lb2),cp)*180/Math.PI;
+  // SLAPAF's sign, from -180 up to but not including 180 degrees
+  const v=-Math.atan2((m[0]*n2[0]+m[1]*n2[1]+m[2]*n2[2])/(l1*l2*lb2),cp)*180/Math.PI;
+  return Math.abs(v)===180?-180:v;
 }
 function _dihTag(phi){ return Math.abs(Math.abs(phi)-180)<30?'anti':Math.abs(Math.abs(phi)-60)<20?'gauche':Math.abs(phi)<20?'eclipsed':'?'; }
 // Module-level storage so UFF stage-boundary logging can see the same torsions
@@ -2255,6 +2428,160 @@ function warnIfNewErrors() {
   _prevErrCount = errs.length;
 }
 
+// ───────────────────────── Identity check ───────────────────────────────
+// A conversion (import, Clean, 3D embedding, Optimise) may move atoms but must not
+// change WHAT the molecule is. A snapshot records the graph (atom and bond counts,
+// element and charge per atom, bond orders, a connectivity hash), which centres carry
+// a wedge or dash, and cis/trans per double bond, read from the 2D drawing and, when
+// a 3D geometry is given, from that too. Two snapshots are compared and any
+// difference is shown as a toast and written to the debug log. The check only reads:
+// it never changes the molecule, and an error inside it never stops a conversion.
+//
+// Bond orders: a bond that is aromatic (1.5) on either side is not compared, because
+// Clean turns a Kekulé ring into an aromatic one on purpose; the connectivity hash
+// and the other bonds still are. Cis/trans is compared only where both sides give a
+// clear answer (a torsion within 60° of 0° or of 180°, and no end bent less than about
+// 10° from straight: the drawing of a C–N=N end is often 177°, and its side is then noise).
+let _idSuspend = 0;               // >0 while a larger conversion owns the check
+const _idStats = {checks:0, flagged:0, last:null};
+let _idLastMsg = '', _idLastT = 0;
+const ID_TOAST_REPEAT_MS = 15000; // the same warning is not toasted again within this time
+// Notes about wedges and dashes (which centres were marked, ignored or left unmarked); the last few are kept
+// so a test can read them, and each distinct one is toasted at most once per ID_TOAST_REPEAT_MS.
+const _stereoNotes = [];
+let _stereoLastMsg = '', _stereoLastT = 0;
+const ID_EZ_COS = 0.5;            // |cos torsion| above this is cis (+) or trans (-)
+const ID_EZ_MIN_SIN = 0.17;       // sine of the smallest bend (about 10°) at an end of the double bond that still gives a side
+
+function _idHash(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(16); }
+function _idKey(a,b){ return a<b ? a+'-'+b : b+'-'+a; }
+const _idNum = (p,q) => p-q;
+
+// 'cis', 'trans' or null for the substituents p1 (on u) and p2 (on v) of the bond u=v.
+function _idSide(p1,pu,pv,p2){
+  const s=(a,b)=>[a[0]-b[0], a[1]-b[1], _nn(a[2],0)-_nn(b[2],0)];
+  const x=(a,b)=>[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+  const d=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const b1=s(pu,p1), b2=s(pv,pu), b3=s(p2,pv);
+  const n1=x(b1,b2), n2=x(b2,b3);
+  const l1=Math.sqrt(d(n1,n1)), l2=Math.sqrt(d(n2,n2));
+  const sc=Math.sqrt(d(b1,b1))*Math.sqrt(d(b2,b2)), sd=Math.sqrt(d(b2,b2))*Math.sqrt(d(b3,b3));
+  if(l1<ID_EZ_MIN_SIN*sc || l2<ID_EZ_MIN_SIN*sd) return null;   // an end within about 10° of straight: no side
+  const c=d(n1,n2)/(l1*l2);
+  return c>ID_EZ_COS ? 'cis' : c<-ID_EZ_COS ? 'trans' : null;
+}
+// cis/trans of every double bond; pos(id) gives [x,y] or [x,y,z], or null. The
+// reference substituent on each end is its neighbour of lowest id. An end that carries
+// two hydrogens (a terminal =CH2 or =NH2+) has no cis/trans: which hydrogen has the
+// lower id says nothing, so the label would change when the two hydrogens swap places.
+function _idEZLabels(pos){
+  const nb=new Map(), isH=new Map();
+  for(const a of mol.atoms){ nb.set(a.id,[]); isH.set(a.id,a.el==='H'); }
+  for(const b of mol.bonds){ const l1=nb.get(b.a1), l2=nb.get(b.a2); if(l1&&l2){ l1.push(b.a2); l2.push(b.a1); } }
+  const twoH=(id,other)=>{ const o=nb.get(id).filter(i=>i!==other); return o.length>=2&&o.every(i=>isH.get(i)); };
+  const out={};
+  for(const b of mol.bonds){
+    if(b.order!==2) continue;
+    const pu=pos(b.a1), pv=pos(b.a2);
+    if(!pu||!pv) continue;
+    if(twoH(b.a1,b.a2)||twoH(b.a2,b.a1)) continue;
+    const su=nb.get(b.a1).filter(i=>i!==b.a2).sort(_idNum)[0];
+    const sv=nb.get(b.a2).filter(i=>i!==b.a1).sort(_idNum)[0];
+    if(su===undefined||sv===undefined) continue;
+    const p1=pos(su), p2=pos(sv);
+    if(!p1||!p2) continue;
+    const lab=_idSide(p1,pu,pv,p2);
+    if(lab) out[_idKey(b.a1,b.a2)]=lab;
+  }
+  return out;
+}
+// coords (optional): Map id → [x,y,z], the 3D geometry produced by the conversion.
+function _idSnap(coords){
+  const atoms={}, bonds={}, marks={}, cs=new Set(), byId=new Map();
+  for(const a of mol.atoms){ atoms[a.id]=a.el+'|'+_nn(a.charge,0); byId.set(a.id,a); }
+  for(const b of mol.bonds){
+    bonds[_idKey(b.a1,b.a2)]=b.order;
+    if(b.stereo){ marks[b.a1+'>'+b.a2]=b.stereo; cs.add(b.a1); }
+  }
+  const hash=_idHash(Object.keys(atoms).sort(_idNum).map(k=>k+atoms[k].split('|')[0]).join(',')+';'+Object.keys(bonds).sort().join(','));
+  const snap={
+    n:mol.atoms.length, m:mol.bonds.length, atoms, bonds, hash, marks,
+    centres:Array.from(cs).sort(_idNum),
+    ez2d:_idEZLabels(id=>{ const a=byId.get(id); return a?[a.x,a.y,0]:null; }),
+    ez3d:null, missing3d:null
+  };
+  if(coords){
+    snap.ez3d=_idEZLabels(id=>coords.get(id)||null);
+    snap.missing3d=mol.atoms.filter(a=>!coords.has(a.id)).map(a=>a.id);
+  }
+  return snap;
+}
+function _idSnapSafe(coords){
+  try { return _idSnap(coords); }
+  catch(err){ console.warn('[OPAL] identity snapshot failed:', err); return null; }
+}
+// What differs between s0 (before) and s1 (after). opts says which parts must agree:
+//   centres  the same atoms carry a wedge or dash
+//   marks    every wedge and dash is on the same bond with the same sign
+//   ez       cis/trans in the 2D drawing is the same
+//   ez3d     'old': the 3D geometry of s1 has the cis/trans of the drawing of s0;
+//            'new': ... of the drawing of s1
+//   coords   the 3D geometry has a position for every atom
+function _idDiff(s0,s1,opts){
+  const out=[];
+  const nm=(s,id)=>{ const v=s.atoms[id]; return (v?v.split('|')[0]:'?')+id; };
+  const cap=(arr,what)=>{ if(arr.length) out.push(arr.length>3 ? `${what} ${arr.slice(0,3).join(', ')} and ${arr.length-3} more` : `${what} ${arr.join(', ')}`); };
+  if(s0.n!==s1.n) out.push(`atom count ${s0.n} → ${s1.n}`);
+  if(s0.m!==s1.m) out.push(`bond count ${s0.m} → ${s1.m}`);
+  cap(Object.keys(s0.atoms).filter(k=>!(k in s1.atoms)).map(k=>nm(s0,k)), 'lost atom');
+  cap(Object.keys(s1.atoms).filter(k=>!(k in s0.atoms)).map(k=>nm(s1,k)), 'new atom');
+  cap(Object.keys(s0.atoms).filter(k=>(k in s1.atoms)&&s0.atoms[k]!==s1.atoms[k]).map(k=>`${nm(s0,k)} (${s0.atoms[k]} → ${s1.atoms[k]})`), 'changed atom');
+  cap(Object.keys(s0.bonds).filter(k=>!(k in s1.bonds)).map(k=>k.split('-').map(i=>nm(s0,i)).join('–')), 'lost bond');
+  cap(Object.keys(s1.bonds).filter(k=>!(k in s0.bonds)).map(k=>k.split('-').map(i=>nm(s1,i)).join('–')), 'new bond');
+  cap(Object.keys(s0.bonds).filter(k=>(k in s1.bonds)&&s0.bonds[k]!==s1.bonds[k]&&s0.bonds[k]!==1.5&&s1.bonds[k]!==1.5)
+    .map(k=>`${k.split('-').map(i=>nm(s0,i)).join('–')} (order ${s0.bonds[k]} → ${s1.bonds[k]})`), 'changed bond');
+  if(s0.hash!==s1.hash && !out.length) out.push('connectivity changed');
+  if(opts.centres){
+    cap(s0.centres.filter(i=>s1.centres.indexOf(i)<0).map(i=>nm(s0,i)), 'wedge lost at');
+    cap(s1.centres.filter(i=>s0.centres.indexOf(i)<0).map(i=>nm(s1,i)), 'wedge added at');
+  }
+  if(opts.marks){
+    cap(Object.keys(s0.marks).filter(k=>!(k in s1.marks)).map(k=>k), 'wedge lost on bond');
+    cap(Object.keys(s1.marks).filter(k=>!(k in s0.marks)).map(k=>k), 'wedge added on bond');
+    cap(Object.keys(s0.marks).filter(k=>(k in s1.marks)&&s0.marks[k]!==s1.marks[k]).map(k=>k), 'wedge flipped on bond');
+  }
+  const ezDiff=(ref,got,what)=>{
+    cap(Object.keys(ref).filter(k=>got[k]&&got[k]!==ref[k]).map(k=>`${k.split('-').map(i=>nm(s1,i)).join('=')} (${ref[k]} → ${got[k]})`), what);
+  };
+  if(opts.ez) ezDiff(s0.ez2d, s1.ez2d, 'cis/trans changed in the drawing at');
+  if(opts.ez3d && s1.ez3d) ezDiff(opts.ez3d==='old' ? s0.ez2d : s1.ez2d, s1.ez3d, 'cis/trans differs in 3D at');
+  if(opts.coords && s1.missing3d && s1.missing3d.length) cap(s1.missing3d.map(i=>nm(s1,i)), 'no 3D position for');
+  return out;
+}
+function _idReport(label,diffs){
+  _idStats.checks++;
+  _idStats.last={label, diffs};
+  if(!diffs.length) return diffs;
+  _idStats.flagged++;
+  for(const d of diffs) _dbg(`identity check, ${label}: ${d}`);
+  const msg=`⚠ ${label} changed the molecule: ${diffs[0]}${diffs.length>1?` (+${diffs.length-1} more, see the debug log)`:''}`;
+  const now=Date.now();
+  if(msg!==_idLastMsg || now-_idLastT>ID_TOAST_REPEAT_MS){ _idLastMsg=msg; _idLastT=now; toast(msg,5000); }
+  return diffs;
+}
+// Compare s0 with the molecule as it is now (and coords, if given). Returns the list of
+// differences, empty when the molecule is the same; null when the check could not run.
+function _idCheck(label,s0,opts,coords){
+  if(!s0 || _idSuspend>0) return null;
+  try {
+    const s1=_idSnap(coords);
+    return _idReport(label, _idDiff(s0,s1,opts));
+  } catch(err){
+    console.warn('[OPAL] identity check failed:', err);
+    return null;
+  }
+}
+
 // ───────────────────────── Undo / Redo ──────────────────────────────────
 
 const undoStack = [], redoStack = [];
@@ -2293,11 +2620,12 @@ const UNDO_LIMIT = 30;
 // captured but is CLEARED on restore: it holds ids of the outgoing molecule and
 // a half-finished pick has no meaning against a different one.
 function _captureState() {
-  return JSON.stringify({ mol: mol, constraints: constraints, cNextId: _cNextId });
+  return JSON.stringify({ mol: mol, constraints: constraints, cNextId: _cNextId, held: _heldToPlain() });
 }
 function _restoreState(json) {
   const st = JSON.parse(json);
   mol = st.mol;
+  _heldFromPlain(st.held);   // the kept 3D coordinates travel with the molecule they belong to
   // Rebind in place: _resetConstraintState()'s note records that no caller
   // depends on array identity, but emptying-and-refilling keeps this consistent
   // with that function rather than introducing a second convention.
@@ -2313,6 +2641,9 @@ function _restoreState(json) {
 // snapshot directly rather than going through snapshot(), so they must
 // replicate its invalidation contract explicitly.
 let mol2DVersion = 0;
+// Cartesian coordinates that belong to the atoms of an imported molecule (see the
+// block "KEPT 3D COORDINATES" below). null for a molecule drawn by hand.
+let heldBase = null;
 function snapshot() {
   undoStack.push(_captureState());   // W5: mol + constraints together
   if (undoStack.length > UNDO_LIMIT) undoStack.shift();
@@ -2393,6 +2724,173 @@ function fitView() {
   vx = -cx*vs; vy = -cy*vs;
   render();
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// DRAWING BACKGROUND AND HONEYCOMB SNAPPING
+//
+// A background of the 2D drawing area (none, checkered, honeycomb) drawn in world
+// coordinates, so it pans and zooms with the molecule, and a snap of NEW atoms and
+// template anchors to the vertices of the honeycomb. The honeycomb has hexagons with
+// a vertex at the top (the orientation of the ring templates) and an edge of one
+// standard bond length. Display settings only: they are not part of the molecule,
+// not in the undo stack, and the background is never in an export (the PNG export
+// renders a frame without it, the SVG export does not draw it).
+// ═══════════════════════════════════════════════════════════════════════
+let bgMode = 'none';               // 'none' | 'check' | 'honey'
+let latticeSnapOn = true;          // the switch; only acts while the honeycomb is shown
+let _bgSuppress = false;           // true while the PNG export renders its frame
+let _altHeld = false;              // Alt suspends the snap while held
+const BG_CHECK_FILL   = 'rgba(255,255,255,0.045)';   // fixed light tones: the drawing area is dark in both themes
+const BG_HONEY_STROKE = 'rgba(160,185,230,0.17)';
+const BG_MIN_CELL_PX  = 8;         // below this on-screen cell size the background is not drawn (it would only be noise)
+const LATTICE_SNAP    = 0.25;      // snap radius, in bond lengths, in world units: it does not grow with the finger
+const BG_LABEL = {none:'None', check:'Checkered', honey:'Honeycomb'};
+
+function setCanvasBackground(mode) {
+  if (!BG_LABEL.hasOwnProperty(mode)) return;
+  bgMode = mode;
+  const b = document.getElementById('bg-btn');
+  if (b) { b.textContent = '▦ Grid: ' + BG_LABEL[mode]; b.classList.toggle('on', mode !== 'none'); }
+  const s = document.getElementById('snap-btn');
+  if (s) s.style.display = mode === 'honey' ? '' : 'none';
+  render();
+}
+function cycleCanvasBackground() {
+  setCanvasBackground(bgMode === 'none' ? 'check' : bgMode === 'check' ? 'honey' : 'none');
+}
+function toggleLatticeSnap() {
+  latticeSnapOn = !latticeSnapOn;
+  const s = document.getElementById('snap-btn');
+  if (s) s.classList.toggle('on', latticeSnapOn);
+  render();
+}
+
+// Centres of the hexagons: row j at y = 1.5 L j, x = sqrt(3) L (i + j/2).
+const _HEX_DX = BOND_LEN * Math.sqrt(3), _HEX_DY = BOND_LEN * 1.5;
+
+// The honeycomb vertex nearest to a world point, with its distance.
+function _latticeNearest(wx, wy) {
+  const j0 = Math.round(wy / _HEX_DY);
+  let best = null, bd = Infinity;
+  for (let j = j0 - 2; j <= j0 + 2; j++) {
+    const cy = j * _HEX_DY;
+    const i0 = Math.round((wx - j * _HEX_DX / 2) / _HEX_DX);
+    for (let i = i0 - 1; i <= i0 + 1; i++) {
+      const cx = _HEX_DX * (i + j / 2);
+      for (let k = 0; k < 6; k++) {
+        const a = Math.PI / 6 + k * Math.PI / 3;
+        const vx_ = cx + BOND_LEN * Math.cos(a), vy_ = cy + BOND_LEN * Math.sin(a);
+        const d = Math.hypot(vx_ - wx, vy_ - wy);
+        if (d < bd) { bd = d; best = {x: vx_, y: vy_, d: d}; }
+      }
+    }
+  }
+  return best;
+}
+
+function _latticeSnapActive() { return bgMode === 'honey' && latticeSnapOn && !_altHeld; }
+
+// A heavy atom already in the drawing within the merge radius of a world point. The merge
+// snap onto an existing atom wins over the honeycomb.
+function _mergeAtomNear(wx, wy) {
+  const R = BOND_LEN * 0.45;
+  for (const a of mol.atoms) {
+    if (a.el === 'H') continue;
+    if (Math.hypot(a.x - wx, a.y - wy) < R) return a;
+  }
+  return null;
+}
+
+// Where a new atom put at this world point goes: the nearest vertex within the snap radius,
+// else the point itself.
+function _latticeSnapWorld(wx, wy) {
+  if (!_latticeSnapActive()) return {x: wx, y: wy};
+  if (_mergeAtomNear(wx, wy)) return {x: wx, y: wy};
+  const v = _latticeNearest(wx, wy);
+  return v && v.d <= BOND_LEN * LATTICE_SNAP ? {x: v.x, y: v.y} : {x: wx, y: wy};
+}
+function _latticeSnapScreen(sp) {
+  if (!_latticeSnapActive()) return sp;
+  const w = s2w(sp.x, sp.y), r = _latticeSnapWorld(w.x, w.y);
+  return (r.x === w.x && r.y === w.y) ? sp : w2s(r.x, r.y);
+}
+
+// Where a template goes. Returns the world position of the template origin and the rotation
+// to use. Without the honeycomb these are the pointer and the angle the user chose. With it,
+// the template snaps by its anchor atom (the atom nearest the origin): the anchor moves to the
+// nearest vertex within the snap radius, and the rotation becomes a multiple of 30 degrees: the
+// multiple nearest the angle chosen at which the anchor comes within the radius of a vertex, taken
+// from those within 60 degrees of the angle chosen. A ring dropped on a hexagon centre therefore
+// falls on the lattice whichever of its equivalent turns was chosen.
+// A template that would merge onto an atom already drawn is left where the pointer is.
+function _tmplPlacement(t, sp) {
+  const w = s2w(sp.x, sp.y);
+  const plain = {wx: w.x, wy: w.y, ang: activeTmplAngle, snapped: false};
+  if (!_latticeSnapActive() || !t.atoms.length) return plain;
+  for (const [dx, dy] of t.atoms) {
+    const [rdx, rdy] = tmplRot(dx, dy);
+    if (_mergeAtomNear(w.x + rdx, w.y + rdy)) return plain;
+  }
+  let anchor = 0, ad = Infinity;
+  t.atoms.forEach(([dx, dy], i) => { const d = Math.hypot(dx, dy); if (d < ad - 1e-9) { ad = d; anchor = i; } });
+  const step = Math.PI / 6, TWO = 2 * Math.PI;
+  const angDist = a => { let d = Math.abs(a - activeTmplAngle) % TWO; return d > Math.PI ? TWO - d : d; };
+  const cands = [];
+  for (let m = 0; m < 12; m++) if (angDist(m * step) <= Math.PI / 3 + 1e-9) cands.push(m * step);
+  cands.sort((a, b) => angDist(a) - angDist(b));
+  for (const ang of cands) {
+    const [rdx, rdy] = tmplRot(t.atoms[anchor][0], t.atoms[anchor][1], ang);
+    const ax = w.x + rdx, ay = w.y + rdy;
+    const v = _latticeNearest(ax, ay);
+    if (v && v.d <= BOND_LEN * LATTICE_SNAP) return {wx: w.x + v.x - ax, wy: w.y + v.y - ay, ang: ang, snapped: true};
+  }
+  return plain;
+}
+
+// The background, in world coordinates. Called first by render().
+function _drawBackground() {
+  if (bgMode === 'none' || _bgSuppress) return;
+  const L = BOND_LEN;
+  if (L * vs < BG_MIN_CELL_PX) return;
+  const a = s2w(0, 0), b = s2w(canvas.width, canvas.height);
+  const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x), y0 = Math.min(a.y, b.y), y1 = Math.max(a.y, b.y);
+  ctx.save();
+  if (bgMode === 'check') {
+    ctx.fillStyle = BG_CHECK_FILL;
+    const i0 = Math.floor(x0 / L), i1 = Math.ceil(x1 / L), j0 = Math.floor(y0 / L), j1 = Math.ceil(y1 / L);
+    for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) {
+      if (((i + j) % 2 + 2) % 2 !== 1) continue;
+      const p = w2s(i * L, j * L);
+      ctx.fillRect(p.x, p.y, L * vs, L * vs);
+    }
+  } else {
+    ctx.strokeStyle = BG_HONEY_STROKE;
+    ctx.lineWidth = 1;
+    const jA = Math.floor(y0 / _HEX_DY) - 1, jB = Math.ceil(y1 / _HEX_DY) + 1;
+    ctx.beginPath();
+    for (let j = jA; j <= jB; j++) {
+      const cy = j * _HEX_DY;
+      const iA = Math.floor((x0 - j * _HEX_DX / 2) / _HEX_DX) - 1, iB = Math.ceil((x1 - j * _HEX_DX / 2) / _HEX_DX) + 1;
+      for (let i = iA; i <= iB; i++) {
+        const cx = _HEX_DX * (i + j / 2);
+        // each hexagon draws three of its six edges, so every edge is drawn once
+        const V = [11, 1, 3, 5].map(k => { const ang = k * Math.PI / 6; return w2s(cx + L * Math.cos(ang), cy + L * Math.sin(ang)); });
+        ctx.moveTo(V[0].x, V[0].y);
+        for (let q = 1; q < V.length; q++) ctx.lineTo(V[q].x, V[q].y);
+      }
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Alt suspends the snap while held. The state is also read from every canvas mouse event, so a
+// key released while the window had no focus cannot leave it stuck.
+document.addEventListener('keydown', e => { if (e.key === 'Alt') _altHeld = true; });
+document.addEventListener('keyup', e => { if (e.key === 'Alt') _altHeld = false; });
+window.addEventListener('blur', () => { _altHeld = false; });
+canvas.addEventListener('mousedown', e => { _altHeld = !!e.altKey; });
+canvas.addEventListener('mousemove', e => { _altHeld = !!e.altKey; });
 
 // ═══════════════════════════════════════════════════════════════════════
 // 3-D VIEWPORT PANE  (Phase 2 — molbuild_redesign_design.md §5–6)
@@ -2665,6 +3163,86 @@ function animate3D(){
   lightRig3D.quaternion.copy(camera3D.quaternion); // keep lights camera-relative
   updateBondOrientations3D();
   renderer3D.render(scene3D, camera3D);
+}
+
+// ══════════════════════════════════════════════════════════════
+// SIDE PANELS  —  hide and show
+// The two panels are the left tool panel and the 3D preview pane. A panel is either
+// fully visible or fully hidden. The state is two attributes on the root element
+// (absent means visible), set before first paint on a phone by the head block. Not
+// stored, not part of a saved view. The 2D canvas takes the freed width, so the
+// molecule is never covered.
+// ══════════════════════════════════════════════════════════════
+const PANEL_GLYPH = { left: ['‹', '›'], right: ['›', '‹'] };   // [open, hidden]
+let _panelTimer = null;   // the one pending settle; cleared before a new one is set
+
+function _panelIsHidden(side){
+  return document.documentElement.getAttribute('data-' + side + '-panel') === 'hidden';
+}
+function _panelPhone(){
+  return !!(window.OPAL_PANELS && window.OPAL_PANELS.phone === true);
+}
+function _panelReducedMotion(){
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+function _panelSyncHandle(side){
+  const h = document.getElementById('handle-' + side);
+  if (!h) return;
+  const hidden = _panelIsHidden(side);
+  h.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+  h.setAttribute('aria-label', (hidden ? 'Show ' : 'Hide ') + side + ' panel');
+  h.querySelector('.panel-handle-tab').textContent = PANEL_GLYPH[side][hidden ? 1 : 0];
+}
+// The 2D canvas resizes and redraws itself; the window resize event never fires for a
+// panel change. The 3D preview is resized only while it is shown: a hidden pane has no
+// width, and a zero width would give the camera a zero aspect. The 3D loop keeps
+// drawing while the pane is hidden, so there is no render skip here.
+function _panelSettle(){
+  if (_panelTimer !== null) { clearTimeout(_panelTimer); _panelTimer = null; }
+  resize();
+  if (!_panelIsHidden('right')) resize3D();
+  requestRender3D();
+}
+function togglePanel(side){
+  const root = document.documentElement;
+  const other = side === 'left' ? 'right' : 'left';
+  if (_panelIsHidden(side)) {
+    root.removeAttribute('data-' + side + '-panel');
+    // On a phone one panel at a time: both slide in the same step, one resize follows.
+    if (_panelPhone() && !_panelIsHidden(other)) root.setAttribute('data-' + other + '-panel', 'hidden');
+  } else {
+    root.setAttribute('data-' + side + '-panel', 'hidden');
+  }
+  _panelSyncHandle('left');
+  _panelSyncHandle('right');
+  // The fragment move popup lives in the 3D pane and holds the 2D canvas modal while it is
+  // open. A hidden pane would leave it open and invisible with the canvas dead to taps, so it
+  // is cancelled with the pane, exactly as its own Cancel button does.
+  if (_panelIsHidden('right') && _movePopup) _cancelMovePopup();
+  if (_panelTimer !== null) { clearTimeout(_panelTimer); _panelTimer = null; }
+  if (_panelReducedMotion()) { _panelSettle(); return; }
+  // transitionend settles earlier; this timer covers the case where no transition runs.
+  _panelTimer = setTimeout(_panelSettle, 250);
+}
+function initPanels(){
+  ['left', 'right'].forEach(side => {
+    const h = document.getElementById('handle-' + side);
+    // A tap on the handle must reach nothing under it: no atom is added, no rotation starts.
+    ['pointerdown', 'mousedown', 'touchstart', 'click'].forEach(type => {
+      h.addEventListener(type, e => { e.stopPropagation(); });
+    });
+    h.addEventListener('click', () => togglePanel(side));
+    _panelSyncHandle(side);
+  });
+  document.getElementById('app').addEventListener('transitionend', e => {
+    if (e.propertyName === 'width' && e.target.classList && e.target.classList.contains('panel') && _panelTimer !== null) _panelSettle();
+  });
+}
+
+// The back link carries the theme fragment, so light stays light on the launcher.
+function syncBackLink(){
+  const a = document.getElementById('back-link');
+  if (a) a.setAttribute('href', 'index.html' + (window.OPAL_THEME ? window.OPAL_THEME.fragment() : ''));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2971,6 +3549,7 @@ function update3DBadge(){
   const badge = document.getElementById('p3d-badge');
   const empty = document.getElementById('p3d-empty');
   _updateMoveToolbarState(); // Phase 6 §7: Move buttons track activeGeometry3D too
+  _updateRebuildBtn();
   if(!badge) return;
   if(!activeGeometry3D){
     badge.style.display = 'none';
@@ -2988,6 +3567,13 @@ function update3DBadge(){
 // ───────────────────────── Rendering ────────────────────────────────────
 
 let selAtom=null, hAtom=null, hBond=null;
+// The bond the last click acted on, kept as the target of the building keys (no atom is
+// selected while it is). Cleared by every change of the atom selection.
+let selBondId=null;
+// Touch building: the atom the ring of actions is open on ({id}, or null); and, for the
+// press in progress, whether it came from a finger, which ring was open and which atom
+// was the single selected one when it began.
+let _kbRing=null, _tapFromTouch=false, _tapRingId=null, _tapSelId=null;
 // Multi-selection (Phase 4, molbuild_redesign_design.md §7). selSet is the
 // source of truth for "what's selected"; selAtom is kept in sync as its
 // "primary" member (via selectOne()/_syncSelPrimary(), defined near the
@@ -3092,7 +3678,9 @@ let _moveRig=null;
 function atomColor(el) { return CPK[el]||CPK_DEF; }
 
 function render() {
+  if (_kbRing) _kbRingPlace();
   ctx.clearRect(0,0,canvas.width,canvas.height);
+  _drawBackground();
 
   // Bonds. Real carbon-bonded H that the "H" toggle is hiding are skipped
   // inside drawBond() via _isHiddenH(); heteroatom H are always drawn.
@@ -3118,14 +3706,16 @@ function render() {
       ctx.lineWidth=1.5; ctx.fill(); ctx.stroke();
     }
   }
+  _drawNextBondPreview();
 
   // Template ghost — atoms that overlap existing ones are shown as green merge targets
   if (activeTmpl && tmplGhost) {
-    const w = s2w(tmplGhost.x, tmplGhost.y);
+    const pl = _tmplPlacement(activeTmpl, tmplGhost);   // the same position and rotation placeTmpl() will use
+    const w = {x:pl.wx, y:pl.wy};
     const SNAP = BOND_LEN * 0.45;
 
     // Rotated positions for each template atom
-    const rpos = activeTmpl.atoms.map(([dx,dy])=>{ const [rdx,rdy]=tmplRot(dx,dy); return [w.x+rdx,w.y+rdy]; });
+    const rpos = activeTmpl.atoms.map(([dx,dy])=>{ const [rdx,rdy]=tmplRot(dx,dy,pl.ang); return [w.x+rdx,w.y+rdy]; });
 
     // Snap map: existing atom to merge with, or null
     const snapMap = rpos.map(([wx,wy])=>{
@@ -3175,9 +3765,9 @@ function render() {
     }
 
     // Rotation angle readout (shown when non-zero)
-    if(Math.abs(activeTmplAngle)>0.01){
+    if(Math.abs(pl.ang)>0.01){
       ctx.globalAlpha=0.9;
-      let deg=Math.round(activeTmplAngle*180/Math.PI)%360;
+      let deg=Math.round(pl.ang*180/Math.PI)%360;
       if(deg<0) deg+=360;
       ctx.fillStyle='#e0e6f0'; ctx.font=`bold ${Math.max(10,11*vs)}px system-ui`;
       ctx.textAlign='left'; ctx.textBaseline='bottom';
@@ -3310,7 +3900,7 @@ function drawBond(bond) {
   const dx=s2.x-s1.x, dy=s2.y-s1.y;
   const len=Math.hypot(dx,dy); if (len<1) return;
   const nx=-dy/len, ny=dx/len;  // perpendicular unit vector
-  const isHov = bond===hBond;
+  const isHov = bond===hBond || bond.id===selBondId;
   const col = isHov ? '#e94560' : '#b0bcd0';
   ctx.lineCap='round';
 
@@ -3601,6 +4191,7 @@ function selectOne(atom) {
   // so a stale multi-selection from a previous marquee never lingers once
   // the user does something outside the marquee/group-drag mechanism itself.
   selAtom=atom||null;
+  selBondId=null;
   selSet.clear();
   if (atom) selSet.add(atom.id);
 }
@@ -3610,6 +4201,7 @@ function _syncSelPrimary(preferred) {
   // mutated directly (marquee finalize, Select All). Prefers `preferred` if
   // it's still a member; otherwise falls back to an arbitrary member, or
   // null if selSet ended up empty.
+  selBondId=null;
   if (selSet.size===0) { selAtom=null; return; }
   if (preferred && selSet.has(preferred.id)) { selAtom=preferred; return; }
   selAtom = getAtom([...selSet][selSet.size-1]);
@@ -3659,7 +4251,7 @@ function snapPt(screenPt, fromAtom) {
   let ang=Math.atan2(dy,dx);
   ang=Math.round(ang/(Math.PI/6))*(Math.PI/6); // 30° snap
   const snapD=BOND_LEN*vs;
-  return {x:s.x+Math.cos(ang)*snapD, y:s.y+Math.sin(ang)*snapD};
+  return _latticeSnapScreen({x:s.x+Math.cos(ang)*snapD, y:s.y+Math.sin(ang)*snapD});
 }
 
 // ── W26 (v0.60): a focused value field is modal against the 2D canvas ───────
@@ -3697,6 +4289,11 @@ canvas.addEventListener('mousedown', e => {
     _swallowTapAfterBlur = true;
     return;
   }
+  // Touch building: what this press began with (see the ring of actions below).
+  _tapFromTouch = _inSynth > 0;
+  _tapRingId = _kbRing ? _kbRing.id : null;
+  _tapSelId = null;
+  _kbRingClose();
   const p=cvPos(e);
   if (e.button===1||(e.button===0&&spaceDown)) {
     isPan=true; panSt=p; panOrig={x:vx,y:vy}; return;
@@ -3747,6 +4344,7 @@ canvas.addEventListener('mousedown', e => {
 
   const atom=hitAtom(p.x,p.y);
   const bond=!atom&&hitBond(p.x,p.y);
+  if (atom && selAtom && selAtom.id===atom.id && selSet.size===1) _tapSelId = atom.id;
 
   // Phase 9 §14 point 6: group-drag is gated ONLY on selSet.size>=2, not on
   // curTool — dragging a member of an existing multi-selection always
@@ -3799,6 +4397,7 @@ canvas.addEventListener('mousedown', e => {
     } else if (bond) {
       selectOne(null);
       snapshot(); applyBOToBond(bond);
+      selBondId=bond.id;
     } else {
       // Empty canvas: can't tell a plain click from a marquee drag-start
       // until mouseup, so defer the clear-vs-select decision there.
@@ -3812,10 +4411,11 @@ canvas.addEventListener('mousedown', e => {
   else if (bond) {
     snapshot();
     applyBOToBond(bond);
+    selectOne(null); selBondId=bond.id;
     render(); updateUI();
   }
   else {
-    snapshot(); const w=s2w(p.x,p.y); addAtom(curEl,w.x,w.y); render(); updateUI();
+    snapshot(); const w0=s2w(p.x,p.y), w=_latticeSnapWorld(w0.x,w0.y); addAtom(curEl,w.x,w.y); render(); updateUI();
   }
 });
 
@@ -3962,7 +4562,7 @@ canvas.addEventListener('mouseup', e => {
     dragStart=null; isDrag=false;
     if (wasDrag) { updateUI(); return; }
     if (tool==='bond') {
-      snapshot(); const w=s2w(startP.x,startP.y); addAtom(curEl,w.x,w.y); render(); updateUI();
+      snapshot(); const w0=s2w(startP.x,startP.y), w=_latticeSnapWorld(w0.x,w0.y); addAtom(curEl,w.x,w.y); render(); updateUI();
     }
     return;
   }
@@ -3975,7 +4575,12 @@ canvas.addEventListener('mouseup', e => {
 
   if (e.button!==0) return;
   if (isPan) { isPan=false; return; }
-  if (moveAtom) { moveAtom=null; groupDragOrig=null; updateUI(); }
+  if (moveAtom) {
+    const tapped=moveAtom;
+    moveAtom=null; groupDragOrig=null; updateUI();
+    // Select tool: a touch tap, without movement, on the atom that was already selected.
+    if (_tapFromTouch && !isDrag && curTool==='select' && _tapSelId===tapped.id) _kbRingToggle(tapped);
+  }
 
   // ── Marquee select (Phase 4 §7) — finalize on release ───────────────────
   // A real drag selects every atom whose centre lands inside the rectangle
@@ -4066,7 +4671,12 @@ canvas.addEventListener('mouseup', e => {
       // this never creates a pointless empty undo entry. Also selects the
       // atom either way, so the charge panel and info panel work without
       // needing to switch to the Select tool.
-      if (dragFrom.el!==curEl) retypeAtom(dragFrom, curEl);
+      // A touch tap on the atom that is already the one selected opens the ring of
+      // actions instead (and closes it again when it was open); a tap on any other
+      // atom does what a click does. The mouse is unchanged.
+      if (_tapFromTouch && _tapSelId===dragFrom.id) _kbRingToggle(dragFrom);
+      else if (dragFrom.el!==curEl) retypeAtom(dragFrom, curEl);
+      else if (curTool==='bond' && _kbIsTerminal(dragFrom)) _kbExtendChain(dragFrom);
       selectOne(dragFrom);
       render(); updateSelPanel();
     }
@@ -4144,13 +4754,17 @@ let _tDist=0, _tMidX=0, _tMidY=0, _tAngle=0;
 let _touchTimer=null, _touchT=null;
 const TOUCH_HOLD_MS=80;
 
+let _inSynth=0;   // above zero while a mouse event made from a touch is being dispatched
 function _synth(type, t, extra={}) {
-  canvas.dispatchEvent(new MouseEvent(type, {
-    clientX:t.clientX, clientY:t.clientY,
-    button:0, buttons:_nn(extra.buttons, 1),
-    shiftKey:_nn(extra.shiftKey, false),
-    bubbles:true, cancelable:true,
-  }));
+  _inSynth++;
+  try {
+    canvas.dispatchEvent(new MouseEvent(type, {
+      clientX:t.clientX, clientY:t.clientY,
+      button:0, buttons:_nn(extra.buttons, 1),
+      shiftKey:_nn(extra.shiftKey, false),
+      bubbles:true, cancelable:true,
+    }));
+  } finally { _inSynth--; }
 }
 function _clearTouchTimer(){ if(_touchTimer){clearTimeout(_touchTimer);_touchTimer=null;} _touchT=null; }
 
@@ -4278,6 +4892,309 @@ canvas.addEventListener('touchcancel', () => {
   render();
 },{passive:false});
 
+// ───────────────────────── CLICK BUILDING (keyboard part) ──────────────────────────────
+// With an atom under the pointer (or one atom selected): a letter changes its element and
+// a digit grows the structure from it. With a bond under the pointer: 1, 2 and 3 set its
+// order and 4 to 8 fuse a ring of that size on the side away from the molecule. A dashed
+// preview shows where the next bond would go, and a click on a terminal atom (Bond tool,
+// element unchanged) extends the chain there. Every new atom is added through the ordinary
+// primitives, so hydrogens, the undo history and the coordinates kept for an imported
+// molecule behave as for an atom drawn by hand. The touch equivalent is at the end of this
+// block: the same keys act on the selected atom or bond, a tap on the selected atom opens a
+// ring of the same actions, and a tap on a terminal atom extends the chain as a click does.
+const KEYBUILD_ELEMENTS = {c:'C', n:'N', o:'O', s:'S', f:'F', l:'Cl', b:'Br', i:'I', p:'P', h:'H'};
+const KEYBUILD_CLEAR = 0.8;      // in bond lengths: a zig-zag position nearer than this to a drawn heavy atom is refused
+
+function _kbWrap(a) { while (a > Math.PI) a -= 2*Math.PI; while (a <= -Math.PI) a += 2*Math.PI; return a; }
+function _kbHeavyNbrs(atomId) {
+  return bondsOf(atomId).map(b => getAtom(b.a1===atomId ? b.a2 : b.a1)).filter(o => o && o.el!=='H');
+}
+function _kbIsTerminal(atom) { return _kbHeavyNbrs(atom.id).length === 1; }
+
+// The direction (radians, world axes) of the next bond or ring centre from an atom, at a
+// distance `reach`. A chain atom with one neighbour that itself has exactly one other
+// heavy neighbour continues the zig-zag (transoid) when the place is free. Otherwise the
+// candidates are scored: free space at the probe point first, then the angular gap to the
+// bonds already there. For a ring (`ring` true) the centre goes opposite to the existing
+// bonds and never at 120 degrees from a single one, where a ring bond would lie on it.
+function _kbNextAngle(atom, reach, ring) {
+  const nb = _kbHeavyNbrs(atom.id);
+  const clearAt = ang => {
+    const px = atom.x + reach*Math.cos(ang), py = atom.y + reach*Math.sin(ang);
+    let m = 1.5*BOND_LEN;
+    for (const o of mol.atoms) { if (o.el==='H' || o===atom) continue; const d = Math.hypot(o.x-px, o.y-py); if (d < m) m = d; }
+    return m / BOND_LEN;
+  };
+  const dirs = nb.map(o => Math.atan2(o.y-atom.y, o.x-atom.x));
+  if (!ring && nb.length === 1) {
+    const n = nb[0];
+    const further = _kbHeavyNbrs(n.id).filter(o => o !== atom);
+    if (further.length === 1) {
+      const m = further[0];
+      const t1 = Math.atan2(n.y-m.y, n.x-m.x), t2 = Math.atan2(atom.y-n.y, atom.x-n.x);
+      const ang = t2 + (_kbWrap(t2-t1) >= 0 ? -1 : 1) * Math.PI/3;
+      if (clearAt(ang) >= KEYBUILD_CLEAR) return ang;
+    }
+  }
+  const cands = [];
+  if (!ring && nb.length === 1) {   // the two turns of 120 degrees: the one nearer the horizontal first, so a chain runs sideways
+    const two = [dirs[0] + 2*Math.PI/3, dirs[0] - 2*Math.PI/3];
+    cands.push(...(Math.abs(_kbWrap(two[0])) <= Math.abs(_kbWrap(two[1])) ? two : [two[1], two[0]]));
+  }
+  if (nb.length >= 1) {
+    let sx = 0, sy = 0;
+    for (const d of dirs) { sx += Math.cos(d); sy += Math.sin(d); }
+    if (Math.hypot(sx, sy) > 0.2) cands.push(Math.atan2(-sy, -sx));
+    else if (nb.length === 1) cands.push(dirs[0] + Math.PI);
+  }
+  for (let k = 0; k < 12; k++) cands.push((-30 + 30*k) * Math.PI/180);
+  let best = cands[0], bestS = -Infinity;
+  for (const ang of cands) {
+    let gap = Math.PI;
+    for (const d of dirs) gap = Math.min(gap, Math.abs(_kbWrap(ang - d)));
+    const sc = Math.min(clearAt(ang), 1)*4 + Math.min(gap, 2*Math.PI/3);
+    if (sc > bestS + 1e-9) { bestS = sc; best = ang; }
+  }
+  return best;
+}
+
+// Where the next atom of a chain goes: one bond length away in the direction above, then
+// onto the honeycomb when its snap is active (the merge onto a drawn atom still wins).
+function _kbNextPos(atom) {
+  const ang = _kbNextAngle(atom, BOND_LEN, false);
+  return _latticeSnapWorld(atom.x + BOND_LEN*Math.cos(ang), atom.y + BOND_LEN*Math.sin(ang));
+}
+
+function _kbGrowBond(atom, el, order, stereo) {
+  const p = _kbNextPos(atom);
+  const na = addAtom(el, p.x, p.y);
+  const b = addBond(atom.id, na.id, order);
+  if (stereo) b.stereo = stereo;
+  return na;
+}
+
+// A ring of n atoms that has `atom` as one of its atoms, on the open side. The other atoms
+// are carbon; a heavy atom already within the merge radius of a new place is used instead
+// of a new one, as a template does. Kekulé alternation for a benzene ring.
+function _kbGrowRing(atom, n, kekule) {
+  const R = BOND_LEN / (2*Math.sin(Math.PI/n));
+  const ang = _kbNextAngle(atom, R, true);
+  const cx = atom.x + R*Math.cos(ang), cy = atom.y + R*Math.sin(ang);
+  const phi0 = Math.atan2(atom.y-cy, atom.x-cx);
+  const ids = [atom.id];
+  for (let k = 1; k < n; k++) {
+    const x = cx + R*Math.cos(phi0 + 2*Math.PI*k/n), y = cy + R*Math.sin(phi0 + 2*Math.PI*k/n);
+    const near = _mergeAtomNear(x, y);
+    ids.push(near && !ids.includes(near.id) ? near.id : addAtom('C', x, y).id);
+  }
+  for (let k = 0; k < n; k++) {
+    const a = ids[k], b = ids[(k+1) % n];
+    if (a === b || mol.bonds.some(o => (o.a1===a && o.a2===b) || (o.a1===b && o.a2===a))) continue;
+    addBond(a, b, kekule && k % 2 === 0 ? 2 : 1);
+  }
+}
+
+// A ring of n atoms fused on a bond, on the side with less of the molecule (each atom
+// counts less the farther it is from the bond). The bond keeps its order.
+function _kbFuseRing(bond, n) {
+  const a1 = getAtom(bond.a1), a2 = getAtom(bond.a2);
+  if (!a1 || !a2) return;
+  const dx = a2.x-a1.x, dy = a2.y-a1.y, L = Math.hypot(dx, dy);
+  if (L < 1e-6) return;
+  const ux = dx/L, uy = dy/L, mx = (a1.x+a2.x)/2, my = (a1.y+a2.y)/2;
+  let left = 0, right = 0;
+  for (const o of mol.atoms) {
+    if (o.el==='H' || o===a1 || o===a2) continue;
+    const side = (o.x-mx)*(-uy) + (o.y-my)*ux, d = Math.hypot(o.x-mx, o.y-my);
+    const w = 1 / (1 + (d/(2*BOND_LEN))*(d/(2*BOND_LEN)));
+    if (side > 1e-6) left += w; else if (side < -1e-6) right += w;
+  }
+  const sgn = left <= right ? 1 : -1;
+  const h = L / (2*Math.tan(Math.PI/n)), R = L / (2*Math.sin(Math.PI/n));
+  const cx = mx - uy*sgn*h, cy = my + ux*sgn*h;
+  const th1 = Math.atan2(a1.y-cy, a1.x-cx), th2 = Math.atan2(a2.y-cy, a2.x-cx);
+  const s = _kbWrap(th1-th2) > 0 ? -1 : 1;
+  const ids = [a2.id];
+  for (let k = 1; k <= n-2; k++) {
+    const t = th2 + s*k*2*Math.PI/n;
+    const x = cx + R*Math.cos(t), y = cy + R*Math.sin(t);
+    const near = _mergeAtomNear(x, y);
+    ids.push(near && !ids.includes(near.id) && near !== a1 && near !== a2 ? near.id : addAtom('C', x, y).id);
+  }
+  ids.push(a1.id);
+  for (let k = 0; k < ids.length-1; k++) {
+    const a = ids[k], b = ids[k+1];
+    if (a === b || mol.bonds.some(o => (o.a1===a && o.a2===b) || (o.a1===b && o.a2===a))) continue;
+    addBond(a, b, 1);
+  }
+}
+
+// A click on a terminal atom: one more atom in the chain, with the bond order and mark of the palette.
+function _kbExtendChain(atom) {
+  snapshot();
+  const order = (curBO==='wedge' || curBO==='dash') ? 1 : curBO;
+  _kbGrowBond(atom, curEl, order, curBO==='wedge' ? 'up' : curBO==='dash' ? 'dn' : null);
+  render(); updateUI(); warnIfNewErrors();
+}
+
+// What the keys act on: the atom or bond under the pointer, else the one selected atom.
+// Nothing while a field, a list or an editable text has focus, a picking mode or a popup is
+// open, or a template is being placed.
+function _kbTarget() {
+  if (_cPick || _movePick || _movePopup || activeTmpl || _modalStack.length) return null;
+  const f = document.activeElement;
+  if (_fieldHasFocus() || (f && (f.isContentEditable || (f.tagName || '').toLowerCase() === 'select'))) return null;
+  const ha = hAtom && getAtom(hAtom.id);
+  if (ha && !_isHiddenH(ha)) return {atom: ha, hovered: true};
+  const hb = hBond && mol.bonds.find(b => b.id === hBond.id);
+  if (hb && !ha) return {bond: hb, hovered: true};
+  const sa = selAtom && selSet.size <= 1 ? getAtom(selAtom.id) : null;
+  if (sa) return {atom: sa, hovered: false};
+  const sb = selBondId !== null && selSet.size === 0 ? mol.bonds.find(b => b.id === selBondId) : null;
+  return sb ? {bond: sb, hovered: false} : null;
+}
+
+// Returns true when the key was taken. The letters s and b stay the Select and Bond tool
+// keys when the atom is only selected, since those keys came first.
+function _kbKey(e) {
+  if (e.ctrlKey || e.metaKey || e.altKey || !e.key || e.key.length !== 1) return false;
+  const t = _kbTarget();
+  if (!t) return false;
+  return _kbApply(t, e.key.toLowerCase());
+}
+
+// One action on a target ({atom} or {bond}, `hovered` as _kbTarget gives it), named by the
+// key that does it. The keys and the ring of actions both come through here.
+function _kbApply(t, k) {
+  if (t.atom) {
+    const el = KEYBUILD_ELEMENTS[k];
+    if (el) {
+      if (!t.hovered && (k === 's' || k === 'b')) return false;
+      if (t.atom.el !== el) retypeAtom(t.atom, el);
+      return true;
+    }
+    if (k !== '1' && k !== '2' && k !== '3' && k !== '6' && k !== '7') return false;
+    snapshot();
+    if (k === '1') _kbGrowBond(t.atom, curEl, 1);
+    else if (k === '2') _kbGrowBond(t.atom, 'O', 2);
+    else if (k === '3') _kbGrowRing(t.atom, 6, true);
+    else if (k === '6') _kbGrowRing(t.atom, 6, false);
+    else _kbGrowRing(t.atom, 5, false);
+    render(); updateUI(); warnIfNewErrors();
+    return true;
+  }
+  if (k >= '1' && k <= '3') {
+    const order = +k;
+    if (t.bond.order !== order || t.bond.stereo) {
+      snapshot();
+      t.bond.stereo = null; t.bond.order = order;
+      _maybeSyncH([t.bond.a1, t.bond.a2]);
+      render(); updateUI(); warnIfNewErrors();
+    }
+    return true;
+  }
+  if (k >= '4' && k <= '8') {
+    snapshot();
+    _kbFuseRing(t.bond, +k);
+    render(); updateUI(); warnIfNewErrors();
+    return true;
+  }
+  return false;
+}
+
+// The dashed preview of the next bond, over the atom under the pointer (Bond tool).
+function _drawNextBondPreview() {
+  if (curTool !== 'bond' || dragFrom || activeTmpl || _cPick || _movePick || _movePopup || isDrag || moveAtom || isPan) return;
+  const a = hAtom && getAtom(hAtom.id);
+  if (!a || _isHiddenH(a)) return;
+  const p = _kbNextPos(a), s = w2s(a.x, a.y), q = w2s(p.x, p.y);
+  ctx.save();
+  ctx.setLineDash([6*vs, 4*vs]);
+  ctx.strokeStyle = 'rgba(233,69,96,0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(q.x, q.y, Math.max(5, 10*vs), 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(233,69,96,0.12)'; ctx.strokeStyle = 'rgba(233,69,96,0.35)';
+  ctx.lineWidth = 1.5; ctx.fill(); ctx.stroke();
+  ctx.restore();
+}
+
+// ── Touch building: the ring of actions ──────────────────────────────────────────────────
+// A tap on the atom that is already the one selected opens a ring of buttons around it,
+// the same actions as the keys: an inner ring grows the structure (a bond, a carbonyl, a
+// benzene, a cyclohexane, a cyclopentane) and an outer ring changes the element. The
+// ring follows the atom when the view moves, closes on the next press anywhere on the
+// canvas, on Escape, and when the atom is no longer the selected one. A button acts
+// through _kbApply, the code the keys use, so each action is one undo step.
+const KBRING_GROW = [['1','—','Add a bond of the chosen element'], ['2','C=O','Add a carbonyl oxygen'],
+                     ['3','Ph','Add a benzene ring'], ['6','C6','Add a cyclohexane ring'], ['7','C5','Add a cyclopentane ring']];
+const KBRING_ELEM = [['c','C','Carbon'], ['n','N','Nitrogen'], ['o','O','Oxygen'], ['s','S','Sulfur'], ['f','F','Fluorine'],
+                     ['l','Cl','Chlorine'], ['b','Br','Bromine'], ['i','I','Iodine'], ['p','P','Phosphorus'], ['h','H','Hydrogen']];
+const KBRING_R_GROW = 58, KBRING_R_ELEM = 104;   // radii of the two rings, in screen pixels
+const KBRING_MARGIN = KBRING_R_ELEM + 22;        // the ring's centre is kept this far from the canvas edge
+
+function _kbRingEl() { return document.getElementById('kb-ring'); }
+
+function _kbRingBuild(box) {
+  while (box.firstChild) box.removeChild(box.firstChild);
+  const add = (list, radius, grow) => list.forEach((it, i) => {
+    const a = -Math.PI/2 + 2*Math.PI*i/list.length;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = grow ? 'kb-grow' : 'kb-elem';
+    b.setAttribute('data-k', it[0]);
+    b.title = it[2]; b.setAttribute('aria-label', it[2]);
+    b.textContent = it[1];
+    b.style.left = (radius*Math.cos(a)).toFixed(1) + 'px';
+    b.style.top = (radius*Math.sin(a)).toFixed(1) + 'px';
+    box.appendChild(b);
+  });
+  add(KBRING_GROW, KBRING_R_GROW, true);
+  add(KBRING_ELEM, KBRING_R_ELEM, false);
+}
+
+function _kbRingClose() {
+  _kbRing = null;
+  const box = _kbRingEl();
+  if (box) box.classList.remove('on');
+}
+
+// Keeps the ring on its atom; closes it when the atom is gone or is no longer the one selected.
+function _kbRingPlace() {
+  const box = _kbRingEl();
+  const a = _kbRing && getAtom(_kbRing.id);
+  if (!box || !a || !selAtom || selAtom.id !== a.id || selSet.size !== 1) { _kbRingClose(); return; }
+  const s = w2s(a.x, a.y);
+  const W = canvas.clientWidth || canvas.width, H = canvas.clientHeight || canvas.height;
+  const cl = (v, size) => size >= 2*KBRING_MARGIN ? Math.max(KBRING_MARGIN, Math.min(size - KBRING_MARGIN, v)) : size/2;
+  box.style.left = cl(s.x, W).toFixed(1) + 'px';
+  box.style.top = cl(s.y, H).toFixed(1) + 'px';
+}
+
+function _kbRingToggle(atom) {
+  if (_tapRingId === atom.id) { _kbRingClose(); return; }   // it was open at the start of this tap
+  const box = _kbRingEl();
+  if (!box) return;
+  _kbRingBuild(box);
+  _kbRing = {id: atom.id};
+  box.classList.add('on');
+  _kbRingPlace();
+}
+
+(function () {
+  const box = _kbRingEl();
+  if (!box) return;
+  box.addEventListener('click', e => {
+    const btn = e.target && e.target.closest ? e.target.closest('button') : null;
+    const a = _kbRing && getAtom(_kbRing.id);
+    if (!btn || !a) { _kbRingClose(); return; }
+    const k = btn.getAttribute('data-k');
+    _kbRingClose();
+    _kbApply({atom: a, hovered: true}, k);
+  });
+})();
+
 document.addEventListener('keydown', e=>{
   if(e.target.tagName==='INPUT') return;
   // A backdrop modal is open: its own capture-phase handler owns Escape and
@@ -4319,6 +5236,9 @@ document.addEventListener('keydown', e=>{
     hideAtomElPop();
     selectOne(null); dragFrom=null; ghostPt=null; marquee=null; cancelTmpl(); render(); updateSelPanel();
   }
+  // Click building: with an atom or a bond under the pointer (or an atom selected) the
+  // letters and digits act on it and are not the tool and bond-order keys below.
+  if(_kbKey(e)){ e.preventDefault(); return; }
   const tm={s:'select',b:'bond',e:'erase'};
   if(!e.ctrlKey&&!e.metaKey&&tm[e.key.toLowerCase()]) setTool(tm[e.key.toLowerCase()]);
   if(e.key==='1') setBO(1);
@@ -4332,8 +5252,9 @@ document.addEventListener('keyup', e=>{
 // ───────────────────────── Templates ────────────────────────────────────
 
 // Rotate a template atom offset by the current activeTmplAngle
-function tmplRot(dx,dy){
-  const c=Math.cos(activeTmplAngle), s=Math.sin(activeTmplAngle);
+function tmplRot(dx,dy,ang){
+  const th=ang===undefined?activeTmplAngle:ang;
+  const c=Math.cos(th), s=Math.sin(th);
   return [dx*c-dy*s, dx*s+dy*c];
 }
 
@@ -4352,7 +5273,8 @@ function cancelTmpl() {
 }
 function placeTmpl(t,sp) {
   snapshot();
-  const w=s2w(sp.x,sp.y);
+  const pl=_tmplPlacement(t,sp);   // honeycomb snap of the anchor and rotation, or the pointer as it is
+  const w={x:pl.wx, y:pl.wy};
   const SNAP=BOND_LEN*0.45; // world-unit merge radius (same as ghost)
 
   // Model B: build the template skeleton with per-primitive H sync suspended,
@@ -4372,7 +5294,7 @@ function placeTmpl(t,sp) {
 
   // Resolve each template atom: apply rotation, then merge with existing if within SNAP
   const ids=t.atoms.map(([dx,dy,el])=>{
-    const [rdx,rdy]=tmplRot(dx,dy);
+    const [rdx,rdy]=tmplRot(dx,dy,pl.ang);
     const wx=w.x+rdx, wy=w.y+rdy;
     let best=null, bestD=SNAP;
     for(const a of mol.atoms){
@@ -4577,6 +5499,32 @@ function writeSmiles() {
 
 // ───────────────────────── SMILES Parser ────────────────────────────────
 
+// cis/trans of the double bonds a SMILES string specifies with direction marks.
+// A mark between X and Y says X lies below Y when written 'X/Y', above when
+// 'X\\Y'. The side of a substituent S on a double-bond atom D follows:
+// S written before D is up for a down-slash, S written after D is up for an
+// up-slash. Both ends need a marked substituent; the first one found on each
+// end is the reference. Returns [{a1,a2,s1,s2,rel}], rel being 'cis' or 'trans'
+// for s1 (on a1) against s2 (on a2).
+function _smilesDoubleBondStereo(bonds, marks){
+  const out=[];
+  if(!marks.length) return out;
+  const upOf=(D,B)=>{
+    for(const m of marks){
+      const S = m.to===D ? m.from : (m.from===D ? m.to : null);
+      if(S===null || S===B) continue;
+      return {s:S, up: m.to===D ? m.dir==='\\' : m.dir==='/'};
+    }
+    return null;
+  };
+  for(const b of bonds){
+    if(b.order!==2) continue;
+    const u1=upOf(b.a1,b.a2), u2=upOf(b.a2,b.a1);
+    if(u1 && u2) out.push({a1:b.a1,a2:b.a2,s1:u1.s,s2:u2.s,rel:u1.up===u2.up?'cis':'trans'});
+  }
+  return out;
+}
+
 function parseSmiles(smiles) {
   const atoms=[], bonds=[];
   let nextId=200;
@@ -4593,18 +5541,22 @@ function parseSmiles(smiles) {
   // so the bond into `[nH]` stayed 1.
   const aroAt=new Set();
   let prev=null, pendBO=1, pendEx=false;
+  // Direction mark written on the next bond (up-slash or down-slash), and the
+  // marks seen so far as {from,to,dir}, `from` being the atom written first.
+  let pendDir=null;
+  const dirMarks=[];
   let i=0;
 
   while (i<smiles.length) {
     const ch=smiles[i];
     if(ch==='('){stack.push(prev);i++;continue;}
-    if(ch===')'){prev=stack.pop();pendBO=1;pendEx=false;i++;continue;}
+    if(ch===')'){prev=stack.pop();pendBO=1;pendEx=false;pendDir=null;i++;continue;}
     if(ch==='='){pendBO=2;pendEx=true;i++;continue;}
     if(ch==='#'){pendBO=3;pendEx=true;i++;continue;}
     if(ch===':'){pendBO=1.5;pendEx=true;i++;continue;}
     if(ch==='-'){pendBO=1;pendEx=true;i++;continue;}
-    if(ch==='/'||ch==='\\'){pendBO=1;pendEx=true;i++;continue;}  // ignore stereo (explicit single)
-    if(ch==='.'){prev=null;pendBO=1;pendEx=false;i++;continue;}
+    if(ch==='/'||ch==='\\'){pendBO=1;pendEx=true;pendDir=ch;i++;continue;}  // explicit single; the direction is kept for the cis/trans of a neighbouring double bond
+    if(ch==='.'){prev=null;pendBO=1;pendEx=false;pendDir=null;i++;continue;}
 
     // Ring closure digits
     if(ch==='%'||/\d/.test(ch)){
@@ -4682,12 +5634,13 @@ function parseSmiles(smiles) {
       // made the exocyclic bond of e.g. `Cc1ccccc1` aromatic.
       if(ord===1 && !pendEx && isAro && aroAt.has(prev)) ord=1.5;
       bonds.push({id:nid(),a1:prev,a2:atom.id,order:ord});
+      if(pendDir) dirMarks.push({from:prev,to:atom.id,dir:pendDir});
     }
-    pendBO=1; pendEx=false; prev=atom.id;
+    pendBO=1; pendEx=false; pendDir=null; prev=atom.id;
   }
 
   _coordinateFreeMetals(atoms, bonds, ()=>nid());
-  return {atoms,bonds,nextId};
+  return {atoms,bonds,nextId,stereo:_smilesDoubleBondStereo(bonds,dirMarks)};
 }
 
 // A metal written as a DISCONNECTED SMILES component (e.g. the '.[Mg+2]' in a
@@ -5071,13 +6024,17 @@ function importSMILES() {
     _abortOptimise();
     snapshot();                   // single undo entry: the pre-import molecule
     mol={atoms:parsed.atoms,bonds:parsed.bonds,nextId:parsed.nextId};
+    heldBase=null; _updateRebuildBtn(); // the kept coordinates described the molecule just replaced
     _resetConstraintState();      // §8.13 — parsed.nextId restarts at 1, so old ids ALIAS
     _materializeAllHydrogens();   // Model B: SMILES import carries real H (§6.3)
     // Bug C layer 1 (template_placement_design.md §2): layoutMol is only the
     // seed; clean2D is the relaxation. Without it even benzene comes out of the
     // seed with two atoms exactly superimposed (harness: minPairDist 0.0 -> 50.0).
     // skipSnapshot=true — the snapshot above already captured the pre-import mol.
-    clean2D(true, true);
+    const _s0=_idSnapSafe();      // the graph as parsed, before the layout steps
+    _clean2DQuiet(true, true);
+    _applyDoubleBondStereo2D(parsed.stereo);
+    _idCheck('SMILES import', _s0, {centres:true, marks:true});
     selectOne(null); fitView(); render(); updateUI(); toast('SMILES imported');
   } catch(err){ toast('Parse error: '+err.message); console.error(err); }
 }
@@ -5546,7 +6503,7 @@ function repositionStereoSubstituents(coords){
 
   // Group stereo-flagged bonds by centre (Phase 7 revision: a centre may
   // carry ONE flagged bond — e.g. a wedge drawn by hand in the 2D editor —
-  // or TWO, from the standard 2-plain+1-wedge+1-dash import depiction.
+  // or TWO, from the older import depiction (2 plain + 1 wedge + 1 dash, written until v0.70).
   // Processing bonds independently (the old approach) breaks for two flags
   // on the same centre: each bond's own pass would treat the OTHER flagged
   // substituent as the unflagged "leftover" and try to reposition it too,
@@ -5565,9 +6522,15 @@ function repositionStereoSubstituents(coords){
   // matches reassign's convention exactly. The old globalNormal alignment
   // approach flipped sign along the zigzag and is gone.)
 
+  // A wedge or dash on an atom that is not a real stereocentre says nothing about 3D: it is read as
+  // a plain bond, and one warning names the atoms.
+  const realCentres = byCenter.size ? _stereoCentreSet(true, new Set(byCenter.keys())) : null;
+  const ignoredCentres = [];
+
   for (const [centerId, flagged] of byCenter){
     const center = getAtom(centerId);
     if (!center) continue;
+    if (!realCentres.has(centerId)){ ignoredCentres.push(centerId); continue; }
     const nbrs = adj.get(centerId);
     // Tetrahedral centres only — but "tetrahedral" now means degree 4 in the
     // real graph (every substituent explicit, including any H) OR degree 3
@@ -5609,7 +6572,10 @@ function repositionStereoSubstituents(coords){
     // real 3D chirality to what the wedge depicts against the actual 2D anchor
     // positions. This is per-centre and position-based, so it needs no shared
     // molecule-wide reference and cannot flip sign along the backbone.
-    function buildDirs(anchor1, anchor2){
+    // `third` (optional) is the third plain neighbour of a centre whose four substituents are all
+    // real and carry ONE mark: the side is then the orientation of the triangle the three plain
+    // neighbours span, the reading _markStereoCentre() writes, not the anchor pair alone.
+    function buildDirs(anchor1, anchor2, third){
       const u = v3.norm(v3.sub(coords.get(anchor1), cPos));
       const w = v3.norm(v3.sub(coords.get(anchor2), cPos));
       const crs = v3.cross(u, w);
@@ -5633,7 +6599,11 @@ function repositionStereoSubstituents(coords){
       const lo = Math.min(anchor1, anchor2), hi = Math.max(anchor1, anchor2);
       const vlo = (lo===anchor1) ? u : w, vhi = (lo===anchor1) ? w : u;
       const c2 = getAtom(centerId), Alo = getAtom(lo), Ahi = getAtom(hi);
-      const inPlane = (Alo.x-c2.x)*(-(Ahi.y-c2.y)) - (-(Alo.y-c2.y))*(Ahi.x-c2.x);
+      let inPlane = (Alo.x-c2.x)*(-(Ahi.y-c2.y)) - (-(Alo.y-c2.y))*(Ahi.x-c2.x);
+      if (third !== undefined){
+        const T3 = getAtom(third);
+        inPlane = (Ahi.x-Alo.x)*(-(T3.y-Alo.y)) - (-(Ahi.y-Alo.y))*(T3.x-Alo.x);
+      }
       const det3s = (a,b,d)=> a[0]*(b[1]*d[2]-b[2]*d[1]) - a[1]*(b[0]*d[2]-b[2]*d[0]) + a[2]*(b[0]*d[1]-b[1]*d[0]);
       const detA = det3s(vlo, vhi, candA);
       // A wedge ('up' = virtual +z toward the viewer) depicts sign(inPlane); make
@@ -5656,7 +6626,7 @@ function repositionStereoSubstituents(coords){
       // further coordination between the two functions is needed.
       const hasRealLeftover = others.length === 3;
       const [anchor1, anchor2, leftover] = others;
-      const dirs = buildDirs(anchor1, anchor2);
+      const dirs = buildDirs(anchor1, anchor2, hasRealLeftover ? leftover : undefined);
       if (!dirs) continue;
       const wedgeId = flagged[0].atomId, wedgeStereo = flagged[0].stereo;
       moveOne(wedgeId,  wedgeStereo === 'up' ? dirs.dirPlus  : dirs.dirMinus);
@@ -5679,6 +6649,139 @@ function repositionStereoSubstituents(coords){
       moveOne(second.atomId, first.stereo === 'up' ? dirs.dirMinus : dirs.dirPlus);
     }
   }
+  if (ignoredCentres.length)
+    _stereoWarn(`Wedge or dash ignored at ${_stereoNames(ignoredCentres)}: not a stereocentre, so the bond is read as plain.`);
+}
+
+// ── Real stereocentres, one mark per centre, and the read-back ──────────────
+// A real stereocentre is an sp3 atom (every bond single) with four different substituents:
+// degree 4, or degree 3 with one implicit H. "Different" is the branch signature the import has
+// always used (the atoms of each branch counted shell by shell), not a full CIP ranking. With
+// `lenient` a ring atom whose only alike pair is its two ring neighbours also counts: a ring
+// substituent that is cis or trans to another one is a legitimate hand-drawn wedge, and only
+// the marks the 3D builder reads are filtered with this, never the marks the import writes.
+// `only` (optional, a Set of atom ids) limits the work to those atoms.
+function _stereoWarn(msg){
+  _stereoNotes.push(msg);
+  if(_stereoNotes.length>20) _stereoNotes.shift();
+  _dbg('stereo: '+msg);
+  const now=Date.now();
+  if(msg!==_stereoLastMsg || now-_stereoLastT>ID_TOAST_REPEAT_MS){ _stereoLastMsg=msg; _stereoLastT=now; toast('⚠ '+msg,5000); }
+}
+function _stereoNames(ids){
+  const nm=id=>{ const a=getAtom(id); return (a?a.el:'?')+id; };
+  return ids.length>3 ? ids.slice(0,3).map(nm).join(', ')+' and '+(ids.length-3)+' more' : ids.map(nm).join(', ');
+}
+function _stereoCentreSet(lenient, only){
+  const adj=new Map(), elOf=new Map();
+  for(const a of mol.atoms){ adj.set(a.id,[]); elOf.set(a.id,a.el); }
+  for(const b of mol.bonds){ const l1=adj.get(b.a1), l2=adj.get(b.a2); if(l1&&l2){ l1.push(b.a2); l2.push(b.a1); } }
+  const ringAtoms=new Set();
+  if(lenient) for(const ring of findRings3D()) for(const id of ring) ringAtoms.add(id);
+  const sig=(center,start)=>{
+    const visited=new Set([center,start]);
+    const shells=[elOf.get(start)];
+    let frontier=[start];
+    while(true){
+      const next=[];
+      for(const id of frontier) for(const nb of adj.get(id)) if(!visited.has(nb)){ visited.add(nb); next.push(nb); }
+      if(!next.length) break;
+      shells.push(next.map(id=>elOf.get(id)).sort().join(''));
+      frontier=next;
+    }
+    return shells.join('|');
+  };
+  const out=new Set();
+  for(const atom of mol.atoms){
+    if(only && !only.has(atom.id)) continue;
+    const nbrs=adj.get(atom.id);
+    if(!(nbrs.length===4 || (nbrs.length===3 && implicitH(atom)===1))) continue;
+    if(_ISMETAL.has(atom.el)) continue;           // the bonds of a metal are dative: no stereocentre
+    if(!mol.bonds.every(b=>!(b.a1===atom.id||b.a2===atom.id)||b.order===1)) continue;
+    const sigs=nbrs.map(nb=>sig(atom.id,nb));
+    const alike=[];
+    for(let i=0;i<sigs.length;i++) for(let j=i+1;j<sigs.length;j++) if(sigs[i]===sigs[j]) alike.push([nbrs[i],nbrs[j]]);
+    if(!alike.length) out.add(atom.id);
+    else if(lenient && alike.length===1 && ringAtoms.has(atom.id) && ringAtoms.has(alike[0][0]) && ringAtoms.has(alike[0][1])) out.add(atom.id);
+  }
+  return out;
+}
+const _stDet = (a,b,c)=> a[0]*(b[1]*c[2]-b[2]*c[1]) - a[1]*(b[0]*c[2]-b[2]*c[0]) + a[2]*(b[0]*c[1]-b[1]*c[0]);
+const _stSub = (p,q)=> [p[0]-q[0], p[1]-q[1], p[2]-q[2]];
+// Gives the centre ONE wedge or dash so that the drawing depicts the chirality of coord3D. The
+// marked bond is the one least harmful to read: not one already marked from another centre, not
+// to a hydrogen (a hidden hydrogen would hide the mark), not to another centre, and not a ring
+// bond, in that order of importance; ties go to the least anchor-worthy substituent. The
+// chirality is the orientation of the tetrahedron (three plain substituents in id order, then
+// the marked one): in 3D from the real positions, in 2D with the marked atom lifted toward the
+// viewer for a wedge. Returns the marked bond, or null when no bond gives a defined side.
+function _markStereoCentre(center, coord3D, ctx){
+  const nbrs=ctx.adj.get(center);
+  if(nbrs.length!==4) return null;
+  const ranked=ctx.rank(center,nbrs);                 // most to least anchor-worthy
+  const bondOf=n=>mol.bonds.find(b=>(b.a1===center&&b.a2===n)||(b.a2===center&&b.a1===n));
+  const cand=[ranked[2],ranked[3],ranked[1],ranked[0]].map((n,i)=>{
+    const b=bondOf(n);
+    const pen=(ctx.used.has(b)?8:0)+(ctx.elOf.get(n)==='H'?4:0)+(ctx.centres.has(n)?2:0)+(ctx.ringBonds.has(_idKey(center,n))?1:0);
+    return {n, b, pen, i};
+  }).filter(c=>c.b).sort((p,q)=>p.pen-q.pen||p.i-q.i);
+  for(const c of cand){
+    const others=nbrs.filter(n=>n!==c.n).sort(_idNum);
+    if(!coord3D.has(c.n) || !others.every(id=>coord3D.has(id))) continue;
+    const P=others.map(id=>coord3D.get(id)), X=coord3D.get(c.n);
+    const truth=Math.sign(_stDet(_stSub(P[1],P[0]), _stSub(P[2],P[0]), _stSub(X,P[0])));
+    const A=getAtom(others[0]), B=getAtom(others[1]), D=getAtom(others[2]);
+    const area=(B.x-A.x)*(-(D.y-A.y)) - (-(B.y-A.y))*(D.x-A.x);   // orientation in the math frame (x, −y)
+    if(!truth || Math.abs(area)<1e-3) continue;
+    if(c.b.a2===center){ const t=c.b.a1; c.b.a1=c.b.a2; c.b.a2=t; }   // the narrow end of the glyph is the centre
+    c.b.stereo = truth*Math.sign(area)>0 ? 'up' : 'dn';
+    ctx.used.add(c.b);
+    return c.b;
+  }
+  return null;
+}
+// Reads the drawing back: exactly one mark at the centre, narrow end at the centre, and the
+// tetrahedron it depicts (the marked atom lifted off the page, the other three flat) has the
+// orientation of the real one. Computed from the four points in the order marked, plain, plain,
+// plain, separately from the way _markStereoCentre() chooses the mark.
+function _stereoReadBack(center, coord3D){
+  const marked=mol.bonds.filter(b=>b.stereo && (b.a1===center||b.a2===center));
+  if(marked.length!==1 || marked[0].a1!==center) return false;
+  const x=marked[0].a2;
+  const others=mol.bonds.filter(b=>b.a1===center||b.a2===center).map(b=>b.a1===center?b.a2:b.a1).filter(n=>n!==x).sort(_idNum);
+  if(others.length!==3) return false;
+  const c2=getAtom(center);
+  const flat=id=>{ const t=getAtom(id); return [t.x-c2.x, -(t.y-c2.y), id===x ? (marked[0].stereo==='up'?1:-1)*BOND_LEN : 0]; };
+  const drawn=[x].concat(others).map(flat);
+  const real=[x].concat(others).map(id=>coord3D.get(id));
+  if(real.some(p=>!p)) return false;
+  const vol=p=>_stDet(_stSub(p[1],p[0]), _stSub(p[2],p[0]), _stSub(p[3],p[0]));
+  const vd=Math.sign(vol(drawn)), vr=Math.sign(vol(real));
+  return vd!==0 && vd===vr;
+}
+// Marks every centre of the list (degree-4 centres), reads each back, takes the mark off a centre
+// that does not read back, and says which centres have no mark and why. `rank` is the anchor-
+// worthiness order of the caller. Returns the ids that carry a mark.
+// `saved` (optional, a Map from centre id to [bond, a1, a2, stereo] entries): the marks the caller
+// took off the centre before; a centre that cannot be marked gets them back, as before the call.
+function _stereoMarkAll(centres, coord3D, adj, elOf, ringAtoms, rank, saved){
+  const ringBonds=new Set();
+  for(const r of findRings3D()) for(let i=0;i<r.length;i++) ringBonds.add(_idKey(r[i], r[(i+1)%r.length]));
+  const ctx={adj, elOf, ringAtoms, ringBonds, rank, centres:new Set(centres), used:new Set()};
+  const none=[], wrong=[], kept=[];
+  for(const id of centres){
+    if(!_markStereoCentre(id, coord3D, ctx)){
+      if(saved && saved.has(id)) for(const [b,a1,a2,st] of saved.get(id)){ b.a1=a1; b.a2=a2; b.stereo=st; }
+      else none.push(id);
+    }
+    else if(!_stereoReadBack(id, coord3D)){
+      for(const b of mol.bonds) if(b.a1===id) b.stereo=null;
+      wrong.push(id);
+    } else kept.push(id);
+  }
+  if(none.length) _stereoWarn(`No wedge or dash could be drawn at ${_stereoNames(none)}: the three other bonds give no side.`);
+  if(wrong.length) _stereoWarn(`The wedge or dash at ${_stereoNames(wrong)} did not read back as the 3D configuration and was left out.`);
+  return kept;
 }
 
 // ── (removed) _computeMoleculePlaneNormal() ────────────────────────────────
@@ -5693,7 +6796,117 @@ function repositionStereoSubstituents(coords){
 // anchor positions, which is parity-invariant and mutually consistent.
 
 // ── Main 3D embedding entry point ──────────────────────────────────────────
+// ── Cis/trans of acyclic double bonds ──────────────────────────────────────
+// The 2D drawing is the source of truth for which side of a double bond each
+// substituent lies on (the same way a wedge is for a stereocentre). A double
+// bond carries cis/trans only when it is not in a ring, neither end is part of
+// a cumulated system, and each end has a heavy substituent; N=N qualifies. The
+// reference substituent of an end is its first heavy neighbour. `side` is every
+// atom reached from a2 without crossing the bond, which moves as one rigid body.
+function _acyclicDoubleBonds(){
+  const adj=new Map(mol.atoms.map(a=>[a.id,[]]));
+  for(const b of mol.bonds){
+    const l1=adj.get(b.a1), l2=adj.get(b.a2);
+    if(l1) l1.push({id:b.a2,o:b.order});
+    if(l2) l2.push({id:b.a1,o:b.order});
+  }
+  const heavy=(list,other)=>list.filter(n=>n.id!==other&&getAtom(n.id)&&getAtom(n.id).el!=='H').map(n=>n.id);
+  const out=[];
+  for(const b of mol.bonds){
+    if(b.order!==2) continue;
+    const n1=adj.get(b.a1), n2=adj.get(b.a2);
+    if(!n1||!n2||n1.length>3||n2.length>3) continue;
+    if(n1.some(n=>n.id!==b.a2&&n.o>=2)||n2.some(n=>n.id!==b.a1&&n.o>=2)) continue;
+    const h1=heavy(n1,b.a2), h2=heavy(n2,b.a1);
+    if(!h1.length||!h2.length) continue;
+    const side=new Set([b.a2]), q=[b.a2];
+    let ring=false;
+    while(q.length&&!ring){
+      const c=q.shift();
+      for(const n of adj.get(c)){
+        if(c===b.a2&&n.id===b.a1) continue;
+        if(n.id===b.a1){ ring=true; break; }
+        if(!side.has(n.id)){ side.add(n.id); q.push(n.id); }
+      }
+    }
+    if(ring) continue;
+    out.push({a1:b.a1,a2:b.a2,s1:h1[0],s2:h2[0],n1:h1.length,n2:h2.length,side});
+  }
+  return out;
+}
+
+// 'cis' or 'trans' of the reference substituents as drawn, null if undefined.
+function _doubleBondRel2D(d){
+  const A=getAtom(d.a1), B=getAtom(d.a2), S1=getAtom(d.s1), S2=getAtom(d.s2);
+  const ux=B.x-A.x, uy=B.y-A.y;
+  const c1=ux*(S1.y-A.y)-uy*(S1.x-A.x), c2=ux*(S2.y-B.y)-uy*(S2.x-B.x);
+  if(Math.abs(c1)<1e-6||Math.abs(c2)<1e-6) return null;
+  return (c1>0)===(c2>0)?'cis':'trans';
+}
+
+// Make the drawing agree with what a SMILES string says about each double
+// bond: the marked cis/trans where it says one, trans for a disubstituted bond
+// it says nothing about. The side of a2 is mirrored across the bond.
+function _applyDoubleBondStereo2D(stereo){
+  for(const d of _acyclicDoubleBonds()){
+    let want=null;
+    const sp=(stereo||[]).find(t=>(t.a1===d.a1&&t.a2===d.a2)||(t.a1===d.a2&&t.a2===d.a1));
+    if(sp){
+      const same=sp.a1===d.a1;
+      const r1=same?sp.s1:sp.s2, r2=same?sp.s2:sp.s1;
+      let cis=sp.rel==='cis';
+      if(r1!==d.s1) cis=!cis;      // the other substituent of a planar end lies opposite
+      if(r2!==d.s2) cis=!cis;
+      want=cis?'cis':'trans';
+    } else if(d.n1===1&&d.n2===1){
+      want='trans';
+    }
+    const cur=_doubleBondRel2D(d);
+    if(!want||!cur||cur===want) continue;
+    const A=getAtom(d.a1), B=getAtom(d.a2);
+    const L=Math.hypot(B.x-A.x,B.y-A.y)||1, cx=(B.x-A.x)/L, cy=(B.y-A.y)/L;
+    for(const id of d.side){
+      const a=getAtom(id);
+      const dx=a.x-A.x, dy=a.y-A.y;
+      const along=dx*cx+dy*cy, perp=-dx*cy+dy*cx;
+      a.x=A.x+along*cx+perp*cy;
+      a.y=A.y+along*cy-perp*cx;
+    }
+  }
+}
+
+// Turn the a2 side of every acyclic double bond by half a turn about the bond
+// when the 3D chain placement put its reference substituents on the other side
+// from the drawing. A half turn is a rigid proper rotation, so nothing else
+// about that side changes.
+function _applyDoubleBondStereo3D(coords){
+  for(const d of _acyclicDoubleBonds()){
+    const want=_doubleBondRel2D(d);
+    if(!want) continue;
+    const A=coords.get(d.a1), B=coords.get(d.a2), P1=coords.get(d.s1), P2=coords.get(d.s2);
+    if(!A||!B||!P1||!P2) continue;
+    const u=v3.norm(v3.sub(B,A));
+    const rej=(v)=>v3.sub(v,v3.scl(u,v3.dot(v,u)));
+    const r1=rej(v3.sub(P1,A)), r2=rej(v3.sub(P2,B));
+    if(v3.len(r1)<1e-6||v3.len(r2)<1e-6) continue;
+    const dt=v3.dot(r1,r2);
+    if(Math.abs(dt)<1e-9||(dt>0?'cis':'trans')===want) continue;
+    for(const id of d.side){
+      const p=coords.get(id);
+      if(!p) continue;
+      const r=v3.sub(p,A), along=v3.dot(r,u);
+      coords.set(id,v3.add(A,v3.sub(v3.scl(u,2*along),r)));
+    }
+  }
+}
+
 function embed3D(){
+  const s0=_idSnapSafe();
+  const c=_embed3DCore();
+  if(c.size) _idCheck('3D embedding', s0, {centres:true, marks:true, ez3d:'old'}, c);
+  return c;
+}
+function _embed3DCore(){
   if(!mol.atoms.length) return new Map();
   const coords=new Map();
 
@@ -6033,6 +7246,7 @@ function embed3D(){
     }
   }
 
+  _applyDoubleBondStereo3D(coords);
   return coords;
 }
 
@@ -6113,6 +7327,239 @@ function placeImplicitH3D(coords){
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// KEPT 3D COORDINATES of an imported molecule
+//
+// The Cartesian coordinates read from a file belong to the atoms, not to the
+// drawing. heldBase keeps them by atom id, and every place that makes the 3D
+// geometry of such a molecule (the live preview, Optimise, the XYZ export)
+// starts from them instead of from a fresh embedding of the 2D drawing:
+//   • an edit that leaves the graph alone moves no atom in 3D;
+//   • an atom that survives an edit keeps its coordinates; an atom added by an
+//     edit is placed from its neighbours' real positions and kept from then on;
+//   • a deleted atom only disappears;
+//   • Optimise starts from these coordinates and its result is put back in
+//     the frame they were in (best superposition of the atoms that were held);
+//   • only rebuild3DFromDrawing() goes back to embed3D().
+// A molecule drawn by hand has no heldBase until Optimise has run on it; the result is then
+// kept in the same way (drawn: true), the drawing is not rebuilt from it, and a change of
+// cis/trans in the drawing releases it (see _heldGeometry).
+// heldBase = { coords: Map(id→[x,y,z]), baseIds: Set (ids read from the file, or the atoms
+//              that Optimise ran on), origin: 'imported'|'optimised', file, kind (what the
+//              reader made of the file, shown in the file bar), opt: null|{max,rms,n},
+//              drawn: true for the result of Optimise on a drawn molecule }
+// ═══════════════════════════════════════════════════════════════════════════
+function _heldToPlain() {
+  if (!heldBase) return null;
+  const c = [];
+  for (const [id, p] of heldBase.coords) c.push([id, p[0], p[1], p[2]]);
+  return { origin: heldBase.origin, file: heldBase.file, kind: heldBase.kind, opt: heldBase.opt, drawn: !!heldBase.drawn, base: Array.from(heldBase.baseIds), c };
+}
+function _heldFromPlain(o) {
+  if (!o) { heldBase = null; return; }
+  const coords = new Map();
+  for (const r of o.c) coords.set(r[0], [r[1], r[2], r[3]]);
+  heldBase = { coords, baseIds: new Set(o.base), origin: o.origin, file: o.file, kind: o.kind || '', opt: o.opt || null, drawn: !!o.drawn };
+}
+// The result of Optimise on a molecule drawn by hand joins the same mechanism: its
+// coordinates belong to the atoms from then on. `drawn` marks that the 2D drawing is the
+// user's own, so Optimise does not redraw it and a change of a cis/trans arrangement in
+// the drawing releases the kept geometry (see _heldGeometry).
+function _heldFromDrawn(coords) {
+  const c = new Map();
+  for (const [id, p] of coords) c.set(id, p.slice());
+  heldBase = { coords: c, baseIds: new Set(c.keys()), origin: 'optimised', file: '', kind: '', opt: null, drawn: true };
+}
+function _heldSet(coords, filename, kind) {
+  const c = new Map();
+  for (const [id, p] of coords) c.set(id, p.slice());
+  heldBase = { coords: c, baseIds: new Set(c.keys()), origin: 'imported', file: filename || '', kind: kind || '', opt: null };
+}
+function _heldCounts() {
+  const ids = new Set(mol.atoms.map(a => a.id));
+  let added = 0, removed = 0;
+  for (const id of ids) if (!heldBase.baseIds.has(id)) added++;
+  for (const id of heldBase.baseIds) if (!ids.has(id)) removed++;
+  return { added, removed };
+}
+// What the comment line of a saved XYZ says about the geometry.
+function _heldTag() {
+  const n = _heldCounts();
+  let t = heldBase.drawn ? 'UFF-optimised' : heldBase.origin === 'optimised' ? 'optimised from an imported geometry' : 'imported geometry';
+  if (heldBase.origin === 'optimised' && heldBase.opt)
+    t += ` (largest shift ${heldBase.opt.max.toFixed(3)} A, rms ${heldBase.opt.rms.toFixed(3)} A from the geometry before Optimise)`;
+  if (n.added || n.removed) t += `, edited (${n.added} atoms added, ${n.removed} removed)`;
+  return t;
+}
+// Place the atoms of `missing` (ids with no kept position) next to placed neighbours,
+// one at a time, with the placement helper of the embedding. Among a few orientations
+// of the new bond the one farthest from every other atom is taken. A group with no
+// placed neighbour at all is started 4 A beyond the placed atoms.
+function _heldPlaceNew(coords, missing) {
+  const nbrOf = new Map(mol.atoms.map(a => [a.id, []]));
+  for (const b of mol.bonds) {
+    const n1 = nbrOf.get(b.a1), n2 = nbrOf.get(b.a2);
+    if (n1) n1.push(b.a2);
+    if (n2) n2.push(b.a1);
+  }
+  const pending = new Set(missing);
+  const HINTS = [null, [1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]];
+  while (pending.size) {
+    let progress = false;
+    for (const id of Array.from(pending)) {
+      const pid = (nbrOf.get(id) || []).find(n => coords.has(n));
+      if (pid === undefined) continue;
+      let best = null, bestD = -1;
+      for (const h of HINTS) {
+        coords.delete(id);
+        placeFromParent3D(pid, id, coords, h);
+        const p = coords.get(id);
+        let dmin = Infinity;
+        for (const [oid, q] of coords) {
+          if (oid === id || oid === pid) continue;
+          const d = Math.hypot(p[0]-q[0], p[1]-q[1], p[2]-q[2]);
+          if (d < dmin) dmin = d;
+        }
+        if (dmin > bestD + 1e-9) { bestD = dmin; best = p; }
+      }
+      coords.set(id, best);
+      pending.delete(id);
+      progress = true;
+    }
+    if (!progress) {
+      const id = pending.values().next().value;
+      let xmax = 0;
+      for (const p of coords.values()) if (p[0] > xmax) xmax = p[0];
+      coords.set(id, [xmax + 4, 0, 0]);
+      pending.delete(id);
+    }
+  }
+}
+// The 3D coordinates of the molecule as it is now, from the kept ones; null when
+// nothing is kept or none of the imported atoms is left (then it is a new molecule).
+function _heldGeometry() {
+  if (!heldBase) return null;
+  const coords = new Map(), missing = [];
+  let survivors = 0;
+  for (const a of mol.atoms) {
+    const p = heldBase.coords.get(a.id);
+    if (p) { coords.set(a.id, p.slice()); if (heldBase.baseIds.has(a.id)) survivors++; }
+    else missing.push(a.id);
+  }
+  if (!survivors) { heldBase = null; _updateRebuildBtn(); return null; }
+  // A drawn molecule: the drawing is the record of cis/trans. If an edit turned a double
+  // bond from one arrangement to the other, the kept 3D no longer shows what is drawn; it is
+  // released and the 3D is built again from the drawing (the caller embeds when this returns
+  // null). Judged only where both substituents that name the arrangement have kept positions.
+  if (heldBase.drawn) {
+    const e2 = _idEZLabels(id => { const a = getAtom(id); return a ? [a.x, a.y, 0] : null; });
+    const e3 = _idEZLabels(id => coords.get(id) || null);
+    const flipped = Object.keys(e2).filter(k => e3[k] && e3[k] !== e2[k]);
+    if (flipped.length) {
+      _dbg(`kept 3D released: cis/trans differs from the drawing at ${flipped.join(', ')}`);
+      heldBase = null; _updateRebuildBtn();
+      toast('A cis/trans arrangement was changed in the drawing, so the 3D is built again from the drawing. Run Optimise to refine it.', 5000);
+      return null;
+    }
+  }
+  if (missing.length) {
+    _heldPlaceNew(coords, missing);
+    for (const id of missing) heldBase.coords.set(id, coords.get(id).slice());
+  }
+  return coords;
+}
+// Rotate and translate every atom of `mobile` so that the atoms `ids` lie as close as
+// possible to their positions in `target` (Horn's quaternion method; fewer than three
+// atoms: translation only). Returns the largest and the root-mean-square distance left.
+function _superposeOnto(mobile, target, ids) {
+  const n = ids.length;
+  if (!n) return {max: 0, rms: 0, n: 0};
+  const cm = [0,0,0], ct = [0,0,0];
+  for (const id of ids) for (let k = 0; k < 3; k++) { cm[k] += mobile.get(id)[k] / n; ct[k] += target.get(id)[k] / n; }
+  let R = [[1,0,0],[0,1,0],[0,0,1]];
+  if (n >= 3) {
+    const S = [[0,0,0],[0,0,0],[0,0,0]];
+    for (const id of ids) {
+      const p = mobile.get(id), q = target.get(id);
+      for (let a = 0; a < 3; a++) for (let b = 0; b < 3; b++) S[a][b] += (p[a]-cm[a]) * (q[b]-ct[b]);
+    }
+    const N = [
+      [S[0][0]+S[1][1]+S[2][2], S[1][2]-S[2][1], S[2][0]-S[0][2], S[0][1]-S[1][0]],
+      [S[1][2]-S[2][1], S[0][0]-S[1][1]-S[2][2], S[0][1]+S[1][0], S[2][0]+S[0][2]],
+      [S[2][0]-S[0][2], S[0][1]+S[1][0], -S[0][0]+S[1][1]-S[2][2], S[1][2]+S[2][1]],
+      [S[0][1]-S[1][0], S[2][0]+S[0][2], S[1][2]+S[2][1], -S[0][0]-S[1][1]+S[2][2]]];
+    // Jacobi sweeps on the symmetric 4x4 matrix; the eigenvector of the largest eigenvalue
+    const V = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+    for (let sweep = 0; sweep < 60; sweep++) {
+      let off = 0;
+      for (let i = 0; i < 4; i++) for (let j = i+1; j < 4; j++) off += N[i][j]*N[i][j];
+      if (off < 1e-24) break;
+      for (let i = 0; i < 3; i++) for (let j = i+1; j < 4; j++) {
+        if (Math.abs(N[i][j]) < 1e-300) continue;
+        const th = (N[j][j]-N[i][i]) / (2*N[i][j]);
+        const t = Math.sign(th || 1) / (Math.abs(th) + Math.sqrt(th*th+1));
+        const c = 1/Math.sqrt(t*t+1), s = t*c;
+        for (let k = 0; k < 4; k++) { const a = N[k][i], b = N[k][j]; N[k][i] = c*a - s*b; N[k][j] = s*a + c*b; }
+        for (let k = 0; k < 4; k++) { const a = N[i][k], b = N[j][k]; N[i][k] = c*a - s*b; N[j][k] = s*a + c*b; }
+        for (let k = 0; k < 4; k++) { const a = V[k][i], b = V[k][j]; V[k][i] = c*a - s*b; V[k][j] = s*a + c*b; }
+      }
+    }
+    let bi = 0;
+    for (let i = 1; i < 4; i++) if (N[i][i] > N[bi][bi]) bi = i;
+    const q0 = V[0][bi], qx = V[1][bi], qy = V[2][bi], qz = V[3][bi];
+    R = [[q0*q0+qx*qx-qy*qy-qz*qz, 2*(qx*qy-q0*qz), 2*(qx*qz+q0*qy)],
+         [2*(qx*qy+q0*qz), q0*q0-qx*qx+qy*qy-qz*qz, 2*(qy*qz-q0*qx)],
+         [2*(qx*qz-q0*qy), 2*(qy*qz+q0*qx), q0*q0-qx*qx-qy*qy+qz*qz]];
+  }
+  for (const [id, p] of mobile) {
+    const d = [p[0]-cm[0], p[1]-cm[1], p[2]-cm[2]];
+    mobile.set(id, [0,1,2].map(a => R[a][0]*d[0] + R[a][1]*d[1] + R[a][2]*d[2] + ct[a]));
+  }
+  let mx = 0, sq = 0;
+  for (const id of ids) {
+    const p = mobile.get(id), q = target.get(id);
+    const d = Math.hypot(p[0]-q[0], p[1]-q[1], p[2]-q[2]);
+    if (d > mx) mx = d;
+    sq += d*d;
+  }
+  return {max: mx, rms: Math.sqrt(sq / n), n};
+}
+// The only way back to a geometry built from the drawing; asks for a second click.
+let _rebuildArmed = null;
+function _updateRebuildBtn() {
+  refreshFileBar();   // every change of heldBase passes here: the bar follows it
+  const b = document.getElementById('p3d-rebuild-btn');
+  if (!b) return;
+  b.style.display = heldBase ? '' : 'none';
+  if (!heldBase) { clearTimeout(_rebuildArmed); _rebuildArmed = null; }
+  b.textContent = _rebuildArmed ? 'Click again to confirm' : '↻ Rebuild 3D from the drawing';
+}
+function rebuild3DFromDrawing() {
+  if (!heldBase) return;
+  if (!_rebuildArmed) {
+    _rebuildArmed = setTimeout(() => { _rebuildArmed = null; _updateRebuildBtn(); }, 4000);
+    _updateRebuildBtn();
+    toast('This replaces the kept coordinates by a new 3D built from the drawing — click again to confirm', 4000);
+    return;
+  }
+  clearTimeout(_rebuildArmed); _rebuildArmed = null;
+  _abortOptimise();
+  heldBase = null;
+  try {
+    const coords = embed3D();
+    const implicitH = placeImplicitH3D(coords);
+    activeGeometry3D = {source:'embed', fromVersion:mol2DVersion, coords, implicitH, stale:false};
+    optResult3D = null;
+    _dbg(`activeGeometry3D updated: source=embed fromVersion=${mol2DVersion} heavyAtoms=${coords.size} (rebuilt from the drawing on request)`);
+    rebuildPane3D();
+    toast('3D rebuilt from the drawing');
+  } catch (err) {
+    console.warn('[OPAL] rebuild from the drawing failed:', err);
+    toast('Could not rebuild the 3D geometry from the drawing');
+  }
+  _updateRebuildBtn();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // LIVE CHEAP PREVIEW (Phase 3 — molbuild_redesign_design.md §4)
 //
 // embed3D()+placeImplicitH3D() are fast/deterministic (no L-BFGS), so we can
@@ -6174,6 +7621,14 @@ function runEmbedPreview() {
   if (activeGeometry3D && !_geometryPredatesCurrentEdit(activeGeometry3D)) return;
 
   try {
+    // An imported molecule keeps its coordinates; only new atoms are placed.
+    const kept = _heldGeometry();
+    if (kept) {
+      activeGeometry3D = {source: heldBase.origin === 'optimised' ? 'optimized' : 'imported', fromVersion:mol2DVersion, coords:kept, implicitH:[], stale:false};
+      _dbg(`activeGeometry3D updated: source=${activeGeometry3D.source} fromVersion=${mol2DVersion} atoms=${kept.size} (kept coordinates, ${_heldTag()})`);
+      rebuildPane3D();
+      return;
+    }
     const coords = embed3D();
     if (!coords.size) return;
     const implicitH = placeImplicitH3D(coords);
@@ -6827,6 +8282,18 @@ function perceiveAromaticity(){
 // user back to the scrunched layout instead of to the pre-import/pre-placement
 // molecule. Default false keeps the "Clean" button's own snapshot unchanged.
 function clean2D(silent=false, skipSnapshot=false){
+  const s0=_idSnapSafe();
+  const r=_clean2DCore(silent, skipSnapshot);
+  _idCheck('Clean', s0, {centres:true, marks:true, ez:true});
+  return r;
+}
+// Import and the post-Optimise redraw run Clean in the middle of a longer conversion
+// (before the cis/trans and wedge steps that finish it); they check the whole instead.
+function _clean2DQuiet(silent, skipSnapshot){
+  _idSuspend++;
+  try { return clean2D(silent, skipSnapshot); } finally { _idSuspend--; }
+}
+function _clean2DCore(silent=false, skipSnapshot=false){
   if(!mol.atoms.length){toast('Nothing to clean');return;}
   if(!skipSnapshot) snapshot();
   perceiveAromaticity();
@@ -7374,6 +8841,88 @@ function clean2D(silent=false, skipSnapshot=false){
     }
   }
 
+  // ── Stage 4a: the angle at every chain atom that has two heavy neighbours ──
+  // The angle springs of Stage 3 are weak next to the bond springs and cannot move an
+  // atom whose neighbours sit in locked rings, so a bridge between two rings (the N=N
+  // of azobenzene, the CH=CH of stilbene) kept whatever angle the distance between the
+  // rings left: 177 degrees at one end and 120 at the other. Rule: such an atom is drawn
+  // straight only when it is sp (a triple bond, or two double bonds) and at 120 degrees
+  // otherwise. The smaller of the two sides is turned rigidly about the atom, to the
+  // same side as before, so every other angle and length is kept; a turn that would put
+  // atoms of the two sides on top of each other is not made. Metals and ring atoms are
+  // left to their own rules.
+  // It runs after Stage 4b below: that stage turns a whole substituent about its ring
+  // atom, which would change the clearance this stage has just checked.
+  const _stage4a=()=>{
+    const ringAt=new Set();
+    for(const r of findRings3D()) for(const id of r) ringAt.add(id);
+    const heavyNb=j=>adj[j].filter(n=>mol.atoms[n].el!=='H');
+    // side of the bend at j: +1 or -1, 0 when it is straight within the margin
+    const turnSign=(j,P,margin)=>{
+      const nb=heavyNb(j); if(nb.length!==2) return 0;
+      const ux=P[nb[0]][0]-P[j][0], uy=P[nb[0]][1]-P[j][1];
+      const vx=P[nb[1]][0]-P[j][0], vy=P[nb[1]][1]-P[j][1];
+      const c=(ux*vy-uy*vx)/((Math.hypot(ux,uy)*Math.hypot(vx,vy))||1);
+      return Math.abs(c)<margin ? 0 : (c>0?1:-1);
+    };
+    const closePairs=(moving,fixed)=>{
+      let n=0;
+      for(const a of moving) for(const b of fixed){
+        if(mol.atoms[a].el==='H'||mol.atoms[b].el==='H') continue;
+        if(Math.hypot(pos[a][0]-pos[b][0],pos[a][1]-pos[b][1])<BOND_LEN*0.5) n++;
+      }
+      return n;
+    };
+    // A turn refused for a clash may be allowed once the atom on the other side of the
+    // bridge has been turned, so the atoms are visited again until none is turned.
+    for(let again=0, turned=true; turned && again<4; again++){
+    turned=false;
+    for(let j=0;j<N;j++){
+      const el=mol.atoms[j].el;
+      if(el==='H'||ringAt.has(mol.atoms[j].id)||_ISMETAL.has(el)) continue;
+      const nb=heavyNb(j);
+      if(nb.length!==2) continue;
+      const isSp=adjBo[j].some(o=>o===3)||adjBo[j].filter(o=>o===2).length>=2;
+      const t=isSp?Math.PI:2*Math.PI/3;
+      const ux=pos[nb[0]][0]-pos[j][0], uy=pos[nb[0]][1]-pos[j][1];
+      const vx=pos[nb[1]][0]-pos[j][0], vy=pos[nb[1]][1]-pos[j][1];
+      const cur=Math.atan2(ux*vy-uy*vx, ux*vx+uy*vy);        // signed angle from the first to the second neighbour
+      if(Math.abs(Math.abs(cur)-t)<0.01) continue;           // within half a degree
+      // The side of the bend is the one of the drawing before this Clean (which keeps
+      // cis and trans as drawn); if that was straight, the one now; if that is straight
+      // too, the opposite of a neighbour's bend (a zig-zag).
+      let sgn=isSp?1:(turnSign(j,origPos,0.1)||turnSign(j,pos,0.02));
+      if(!sgn){
+        const ns=adj[j].map(n=>turnSign(n,pos,0.02)).find(s=>s!==0);
+        sgn=ns?-ns:1;
+      }
+      let delta=sgn*t-cur;
+      while(delta>Math.PI) delta-=2*Math.PI;
+      while(delta<=-Math.PI) delta+=2*Math.PI;
+      let best=null;
+      for(const m of nb){
+        const sp=_splitAtBond(mol.atoms[j].id, mol.atoms[m].id);
+        if(sp && (!best || sp.movingAtomIds.length<best.split.movingAtomIds.length)) best={m,split:sp};
+      }
+      if(!best) continue;
+      const mv=best.split.movingAtomIds.map(id=>idxOf.get(id)).filter(i=>i!=null);
+      const fx=best.split.fixedAtomIds.map(id=>idxOf.get(id)).filter(i=>i!=null);
+      // the angle is measured from the first neighbour to the second: turning the second
+      // side by +delta, or the first side by -delta, changes it by delta
+      const rot=nb[0]===best.m ? -delta : delta;
+      const before=closePairs(mv,fx);
+      const saved=mv.map(i=>[pos[i][0],pos[i][1]]);
+      const cs=Math.cos(rot), sn=Math.sin(rot), ox=pos[j][0], oy=pos[j][1];
+      for(const i of mv){
+        const px=pos[i][0]-ox, py=pos[i][1]-oy;
+        pos[i][0]=ox+px*cs-py*sn; pos[i][1]=oy+px*sn+py*cs;
+      }
+      if(closePairs(mv,fx)>before) mv.forEach((i,k)=>{ pos[i][0]=saved[k][0]; pos[i][1]=saved[k][1]; });
+      else turned=true;
+    }
+    }
+  };
+
   // ── Stage 4b: seat exocyclic substituents radially outward from the ring ──
   // A substituent hanging off a ring should BISECT the external angle at its
   // ring atom — equivalently, point straight out from the ring centroid, which
@@ -7444,6 +8993,104 @@ function clean2D(silent=false, skipSnapshot=false){
       }
     }
   }
+
+  _stage4a();
+
+  // ── Stage 4c: side groups that lie on top of each other ──────────────────
+  // Two side groups on neighbouring atoms of a large ring system (the propionate ester and
+  // the group of the five-membered ring of a bacteriochlorophyll) are each seated outward
+  // from their own ring atom, and the second atoms of the two chains can still land on one
+  // another. Nothing before this stage looks at atoms of different branches, so the overlap
+  // was left in the drawing. Only when two heavy atoms that are not bonded are closer than
+  // half a bond: a smaller side of a single bond is turned rigidly about the atom on the
+  // other side, to the position that leaves the least overlap (softly, up to 0.75 bond).
+  // A chain atom with two neighbours may only be bent the other way (its angle stays 120
+  // degrees); an atom with more neighbours may turn the side by any multiple of 15 degrees.
+  // A side is never turned past another bond of the turning atom (so no stereo mark changes
+  // its meaning), and an atom with a double bond to a non-terminal atom never turns a side
+  // (so no cis/trans changes).
+  const _stage4c=()=>{
+    const heavy=[]; for(let i=0;i<N;i++) if(mol.atoms[i].el!=='H') heavy.push(i);
+    if(heavy.length>400) return;
+    const hard=BOND_LEN*0.5, soft=BOND_LEN*0.75;
+    const bonded=new Set();
+    for(let i=0;i<N;i++) for(const n of adj[i]) bonded.add(i*N+n);
+    const hasClash=()=>{
+      for(let x=0;x<heavy.length;x++) for(let y=x+1;y<heavy.length;y++){
+        const a=heavy[x], b=heavy[y];
+        if(bonded.has(a*N+b)) continue;
+        if(Math.hypot(pos[a][0]-pos[b][0],pos[a][1]-pos[b][1])<hard) return true;
+      }
+      return false;
+    };
+    const penalty=(mv,fx)=>{
+      let s=0;
+      for(const a of mv) for(const b of fx){
+        if(mol.atoms[a].el==='H'||mol.atoms[b].el==='H'||bonded.has(a*N+b)) continue;
+        const d=Math.hypot(pos[a][0]-pos[b][0],pos[a][1]-pos[b][1]);
+        if(d<soft) s+=(soft-d)*(soft-d);
+      }
+      return s;
+    };
+    // the order of the neighbours round an atom, as a list that starts at the lowest index
+    const orderAt=j=>{
+      const L=heavyNb(j).map(n=>[Math.atan2(pos[n][1]-pos[j][1],pos[n][0]-pos[j][0]),n]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+      const k=L.indexOf(Math.min(...L));
+      return L.slice(k).concat(L.slice(0,k)).join(',');
+    };
+    const heavyNb=j=>adj[j].filter(n=>mol.atoms[n].el!=='H');
+    const turn=(mv,ox,oy,th)=>{
+      const cs=Math.cos(th), sn=Math.sin(th);
+      for(const i of mv){
+        const px=pos[i][0]-ox, py=pos[i][1]-oy;
+        pos[i][0]=ox+px*cs-py*sn; pos[i][1]=oy+px*sn+py*cs;
+      }
+    };
+    for(let pass=0; pass<8 && hasClash(); pass++){
+      let best=null;
+      for(const j of heavy){
+        if(_ISMETAL.has(mol.atoms[j].el)) continue;
+        const nbj=heavyNb(j);
+        if(nbj.length<2) continue;
+        if(adj[j].some((n,k)=>adjBo[j][k]===2 && heavyNb(n).length>1)) continue;
+        if(adjBo[j].some(o=>o===3)) continue;
+        for(let k=0;k<adj[j].length;k++){
+          const m=adj[j][k];
+          if(mol.atoms[m].el==='H'||adjBo[j][k]!==1) continue;
+          const sp=_splitAtBond(mol.atoms[j].id, mol.atoms[m].id);
+          if(!sp) continue;
+          const mv=sp.movingAtomIds.map(id=>idxOf.get(id)).filter(i=>i!=null);
+          const fx=sp.fixedAtomIds.map(id=>idxOf.get(id)).filter(i=>i!=null);
+          if(mv.length>fx.length) continue;
+          const base=penalty(mv,fx);
+          if(base<=0) continue;
+          const ox=pos[j][0], oy=pos[j][1];
+          let angs=[];
+          if(nbj.length===2){
+            const p=nbj.find(n=>n!==m);
+            const ux=pos[p][0]-ox, uy=pos[p][1]-oy, ul=Math.hypot(ux,uy)||1;
+            const vx=pos[m][0]-ox, vy=pos[m][1]-oy;
+            const dot=(vx*ux+vy*uy)/ul;
+            const rx=2*dot*ux/ul-vx, ry=2*dot*uy/ul-vy;     // v reflected in the line through j and p
+            angs=[Math.atan2(vx*ry-vy*rx, vx*rx+vy*ry)];
+          } else {
+            for(let d=15; d<=180; d+=15){ angs.push(d*Math.PI/180); if(d<180) angs.push(-d*Math.PI/180); }
+          }
+          const ord=orderAt(j);
+          for(const th of angs){
+            turn(mv,ox,oy,th);
+            const pen=orderAt(j)===ord ? penalty(mv,fx) : Infinity;   // never past another bond of the atom
+            turn(mv,ox,oy,-th);
+            const cost=pen+0.002*BOND_LEN*BOND_LEN*Math.abs(th);
+            if(pen<base-1e-6 && (!best||cost<best.cost)) best={cost,mv,ox,oy,th};
+          }
+        }
+      }
+      if(!best) break;
+      turn(best.mv,best.ox,best.oy,best.th);
+    }
+  };
+  _stage4c();
 
   // ── H repositioning: geometric placement based on heavy-atom layout ───
   // Now that heavy atoms are at their correct positions, compute chemically
@@ -7623,9 +9270,15 @@ function uffKa(ti,tj,tk,r0ij,r0jk){
 }
 
 // Torsion parameters {V, n, p=φ0} for the two central bond atom types
-function uffTorsion(ti,tj){
+function uffTorsion(ti,tj,order){
   const sp2=new Set(['C_2','C_R','N_2','N_R','O_2','S_2','B_2']);
   const Vtab={C_3:2.119,N_3:0.450,O_3:0.018,S_3:6.823,P_3:6.823,Si3:1.225};
+  // A true double bond between C, N or O resists twisting with the UFF barrier
+  // 5*sqrt(Ui*Uj)*(1+4.18*ln(order)), Ui = Uj = 2 for these sp2 atoms; the flat
+  // 5 below leaves cis and trans a few kcal/mol apart and lets a ring-ring
+  // clash turn one into the other.
+  const dbl=new Set(['C_2','N_2','O_2']);
+  if(order===2&&dbl.has(ti)&&dbl.has(tj)) return {V:5*2*(1+4.18*Math.log(2)), n:2, p:0};
   if(sp2.has(ti)&&sp2.has(tj)) return {V:5.0, n:2, p:0};        // planar: minima at φ=0°,180°
   if(sp2.has(ti)||sp2.has(tj)) return {V:1.0, n:6, p:0};        // soft mixed barrier
   return {V:Math.sqrt(_nn(Vtab[ti], 2.119)*_nn(Vtab[tj], 2.119)), n:3, p:0}; // staggered: minima at std φ=60°,180°,300°
@@ -7660,6 +9313,14 @@ function _dih3(x,i,j,k,l){
   const cosD=(mx*nx+my*ny+mz*nz)/(lm*ln);
   const sign=bx*(my*nz-mz*ny)+by*(mz*nx-mx*nz)+bz*(mx*ny-my*nx);
   return Math.sign(sign||1)*Math.acos(Math.max(-1,Math.min(1,cosD)));
+}
+// The dihedral in the sign and size SLAPAF prints and the Move popup shows
+// (radians): cis is 0, trans is 180 degrees. _dih3 returns the supplement with
+// the opposite sign, which the torsion terms rely on, so the dihedral constraint
+// and the cis/trans restraint use this instead.
+function _dihSlapaf3(x,i,j,k,l){
+  const d=_dih3(x,i,j,k,l);
+  return d<0 ? d+Math.PI : d-Math.PI;
 }
 function _oop3(x,j,i,k,l){
   // sin(ω): signed projection of j→l onto normal of i-j-k plane
@@ -7777,7 +9438,7 @@ function buildUFFTerms(allAtoms, activeSet){
   // Torsion
   const torsions=[];
   for(const b of allBonds){
-    const {V,n,p}=uffTorsion(types[b.i],types[b.j]);
+    const {V,n,p}=uffTorsion(types[b.i],types[b.j],b.order);
     if(V===0) continue;
     for(const ii of adj[b.i]) if(ii!==b.j)
       for(const ll of adj[b.j]) if(ll!==b.i&&ll!==ii)
@@ -7802,7 +9463,23 @@ function buildUFFTerms(allAtoms, activeSet){
     pairs.push({i,j,D,xs2:xs*xs});
   }
 
-  return {bonds,angles,torsions,inverts,pairs};
+  // Cis/trans restraint on each acyclic double bond, about the arrangement of
+  // its reference substituents in the drawing. The ring-ring clash of a cis
+  // start is larger than the torsion barrier, so without this the minimiser
+  // turns cis into trans (azobenzene) and a constrained run relaxes back.
+  const stereo=[];
+  const STEREO_K=100;   // kcal/mol; E = k(1 - cos) about the drawn cis or trans
+  for(const d of _acyclicDoubleBonds()){
+    const rel=_doubleBondRel2D(d);
+    if(!rel) continue;
+    // A dihedral constraint the user put on this very bond decides its arrangement.
+    if(constraints.some(c=>c.type==='dihed'&&c.ids.length===4&&
+       ((c.ids[1]===d.a1&&c.ids[2]===d.a2)||(c.ids[1]===d.a2&&c.ids[2]===d.a1)))) continue;
+    const i=idxOf.get(d.s1), j=idxOf.get(d.a1), k=idxOf.get(d.a2), l=idxOf.get(d.s2);
+    if([i,j,k,l].some(v=>v==null||!activeSet.has(v))) continue;
+    stereo.push({i,j,k,l,d0:rel==='cis'?0:Math.PI,k0:STEREO_K});
+  }
+  return {bonds,angles,torsions,inverts,pairs,stereo};
 }
 
 // ── UFF energy (kcal/mol) ─────────────────────────────────────────────────
@@ -7817,6 +9494,9 @@ function uffEnergy(x,terms){
   }
   for(const t of terms.torsions){
     E+=0.5*t.V*(1-Math.cos(t.n*_dih3(x,t.i,t.j,t.k,t.l)-t.p));
+  }
+  for(const t of (terms.stereo||[])){
+    E+=t.k0*(1-Math.cos(_dihSlapaf3(x,t.i,t.j,t.k,t.l)-t.d0));
   }
   for(const t of terms.inverts){
     const s=_oop3(x,t.j,t.i,t.k,t.l); E+=t.ki*s*s;
@@ -7842,7 +9522,7 @@ function uffEnergy(x,terms){
     } else if(ct.type==='angle'){
       E+=0.5*ct.ka*_sq(_ang3(x,ai,aj,ak)-ct.a0);
     } else if(ct.type==='dihed'){
-      E+=ct.kd*(1-Math.cos(_dih3(x,ai,aj,ak,al)-ct.d0));
+      E+=ct.kd*(1-Math.cos(_dihSlapaf3(x,ai,aj,ak,al)-ct.d0));
     }
   }
 
@@ -7948,6 +9628,8 @@ function _rePlaceH(predH,allAtoms,x){
 
 // ── Optimization driver ───────────────────────────────────────────────────
 let _optSt=null; // active run (null = idle)
+let _optIdSnap=null; // identity snapshot taken when the run started (graph, wedges, cis/trans of the drawing)
+let _optHeldBefore=null; // kept coordinates the run started from (Map), or null when it started from an embedding
 
 function startOptimise(){
   if(_optSt){return;}
@@ -7966,7 +9648,12 @@ function startOptimise(){
     // Already clean — just perceive aromaticity in case bonds changed elsewhere
     if(perceiveAromaticity()){ render(); updateUI(); }
   }
-  const c3d0=embed3D();
+  _optIdSnap=_idSnapSafe();   // after the automatic Clean above, before the 3D start geometry
+  // An imported molecule starts from its kept coordinates, not from an embedding of the drawing.
+  const _kept0=_heldGeometry();
+  const _fromHeld=!!_kept0;
+  _optHeldBefore=_fromHeld?new Map(Array.from(_kept0,([id,p])=>[id,p.slice()])):null;
+  const c3d0=_fromHeld?_kept0:embed3D();
 
   // ── Symmetry-breaking z-perturbation for sp3 rings ────────────────────
   // embed3D places every ring in a flat plane (z = const), which creates a
@@ -7976,7 +9663,7 @@ function startOptimise(){
   // converge to the correct puckered conformation (chair for cyclohexane,
   // envelope for cyclopentane / pyrrolidine / etc.).
   // Aromatic rings are intentionally flat — they are skipped.
-  (()=>{
+  if(!_fromHeld)(()=>{
     const rings3D=findRings3D();
     const PERTURB=0.15; // Å
     for(const ring of rings3D){
@@ -8021,6 +9708,8 @@ function startOptimise(){
 
   // ── Chain-extension pre-optimisation ─────────────────────────────────────
   try{(()=>{
+    // Kept coordinates are a real geometry: turning its chain bonds to anti would change a conformation that was read from a file.
+    if(_fromHeld){ _dbg('pre-opt: skipped, starting from kept coordinates'); return; }
     const ringSet=new Set(findRings3D().reduce((acc,r)=>acc.concat(r), []));
     _dbg(`pre-opt: ${mol.atoms.length} mol atoms, ${mol.bonds.length} mol bonds, ring atoms=${ringSet.size}`);
     const idxOf=new Map(allAtoms.map((a,i)=>[a.id,i]));
@@ -8058,9 +9747,9 @@ function startOptimise(){
       const phi_deg=_dihXY(x,t.i,t.j,t.k,t.l);
       if(!isFinite(phi_deg)){ _dbg(`  [${t.j}]-[${t.k}]: degenerate, skip`); continue; }
       const phi=phi_deg*Math.PI/180;
-      // rot = φ − π (not π − φ): Rodrigues rotation around j→k axis SUBTRACTS
-      // the angle from the dihedral, so negating gives the correct direction.
-      let rot=phi-Math.PI;
+      // The Rodrigues rotation below needs the angle of the dihedral measured with
+      // the opposite sign to SLAPAF's, minus π; phi has SLAPAF's sign, hence −φ − π.
+      let rot=-phi-Math.PI;
       if(rot> Math.PI) rot-=2*Math.PI;             // choose shortest path
       if(rot<-Math.PI) rot+=2*Math.PI;
       _dbg(`  bond [${t.j}]-[${t.k}]: ${phi_deg.toFixed(1)}° → rotate ${(rot*180/Math.PI).toFixed(1)}°`);
@@ -8310,11 +9999,11 @@ function _refreshLayout2DFromOptimized3D(c3d){
   snapshot(); // undo-able as one step back to the pre-Optimise 2D layout
 
   layoutMol({atoms: mol.atoms, bonds: mol.bonds});
-  clean2D(true); // silent=true: not a user-invoked ✦ Clean click
+  _clean2DQuiet(true); // silent=true: not a user-invoked ✦ Clean click
 
   _fixEZConsistency(c3d); // c3d is already Map<atomId,[x,y,z]> — z ignored
 
-  clean2D(true); // one extra pass, same rationale as import (§12)
+  _clean2DQuiet(true); // one extra pass, same rationale as import (§12)
 
   // Orient the longest carbon chain horizontally — a clean, chemist-style
   // left-to-right zig-zag — instead of leaving it at layoutMol()'s arbitrary
@@ -8497,6 +10186,7 @@ function _reassignStereoFromOptimized3D(coord3D){
 
   const det3 = (a,b,c)=> a[0]*(b[1]*c[2]-b[2]*c[1]) - a[1]*(b[0]*c[2]-b[2]*c[0]) + a[2]*(b[0]*c[1]-b[1]*c[0]);
 
+  const deg4 = [], savedMarks = new Map();
   for (const atom of mol.atoms){
     if (!prevFlagged.has(atom.id)) continue;               // option-1 gate
     const nbrs = adjId.get(atom.id);
@@ -8507,6 +10197,7 @@ function _reassignStereoFromOptimized3D(coord3D){
     // degree 3, exactly as repositionStereoSubstituents() also has to handle).
     const implicitOne = nbrs.length===3 && implicitH(atom)===1;
     if (nbrs.length!==4 && !implicitOne) continue;
+    if (_ISMETAL.has(atom.el)) continue;                   // a metal is never a stereocentre here
     const allSingle = mol.bonds.every(b => !(b.a1===atom.id||b.a2===atom.id) || b.order===1);
     if (!allSingle) continue;                              // sp3: every bond at the centre single
     // Distinguishability of the real (heavy) branches; the implicit-H branch,
@@ -8518,10 +10209,18 @@ function _reassignStereoFromOptimized3D(coord3D){
     if (!distinguishable) continue;                        // genuine stereocentre only — else leave flags as-is
     if (!coord3D.has(atom.id)) continue;
 
+    if (nbrs.length===4){
+      // Every substituent explicit: the shared one-mark depiction (_stereoMarkAll(), below the
+      // loop). The marks the centre carried are kept aside and come back if it cannot be marked.
+      savedMarks.set(atom.id, mol.bonds.filter(b => b.a1===atom.id || b.a2===atom.id).map(b => [b, b.a1, b.a2, b.stereo]));
+      for (const b of mol.bonds) if (b.a1===atom.id || b.a2===atom.id) b.stereo = null;
+      deg4.push(atom.id);
+      continue;
+    }
+
     const ranked = rankSubstituents(atom.id, nbrs);
     const anchors = [ranked[0], ranked[1]];                // the two plain (in-plane) substituents
     const sub1 = ranked[2];                                // wedge target (least anchor-worthy heavy)
-    const sub2 = ranked[3];                                // present only at degree 4 (no implicit H)
     if (!coord3D.has(anchors[0]) || !coord3D.has(anchors[1]) || !coord3D.has(sub1)) continue;
 
     // truth3D — anchors ordered by id so the sign is reproducible and matched
@@ -8557,22 +10256,8 @@ function _reassignStereoFromOptimized3D(coord3D){
       if (bond1.a2===atom.id){ const t=bond1.a1; bond1.a1=bond1.a2; bond1.a2=t; }
       bond1.stereo = wantUp ? 'up' : 'dn';
     }
-    // Degree-4: the second-least anchor-worthy substituent (sub2) takes the
-    // opposite glyph — the mirror tetrahedral completion — exactly as the import
-    // path's dual-flag depiction does. With H now first-class ordered atoms
-    // (Model B §5/§6.4), sub2 IS the real stereocentre-H at a centre bearing one
-    // H (rankSubstituents sorts H last), so the H bond gets the opposite glyph of
-    // sub1 instead of rendering plain — closing the Phase-2 post-optimise carry-
-    // over. The old `elOf.get(sub2)!=='H'` guard (a relic of when H were stripped)
-    // is therefore removed.
-    if (nbrs.length===4 && sub2!==undefined){
-      const bond2 = mol.bonds.find(b => (b.a1===atom.id&&b.a2===sub2)||(b.a2===atom.id&&b.a1===sub2));
-      if (bond2){
-        if (bond2.a2===atom.id){ const t=bond2.a1; bond2.a1=bond2.a2; bond2.a2=t; }
-        bond2.stereo = wantUp ? 'dn' : 'up';
-      }
-    }
   }
+  if (deg4.length) _stereoMarkAll(deg4, coord3D, adjId, elOf, ringAtoms, rankSubstituents, savedMarks);
 }
 
 function _finishOptimise(gn,timedOut,userStop){
@@ -8607,6 +10292,19 @@ function _finishOptimise(gn,timedOut,userStop){
   // sp3/sp branch existed to preserve.
   const implH=[];
 
+  // A run that started from kept coordinates is put back in their frame (best superposition
+  // of the atoms that were held) and reports how far the atoms moved.
+  let _shiftMsg='', _heldAfterRun=null;
+  if(_optHeldBefore && heldBase){
+    const ids=[];
+    for(const id of _optHeldBefore.keys()) if(c3d.has(id)) ids.push(id);
+    const fit=_superposeOnto(c3d,_optHeldBefore,ids);
+    _heldAfterRun={max:fit.max,rms:fit.rms,n:fit.n};
+    _shiftMsg=` · largest shift ${fit.max.toFixed(3)} Å, rms ${fit.rms.toFixed(3)} Å`;
+    _dbg(`Optimise from kept coordinates: ${fit.n} atoms superposed, largest shift ${fit.max.toFixed(4)} A, rms ${fit.rms.toFixed(4)} A`);
+  }
+  _optHeldBefore=null;
+
   optResult3D={c3d,implH};
 
   // Re-derive the 2D depiction from this optimized structure (see
@@ -8615,7 +10313,36 @@ function _finishOptimise(gn,timedOut,userStop){
   // activeGeometry3D.fromVersion needs to capture that POST-refresh version,
   // not the version from a moment ago, or this very 3D result would
   // immediately show as "stale" relative to the 2D edit it just caused.
-  _refreshLayout2DFromOptimized3D(c3d);
+  // A molecule drawn by hand keeps its own drawing: the 2D is not rebuilt from the result,
+  // and the result becomes the kept 3D of its atoms. An imported molecule has no drawing of
+  // its own, so it still gets its 2D layout from the 3D.
+  // The exception: a dihedral constraint put by the user on a double bond can give the result the other
+  // cis/trans than the drawing. The drawing is the record of the arrangement, so then it follows the
+  // result, as it always did.
+  const _drawnRun=!_heldAfterRun || (heldBase && heldBase.drawn);
+  let _redrawFrom3D=!_drawnRun;
+  if(_drawnRun){
+    const e2=_idEZLabels(id=>{ const a=getAtom(id); return a?[a.x,a.y,0]:null; });
+    const e3=_idEZLabels(id=>c3d.get(id)||null);
+    if(Object.keys(e2).some(k=>e3[k]&&e3[k]!==e2[k])) _redrawFrom3D=true;
+  }
+  if(!_redrawFrom3D){
+    updateUI(); updateSelPanel(); render();
+  } else {
+    _refreshLayout2DFromOptimized3D(c3d);
+  }
+  // The kept coordinates change only now: the undo entries made by the redraw above still hold the ones before the run.
+  if(_heldAfterRun && heldBase){
+    for(const [id,p] of c3d) heldBase.coords.set(id,p.slice());
+    heldBase.origin='optimised';
+    heldBase.opt=_heldAfterRun;
+  } else if(!_heldAfterRun){
+    _heldFromDrawn(c3d);
+  }
+  // Identity: the graph, the centres that carry a wedge, and cis/trans of the
+  // redrawn 2D and of the optimised 3D must be those of the molecule that was started.
+  _idCheck('Optimise', _optIdSnap, {centres:true, ez:true, ez3d:'old', coords:true}, c3d);
+  _optIdSnap=null;
 
   // Derived 3D geometry for the 3D viewport pane — NEVER written back into
   // mol.atoms[].x/y directly (the line above is the one deliberate,
@@ -8642,7 +10369,8 @@ function _finishOptimise(gn,timedOut,userStop){
   const msg = timedOut  ? `Stopped (time limit) — ∇RMS ${gn.toFixed(3)} kcal/mol/Å · 2D updated`
              : userStop ? `Stopped by user — ∇RMS ${gn.toFixed(3)} kcal/mol/Å · 2D updated`
              :            `Optimised ✓ — ∇RMS ${gn.toFixed(4)} kcal/mol/Å · 2D updated`;
-  toast(msg);
+  toast(msg+_shiftMsg);
+  _updateRebuildBtn();
 }
 
 function _updateOptUI(label,pct,gn,iter){
@@ -8751,6 +10479,9 @@ function _validateMovePickBonds(type, ids) {
 const _CON_NEEDED = {fixed:1, dist:2, angle:3, dihed:4};
 const _CON_ICON   = {fixed:'🔒', dist:'↔', angle:'∠', dihed:'↻'};
 const _CON_COLOR  = {fixed:'#f39c12', dist:'#3498db', angle:'#2ecc71', dihed:'#ce93d8'};
+// The same four colours for the list in the tool panel, which follows the theme: the
+// canvas keeps the table above because it is drawn on a dark ground in both themes.
+const _CON_COLOR_UI = {fixed:'var(--yellow)', dist:'var(--blue)', angle:'var(--green)', dihed:'var(--con-dihed,#ce93d8)'};
 const _CON_UNIT   = {dist:'Å', angle:'°', dihed:'°'};
 // Default constraint force constants.
 // Distance k=5000 kcal/mol/Å² and angle k=2000 kcal/mol/rad² give violations
@@ -8980,8 +10711,7 @@ function _dihed3D(coords, idA, idB, idC, idD) {
   const cosv = abProj.dot(dcProj);
   const sinv = abProj.clone().cross(dcProj).dot(axis);
   let deg = Math.atan2(sinv, cosv) * 180 / Math.PI; // (-180, 180]
-  if (deg < 0) deg += 360; // normalize into the popup's 0–359° slider range
-  return deg;
+  return Math.abs(deg) === 180 ? -180 : deg;        // SLAPAF's range, -180 up to but not including 180, as a dihedral constraint reads it
 }
 
 function _finishMovePick() {
@@ -9021,7 +10751,7 @@ function _finishMovePick() {
 const MOVE_RANGE = {
   dist:  {min:0.1, max:5.0, step:0.1, unit:'Å'},
   angle: {min:0,   max:359, step:5,   unit:'°'},
-  dihed: {min:0,   max:359, step:5,   unit:'°'},
+  dihed: {min:-180, max:179, step:5,  unit:'°'},
 };
 
 function _openMovePopup(type, ids, vertexId, anchorId, split) {
@@ -9427,6 +11157,7 @@ function _applyMovePopup() {
   _discardMoveRig();
 
   _refreshLayout2DFromOptimized3D(workingCoords);
+  if (heldBase) for (const [id, p] of workingCoords) heldBase.coords.set(id, p.slice()); // a deliberate 3D move is kept
 
   activeGeometry3D = {source:'moved', fromVersion:mol2DVersion, coords:workingCoords, implicitH:workingImplH, stale:false};
   _dbg(`activeGeometry3D updated: source=moved fromVersion=${mol2DVersion} heavyAtoms=${workingCoords.size} implicitH=${workingImplH.length}`);
@@ -9459,7 +11190,7 @@ function _renderConList() {
 
   for (const c of live) {
     const lbl   = c.ids.map(_atomLabel).join('–');
-    const color = _CON_COLOR[c.type]||'#888';
+    const color = _CON_COLOR_UI[c.type]||'var(--txt3)';
     const hasVal = c.type !== 'fixed';
     const unit   = _CON_UNIT[c.type]||'';
 
@@ -9639,7 +11370,7 @@ const IMPORT_COV_DEF = 1.50; // fallback for unknown elements
 const BOHR2ANG_IMP = 0.529177210903;
 
 // iOS Safari's file-input `accept` filtering keys off registered UTIs, and
-// .xyz/.molden/.input aren't registered ones. Combined with the text/*
+// .xyz/.molden aren't registered ones. Combined with the text/*
 // wildcard, WebKit's picker can end up showing nothing (or the wrong tab)
 // on iPadOS even though the same accept string works fine on desktop
 // browsers. Leave the markup with no `accept` at all and apply it at init on
@@ -9653,7 +11384,7 @@ function applyFileInputAccept(inputId, acceptString) {
   }
 }
 
-applyFileInputAccept('file-inp', '.xyz,.molden,.input,text/*');
+applyFileInputAccept('file-inp', '.xyz,.molden,text/*');
 
 // Triggered by the ⬆ Load toolbar button.
 // On iOS/iPadOS, calling .click() directly from an onclick handler (a user
@@ -9697,25 +11428,29 @@ function handleFileLoad(e) {
     if (myGen !== _loadGeneration) return;   // superseded by a newer pick — abandon quietly
     const text = ev.target.result;
     try {
-      let atoms;
+      let atoms, kind;
       const ext = file.name.split('.').pop().toLowerCase();
       if (ext === 'xyz') {
-        atoms = _parseXYZ3D(text);
-      } else if (ext === 'molden' || ext === 'input') {
-        atoms = _parseMolden3D(text);
+        atoms = _parseXYZ3D(text); kind = 'XYZ geometry';
+      } else if (ext === 'molden') {
+        atoms = _parseMolden3D(text); kind = 'Molden file';
+      } else if (ext === 'input') {
+        // OpenMolcas input files hold no coordinates this loader can read.
+        toast('Unrecognised format — use .xyz or .molden');
+        return;
       } else {
         // Auto-detect: XYZ starts with a bare integer; Molden contains [Atoms]
         if (/^\s*\d+\s*\r?\n/.test(text)) {
-          atoms = _parseXYZ3D(text);
+          atoms = _parseXYZ3D(text); kind = 'XYZ geometry';
         } else if (/\[Atoms\]/i.test(text)) {
-          atoms = _parseMolden3D(text);
+          atoms = _parseMolden3D(text); kind = 'Molden file';
         } else {
           toast('Unrecognised format — use .xyz or .molden');
           return;
         }
       }
       if (!atoms || !atoms.length) { toast('No atoms found in file'); return; }
-      _applyImport3D(atoms, file.name);
+      _applyImport3D(atoms, file.name, kind);
     } catch(err) {
       toast('Parse error: ' + err.message);
       console.error('Import error:', err);
@@ -10240,7 +11975,7 @@ function maxMatching(nAtoms, edges, need, capE, edgeOrder) {
   return x;
 }
 
-function _applyImport3D(atoms3d, filename) {
+function _applyImport3D(atoms3d, filename, fileKind) {
   _abortOptimise(); // v0.57 §8.13 sibling — a live run must not outlive its molecule
   // Bond detection via Alvarez covalent radii (IMPORT_COV) with 1.20 tolerance,
   // exactly as documented in design_system.md §6b. Bond ORDERS are no longer set
@@ -10297,9 +12032,21 @@ function _applyImport3D(atoms3d, filename) {
     toast('⚠ Open-shell/odd-electron species: '+rad+' unpaired — left as radical (no fabricated bonds)', 4500);
   }
 
+  // The graph as written from the file, before any layout step: the end of this
+  // function compares the finished molecule with it (identity check).
+  const _idS0 = _idSnapSafe();
+  {
+    const _bad = [];
+    if (mol.atoms.length !== atoms3d.length) _bad.push(`atom count ${atoms3d.length} in the file → ${mol.atoms.length}`);
+    if (mol.bonds.length !== connectivity.length) _bad.push(`bond count ${connectivity.length} found in the file → ${mol.bonds.length}`);
+    for (let i = 0; i < atoms3d.length && i < mol.atoms.length; i++)
+      if (mol.atoms[i].el !== atoms3d[i].el) { _bad.push(`atom ${i+1} is ${atoms3d[i].el} in the file → ${mol.atoms[i].el}`); break; }
+    _idReport('Import', _bad);
+  }
+
   // Lay out the 2D depiction from connectivity alone.
   layoutMol({atoms: mol.atoms, bonds: mol.bonds});
-  clean2D(true); // silent=true: this isn't a user-invoked ✦ Clean click
+  _clean2DQuiet(true); // silent=true: this isn't a user-invoked ✦ Clean click
 
   // ── E/Z consistency correction (post-clean2D) ──────────────────────────
   // See _fixEZConsistency() above (shared with the post-Optimise 2D
@@ -10326,7 +12073,7 @@ function _applyImport3D(atoms3d, filename) {
   // has no mechanism that moves an atom across the double-bond axis it was
   // just placed relative to, so the E/Z/s-cis-trans corrections are stable
   // across this extra pass.
-  clean2D(true); // silent=true — same reasoning as the first call above
+  _clean2DQuiet(true); // silent=true — same reasoning as the first call above
 
   // ── Wedge/dash stereocentre detection + sign assignment (Phase 7) ───────
   // Mechanically different from the E/Z fix above: E/Z could directly
@@ -10444,6 +12191,7 @@ function _applyImport3D(atoms3d, filename) {
     for (const atom of mol.atoms){
       const nbrs = adjId.get(atom.id);
       if (nbrs.length !== 4) continue;          // tetrahedral candidates only
+      if (_ISMETAL.has(atom.el)) continue;      // the bonds of a metal are dative: a wedge there says nothing
       // sp3 only: every bond touching this atom must be a single bond.
       const allSingle = mol.bonds.every(b => !(b.a1===atom.id||b.a2===atom.id) || b.order===1);
       if (!allSingle) continue;
@@ -10470,61 +12218,19 @@ function _applyImport3D(atoms3d, filename) {
       });
     }
 
-    // Sub-problem 3: the sign (see header comment above for the convention
-    // and why it must stay paired with repositionStereoSubstituents()).
-    // det3 is kept only as the degenerate-case fallback below (no usable
-    // global reference — e.g. a single isolated stereocentre with no
-    // extended chain to measure a plane against); the global-side test is
-    // the normal path.
-    function det3(v1,v2,v3){
-      const cr=[v2[1]*v3[2]-v2[2]*v3[1], v2[2]*v3[0]-v2[0]*v3[2], v2[0]*v3[1]-v2[1]*v3[0]];
-      return v1[0]*cr[0]+v1[1]*cr[1]+v1[2]*cr[2];
-    }
-
-    // DIRECT signed-volume assignment — the identical convention used by
-    // _reassignStereoFromOptimized3D() (post-Optimise) and
-    // repositionStereoSubstituents() (embed): tie each glyph to the real
-    // imported-3D chirality measured against the ACTUAL 2D anchor positions.
-    // The 2D layout is already final here (layoutMol()+clean2D() ran above),
-    // so reading getAtom(id).x/y is valid. This replaces the old
-    // T = sub1·_computeMoleculePlaneNormal() test, which measured the
-    // substituent against a molecule-wide 3D plane whose sign flips along a
-    // zigzag backbone and bears no fixed relationship to layoutMol()'s 2D
-    // handedness — so it depicted the right enantiomer only for lucky chain
-    // parities (chiral.xyz among them) and mirrored the rest, and, worse,
-    // disagreed with the embed/Optimise paths, so importing then Optimising
-    // could flip the flags. det3() (defined above) now carries the real
-    // computation. anchOrd sorts the two anchors by id so the 3D signed
-    // volume and the 2D cross are read in the same order.
-    for (const center of stereocenters){
-      const nbrs = adjId.get(center);
-      const ranked = rankSubstituents(center, nbrs);
-      const sub1 = ranked[2], sub2 = ranked[3];           // wedge target + its opposite
-      const anchOrd = [ranked[0], ranked[1]].sort((p,q)=>p-q);
-      const A = coord3D.get(center);
-      const vec = id => { const P = coord3D.get(id); return [P[0]-A[0], P[1]-A[1], P[2]-A[2]]; };
-      const truth3D = Math.sign(det3(vec(anchOrd[0]), vec(anchOrd[1]), vec(sub1))); // real imported chirality
-      const C2 = getAtom(center), a0 = getAtom(anchOrd[0]), a1 = getAtom(anchOrd[1]);
-      const inPlane = (a0.x-C2.x)*(-(a1.y-C2.y)) - (-(a0.y-C2.y))*(a1.x-C2.x);        // 2D anchor cross, math frame (x,−y)
-      if (Math.abs(inPlane) < 1e-3) continue;             // near-collinear 2D anchors — leave unflagged
-      const wantUp = (truth3D * Math.sign(inPlane) > 0);  // wedge iff a wedge depicts truth3D
-      const bond1 = mol.bonds.find(b => (b.a1===center&&b.a2===sub1)||(b.a2===center&&b.a1===sub1));
-      const bond2 = mol.bonds.find(b => (b.a1===center&&b.a2===sub2)||(b.a2===center&&b.a1===sub2));
-      // sub1 is never H — rankSubstituents() ranks the lone possible H last
-      // (sub2), and a stereocentre can have at most one H among its four
-      // substituents — so bond1's flag alone, with both plain anchors, fully
-      // encodes the chirality; the remaining (possibly implicit) substituent
-      // is simply on the opposite face.
-      if (bond1) bond1.stereo = wantUp ? 'up' : 'dn';
-      // sub2 gets its own opposite flag. Under Model B (real, ordered H —
-      // molbuild_h_as_real_atoms_design.md §5) sub2 is a real drawn atom
-      // whether it's a heavy substituent OR the stereocentre's single H, so its
-      // bond can always carry the visible opposite glyph. Phase 2 renders that
-      // glyph on the real H bond whenever the H is shown; when the H is hidden
-      // the bond is skipped in render() and sub1 alone (with the two plain
-      // anchors) still fully encodes the chirality.
-      if (bond2) bond2.stereo = wantUp ? 'dn' : 'up';
-    }
+    // Sub-problem 3: the sign. The 2D layout is already final here
+    // (layoutMol()+clean2D() ran above), so the glyph is tied to the real
+    // imported-3D chirality measured against the ACTUAL 2D positions, with the
+    // same signed-volume convention repositionStereoSubstituents() (embed) and
+    // _reassignStereoFromOptimized3D() (post-Optimise) read it back with. A
+    // molecule-wide reference plane was tried first and flips sign along a
+    // zigzag backbone; it is not used.
+    // One mark per centre, chosen and read back by _stereoMarkAll(): the old
+    // depiction (two plain anchors, one wedge and one dash) is gone. The centre's chirality
+    // is the orientation of the tetrahedron its three plain substituents and the marked one
+    // span, so the choice of the marked bond is free and can avoid a bond shared with a
+    // neighbouring centre, a ring bond and a hydrogen.
+    _stereoMarkAll(stereocenters, coord3D, adjId, elOf, ringAtoms, rankSubstituents);
   })();
 
   // Original 3D coordinates for every atom in the file, by mol.atoms id —
@@ -10554,6 +12260,9 @@ function _applyImport3D(atoms3d, filename) {
   // edited the 2D structure since import and correctly replace this with a
   // fresh embed at that point, instead of never refreshing.
   activeGeometry3D = {source:'imported', fromVersion:mol2DVersion, coords, implicitH:[], stale:false};
+  _idCheck('Import', _idS0, {ez3d:'new', coords:true}, coords);
+  _heldSet(coords, filename, fileKind); // the file's coordinates stay with the atoms through every later edit
+  _updateRebuildBtn();
   rebuildPane3D(); // §6: rebuild (with disposeSession3D() first) on every activeGeometry3D change
 
   selectOne(null); updateUI();
@@ -10585,6 +12294,208 @@ function _askFilename(label, ext, stem){
   const s = raw.trim() || stem;
   return s.endsWith('.' + ext) ? s : s + '.' + ext;
 }
+
+//@@OPAL-SHARED:BEGIN citation@@
+const CITE = (() => {
+  // How to cite OPAL: the two references, their plain-text and BibTeX forms, the
+  // line added to exported files, and the small window every tool and the launcher
+  // open from their info button. One source for all of them.
+  //
+  // TO FILL IN A REFERENCE LATER: edit the entry below (authors, title, venue, year,
+  // doi, url), run the sync script, bump the version of every tool and of the
+  // launcher. While an entry has no title it is shown as "in preparation", offers no
+  // Copy button, and adds nothing to exported files.
+  const CITATIONS = [
+    { id: 'opal', label: 'The OPAL article',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' },
+    { id: 'openmolcas', label: 'The OpenMolcas paper that presents OPAL',
+      authors: '', title: '', venue: '', year: '', doi: '', url: '' }
+  ];
+  const PENDING_TEXT = 'In preparation; the reference will appear here.';
+  const INTRO_TEXT = 'If you use OPAL in published work, please cite:';
+
+  // The tutorial page of each tool lives on the published site, so the address is
+  // absolute: the dock carries the same files and has no tutorials of its own. The
+  // page is found from the tool's name, lower-cased, and only when that name is in
+  // the list, so the launcher's window gets no such line.
+  const TUTORIAL_BASE = 'https://lucadevico.github.io/opal/tutorials/tools/';
+  const TUTORIAL_TOOLS = ['csfscalc', 'geodiff', 'intcoords', 'molbuild', 'molviz', 'orbviz', 'pathvibviz', 'rassiviz'];
+  const TUTORIAL_TEXT = 'Tutorial for this tool';
+
+  function list(override) { return override || CITATIONS; }
+  function tutorialUrl(toolName) {
+    const slug = String(toolName == null ? '' : toolName).toLowerCase();
+    return TUTORIAL_TOOLS.indexOf(slug) >= 0 ? TUTORIAL_BASE + slug + '/' : '';
+  }
+  function isEmpty(c) { return !c || !String(c.title || '').trim(); }
+  function field(c, k) { return String(c[k] == null ? '' : c[k]).trim(); }
+
+  // Plain text: Authors. Title. Venue, Year. doi:...  (parts that are empty are left out)
+  function plain(c) {
+    if (isEmpty(c)) return '';
+    const parts = [];
+    const a = field(c, 'authors'), t = field(c, 'title'), v = field(c, 'venue'), y = field(c, 'year');
+    const d = field(c, 'doi'), u = field(c, 'url');
+    if (a) parts.push(a.replace(/\.$/, '') + '.');
+    parts.push(t.replace(/\.$/, '') + '.');
+    if (v || y) parts.push((v + (v && y ? ', ' : '') + y) + '.');
+    if (d) parts.push('doi:' + d);
+    else if (u) parts.push(u);
+    return parts.join(' ');
+  }
+
+  function bibEscape(s) { return s.replace(/[{}]/g, ''); }
+  function bibtex(c) {
+    if (isEmpty(c)) return '';
+    const rows = [];
+    const add = (k, v) => { if (v) rows.push('  ' + k + ' = {' + bibEscape(v) + '}'); };
+    add('author', field(c, 'authors'));
+    add('title', field(c, 'title'));
+    add('journal', field(c, 'venue'));
+    add('year', field(c, 'year'));
+    add('doi', field(c, 'doi'));
+    add('url', field(c, 'url'));
+    const key = 'opal_' + String(c.id).replace(/[^A-Za-z0-9]/g, '') + field(c, 'year');
+    return '@article{' + key + ',\n' + rows.join(',\n') + '\n}';
+  }
+
+  // The DOIs of the entries that have one, and the line exports carry.
+  function dois(override) {
+    return list(override).filter(c => !isEmpty(c) && field(c, 'doi')).map(c => field(c, 'doi'));
+  }
+  // Empty string while no entry has a DOI. Callers add it only when it is not empty.
+  function exportLine(override) {
+    const d = dois(override);
+    return d.length ? 'Please cite: ' + d.map(x => 'doi:' + x).join('; ') : '';
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Copy: the clipboard interface where the page may use it, otherwise a hidden
+  // read-only text field selected and copied. Resolves to true or false.
+  function copyText(text) {
+    const fallback = () => {
+      let ok = false;
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.readOnly = true;
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+      document.body.appendChild(ta);
+      try { ta.focus({ preventScroll: true }); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand('copy'); }
+      catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(() => true, () => fallback());
+    }
+    return Promise.resolve(fallback());
+  }
+
+  const STYLE_ID = 'cite-style';
+  const CSS =
+    '.cite-back{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:12px;box-sizing:border-box}' +
+    '.cite-box{background:var(--panel,#16213e);color:var(--txt,#e8e8f0);border:1px solid var(--border,#2a3a5c);border-radius:var(--r,8px);max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:16px 18px;box-sizing:border-box;font-size:13px;line-height:1.5}' +
+    '.cite-box h2{margin:0 0 2px;font-size:15px}' +
+    '.cite-ver{color:var(--txt3,#9aa3b8);font-size:12px;margin-bottom:10px}' +
+    '.cite-item{margin:10px 0;padding:8px 10px;border:1px solid var(--border,#2a3a5c);border-radius:6px}' +
+    '.cite-label{font-weight:600;margin-bottom:4px}' +
+    '.cite-text{white-space:pre-wrap;word-break:break-word;-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}' +
+    '.cite-pending{color:var(--txt3,#9aa3b8);font-style:italic}' +
+    '.cite-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}' +
+    '.cite-row button,.cite-close{font:inherit;font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid var(--border,#2a3a5c);background:transparent;color:inherit;cursor:pointer}' +
+    '.cite-status{min-height:1.2em;margin-top:6px;font-size:12px;color:var(--txt3,#9aa3b8)}' +
+    '.cite-tut{margin:10px 0 0}.cite-tut a{color:var(--accent,#5dade2)}' +
+    '.cite-close{margin-top:8px}';
+
+  let openState = null;   // { back, keyHandler, returnTo } while the window is shown
+
+  function close() {
+    if (!openState) return;
+    const s = openState; openState = null;
+    document.removeEventListener('keydown', s.keyHandler, true);
+    if (s.back.parentNode) s.back.parentNode.removeChild(s.back);
+    if (s.returnTo && s.returnTo.focus) { try { s.returnTo.focus({ preventScroll: true }); } catch (e) {} }
+  }
+
+  // Body markup of the window; also used by the launcher's own section.
+  function bodyHtml(override) {
+    const items = list(override);
+    let h = '<p>' + esc(INTRO_TEXT) + '</p>';
+    for (let i = 0; i < items.length; i++) {
+      const c = items[i];
+      h += '<div class="cite-item" data-cite="' + esc(c.id) + '"><div class="cite-label">' + esc(c.label) + '</div>';
+      if (isEmpty(c)) {
+        h += '<div class="cite-pending">' + esc(PENDING_TEXT) + '</div>';
+      } else {
+        h += '<div class="cite-text">' + esc(plain(c)) + '</div>' +
+          '<div class="cite-row"><button type="button" data-copy="plain" data-i="' + i + '">Copy text</button>' +
+          '<button type="button" data-copy="bibtex" data-i="' + i + '">Copy BibTeX</button></div>';
+      }
+      h += '</div>';
+    }
+    return h + '<div class="cite-status" role="status"></div>';
+  }
+
+  function wireCopy(root, override) {
+    const items = list(override);
+    root.addEventListener('click', (ev) => {
+      const b = ev.target && ev.target.closest ? ev.target.closest('button[data-copy]') : null;
+      if (!b) return;
+      const c = items[Number(b.getAttribute('data-i'))];
+      if (isEmpty(c)) return;                 // the handler refuses as well as the markup
+      const text = b.getAttribute('data-copy') === 'bibtex' ? bibtex(c) : plain(c);
+      const status = root.querySelector('.cite-status');
+      copyText(text).then((ok) => {
+        if (status) status.textContent = ok ? 'Copied.' : 'Copy failed: select the text above and copy it by hand.';
+      });
+    });
+  }
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = STYLE_ID; st.textContent = CSS;
+    document.head.appendChild(st);
+  }
+
+  function open(toolName, version, override) {
+    close();
+    ensureStyle();
+    const back = document.createElement('div');
+    back.className = 'cite-back';
+    const box = document.createElement('div');
+    box.className = 'cite-box';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'How to cite');
+    const tut = tutorialUrl(toolName);
+    box.innerHTML = '<h2>' + esc(toolName) + '</h2><div class="cite-ver">' + esc(version) + '</div>' +
+      bodyHtml(override) +
+      (tut ? '<p class="cite-tut"><a href="' + esc(tut) + '" target="_blank" rel="noopener">' + esc(TUTORIAL_TEXT) + '</a></p>' : '') +
+      '<button type="button" class="cite-close">Close</button>';
+    back.appendChild(box);
+    wireCopy(box, override);
+    box.querySelector('.cite-close').addEventListener('click', close);
+    back.addEventListener('click', (ev) => { if (ev.target === back) close(); });
+    const keyHandler = (ev) => { if (ev.key === 'Escape') { ev.stopPropagation(); close(); } };
+    document.addEventListener('keydown', keyHandler, true);
+    document.body.appendChild(back);
+    openState = { back: back, keyHandler: keyHandler, returnTo: document.activeElement };
+    const closeBtn = box.querySelector('.cite-close');
+    try { closeBtn.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  return {
+    TUTORIAL_BASE: TUTORIAL_BASE, TUTORIAL_TOOLS: TUTORIAL_TOOLS, tutorialUrl: tutorialUrl,
+    CITATIONS: CITATIONS, PENDING_TEXT: PENDING_TEXT, INTRO_TEXT: INTRO_TEXT,
+    isEmpty: isEmpty, plain: plain, bibtex: bibtex, dois: dois, exportLine: exportLine,
+    bodyHtml: bodyHtml, wireCopy: wireCopy, ensureStyle: ensureStyle,
+    open: open, close: close, isOpen: () => !!openState
+  };
+})();
+//@@OPAL-SHARED:END citation@@
 
 function exportXYZ() {
   if(!mol.atoms.length){toast('Nothing to export');return;}
@@ -10899,10 +12810,19 @@ function exportPNG2D() {
   if (!mol.atoms.length) { toast('Nothing to export'); return; }
   const filename = _askFilename('PNG','png');
   if (filename===null) return;
-  canvas.toBlob(blob => {
-    if (!blob) { toast('PNG export failed'); return; }
-    _downloadBlob(blob, filename, 'image/png', `PNG exported — ${canvas.width}×${canvas.height} px`);
-  }, 'image/png');
+  // The background is a display aid and is never exported: render a frame without it, hand
+  // the canvas to the encoder (it copies the bitmap at the call), then draw the screen again.
+  _bgSuppress = true;
+  try {
+    render();
+    canvas.toBlob(blob => {
+      if (!blob) { toast('PNG export failed'); return; }
+      _downloadBlob(blob, filename, 'image/png', `PNG exported — ${canvas.width}×${canvas.height} px`);
+    }, 'image/png');
+  } finally {
+    _bgSuppress = false;
+    render();
+  }
 }
 
 function exportSVG2D() {
@@ -10934,7 +12854,12 @@ function _buildXYZLines(){
   // drawn sketch never embedded) or the 2D structure has been edited since the
   // geometry was captured (stored coords no longer match the current atoms).
   let c3d, implH, geoTag;
-  if (activeGeometry3D && !_geometryPredatesCurrentEdit(activeGeometry3D)) {
+  const kept = _heldGeometry(); // an imported molecule: always its kept coordinates, whatever the preview has caught up with
+  if (kept) {
+    c3d    = kept;
+    implH  = [];
+    geoTag = _heldTag();
+  } else if (activeGeometry3D && !_geometryPredatesCurrentEdit(activeGeometry3D)) {
     c3d    = activeGeometry3D.coords;
     implH  = activeGeometry3D.implicitH || [];
     geoTag = activeGeometry3D.source==='imported'  ? 'imported geometry'
@@ -10955,7 +12880,7 @@ function _buildXYZLines(){
     }).join(' ');
   const fmt = v => _padS(v.toFixed(6), 14);
   const lines = [`${total}`,
-    `MolBuild ${MOLBUILD_VERSION} | ${geoTag}${stereoAnno?' | stereo: '+stereoAnno:''}`];
+    `MolBuild ${MOLBUILD_VERSION} | ${geoTag}${stereoAnno?' | stereo: '+stereoAnno:''}${CITE.exportLine()?' | '+CITE.exportLine():''}`];
   for(const a of mol.atoms){ const p=c3d.get(a.id)||[0,0,0]; lines.push(`${_padE(a.el, 3)}${fmt(p[0])}${fmt(p[1])}${fmt(p[2])}`); }
   for(const{el,pos} of implH)                                  lines.push(`${_padE(el, 3)}${fmt(pos[0])}${fmt(pos[1])}${fmt(pos[2])}`);
   return lines;
@@ -10965,7 +12890,7 @@ let _xyzModalLines = null;  // cached lines while modal is open
 
 function showXYZModal(){
   if(!mol.atoms.length){toast('Nothing to show');return;}
-  if(!optResult3D) toast('Showing Phase-2 geometry — run Optimise for 3D-optimised coordinates', 2000);
+  if(!optResult3D && !heldBase) toast('Showing Phase-2 geometry — run Optimise for 3D-optimised coordinates', 2000);
   try {
     _xyzModalLines = _buildXYZLines();
   } catch (err) {
@@ -11199,6 +13124,7 @@ function updateUI() {
     const s=writeSmiles();
     document.getElementById('smi-out').textContent=s||(mol.atoms.length?'(disconnected)':'(empty)');
   },250);
+  refreshFileBar();
   updateSelPanel();
   updateChargeDisp();
   _updateMoveToolbarState(); // Phase 6 §7: Move buttons track mol.atoms.length too
@@ -11296,6 +13222,67 @@ function toast(msg,dur=2600) {
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>el.classList.remove('show'),dur);
 }
+
+// ── file bar ──────────────────────────────────────────────────────────
+// Along the bottom of the page: the imported file's name and kind, or "New drawing".
+// MolBuild starts from a blank canvas, so its empty state is not an invitation to open
+// a file. What counts as the imported file: the file whose coordinates heldBase keeps,
+// for as long as at least one of its atoms is in the drawing. Edits, Clean and Optimise
+// leave the name; clearing, a SMILES import, rebuilding the 3D from the drawing, or
+// deleting every atom of the file bring back "New drawing". The bar follows heldBase
+// through refreshFileBar(), called wherever heldBase or the drawing changes.
+const FILE_BAR_NEW = 'New drawing';
+const FILE_BAR_MAXLEN = 40;                  // longest name shown whole
+let _fileBarName = null, _fileBarKind = null;
+// Shortened in the middle so the extension stays visible. A short name is returned as it is.
+function shortenFileName(name, max) {
+  if (name.length <= max) return name;
+  const m = /\.[^.\/\\]{1,8}$/.exec(name);
+  const ext = m ? m[0] : '';
+  const stem = name.slice(0, name.length - ext.length);
+  const room = max - ext.length - 1;
+  if (room < 2) return name;
+  const front = Math.ceil(room * 0.6), back = room - front;
+  return stem.slice(0, front) + '…' + (back > 0 ? stem.slice(stem.length - back) : '') + ext;
+}
+function setFileBar(name, kind) {
+  const bar = document.getElementById('file-bar');
+  const nm = document.getElementById('file-bar-name'), kd = document.getElementById('file-bar-kind');
+  _fileBarName = name || ''; _fileBarKind = kind || '';
+  if (name) {
+    bar.classList.remove('empty');
+    nm.textContent = shortenFileName(name, FILE_BAR_MAXLEN);
+    nm.title = name;
+    kd.textContent = kind || '';
+    document.title = name + ' · MolBuild';
+  } else {
+    bar.classList.add('empty');
+    nm.textContent = FILE_BAR_NEW;
+    nm.title = '';
+    kd.textContent = '';
+    document.title = FILE_BAR_NEW + ' · MolBuild';
+  }
+  // The bar has a fixed height, so the views normally keep their size; the guarded
+  // resize of the 3D pane runs only when its canvas did not follow.
+  if (typeof renderer3D !== 'undefined' && renderer3D) {
+    const vp = document.getElementById('cvw-3d'), cv = renderer3D.domElement;
+    if (vp && cv && (vp.clientWidth !== cv.clientWidth || vp.clientHeight !== cv.clientHeight)) resize3D();
+  }
+}
+function refreshFileBar() {
+  let name = '', kind = '';
+  if (heldBase && heldBase.file) {
+    for (const a of mol.atoms) {
+      if (heldBase.baseIds.has(a.id)) { name = heldBase.file; kind = heldBase.kind || ''; break; }
+    }
+  }
+  if (name === _fileBarName && kind === _fileBarKind) return;
+  setFileBar(name, kind);
+}
+// A touch screen has no hover: a tap on the name shows the whole name.
+document.getElementById('file-bar-name').addEventListener('click', function () {
+  if (this.title) toast(this.title, 4000);
+});
 
 // Phase 5 §8: the periodic table modal serves two callers — the toolbar's
 // "what element will new atoms be" picker (showElModal() with no argument,
@@ -11432,6 +13419,9 @@ render();
 updateUI();
 // Stamp the version badge in the toolbar — always reads from MOLBUILD_VERSION
 document.getElementById('ver-badge').textContent = MOLBUILD_VERSION;
+initPanels();
+syncBackLink();
+if (window.OPAL_THEME) window.OPAL_THEME.onChange(syncBackLink);
 
 // Welcome demo: draw ethanol skeleton with standard 120° bond angles
 (function() {

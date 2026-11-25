@@ -1,0 +1,25 @@
+&GATEWAY
+  Coord
+4
+trans-diazene
+N  -0.626000   0.000000   0.000000
+N   0.626000   0.000000   0.000000
+H  -0.926600   0.983100   0.000000
+H   0.926600  -0.983100   0.000000
+  Basis = ANO-S-VDZP
+  Group = NoSym
+  RICD
+&SEWARD
+&SCF
+  Charge = 0
+&RASSCF
+  Spin = 1
+  Charge = 0
+  Ras2 = 4
+  NActEl = 6 0 0
+  CIRoot = 5 5 1
+&CASPT2
+  RMULTI = All
+>> COPY $Project.JobMix JOB001
+&RASSI
+  NrOfJobIph = 1 all
